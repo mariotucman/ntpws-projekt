@@ -3,8 +3,11 @@
 
 function stranica_pocetna()
 {
+    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM korisnici'); // test
+
     echo '<!doctype html><html lang="hr"><head><meta charset="utf-8"><title>Mjestopis</title></head>';
-    echo '<body><h1>Mjestopis</h1><p>Dobrodošli na Mjestopis.</p></body></html>';
+    echo '<body><h1>Mjestopis</h1><p>Dobrodošli na Mjestopis.</p>';
+    echo '<p>Broj korisnika u bazi: ' . $redak['broj'] . '</p></body></html>';
 }
 
 function stranica_nije_pronadena()
