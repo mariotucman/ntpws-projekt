@@ -1,0 +1,23 @@
+{
+  "name": "ntpws-projekt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "sass scss/stil.scss javno/css/stil.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariotucman/ntpws-projekt.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mariotucman/ntpws-projekt/issues"
+  },
+  "homepage": "https://github.com/mariotucman/ntpws-projekt#readme",
+  "devDependencies": {
+    "sass": "^1.108.1"
+  }
+}

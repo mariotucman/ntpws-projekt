@@ -3,3 +3,9 @@
 
 # Log grešaka
 /zapisi/
+
+# npm paketi (npm install)
+/node_modules/
+
+# Kompajlirani CSS (npm run scss)
+/javno/css
