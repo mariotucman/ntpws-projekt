@@ -5,10 +5,12 @@ require __DIR__ . '/../aplikacija/konfiguracija.php';
 require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
+require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 
 // Popis dopuštenih stranica
 $stranice = [
     'pocetna' => 'stranica_pocetna',
+    'registracija' => 'stranica_registracija',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

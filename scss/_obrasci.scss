@@ -1,0 +1,55 @@
+@use 'varijable' as *;
+
+.obrazac-kartica {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px;
+  border-radius: $radius-block;
+  background-color: $color-surface;
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: 36px;
+  }
+
+  &__naslov {
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  &__gumb {
+    width: 100%;
+    min-height: 52px;
+  }
+}
+
+.polje {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &__oznaka {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &__unos {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1px solid $color-text-muted;
+    border-radius: $radius-button;
+    background-color: $color-surface;
+    color: $color-text;
+    font-family: inherit;
+    font-size: 16px;
+  }
+
+  &__pomoc {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+}

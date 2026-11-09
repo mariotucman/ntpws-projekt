@@ -18,6 +18,8 @@
             <nav class="izbornik" aria-label="Glavni izbornik">
                 <a class="izbornik__stavka" href="index.php"<?= ($aktivno ?? '') === 'pocetna' ? ' aria-current="page"' : '' ?>>Početna</a>
             </nav>
+
+            <a class="zaglavlje__registracija" href="index.php?stranica=registracija"<?= ($aktivno ?? '') === 'registracija' ? ' aria-current="page"' : '' ?>>Registracija</a>
         </div>
 
         <div>

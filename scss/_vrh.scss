@@ -63,6 +63,24 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
+
+  &__registracija {
+    display: flex;
+    align-items: center;
+    min-height: $touch-min;
+    padding: 0 $spacing-l;
+    border-radius: $radius-pill;
+    background-color: $color-accent;
+    color: $color-text;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text;
+      filter: brightness(0.95);
+    }
+  }
 }
 
 .logo {

@@ -1,0 +1,25 @@
+@use 'varijable' as *;
+
+.gumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $touch-min;
+  padding: 0 20px;
+  border: 0;
+  border-radius: $radius-button;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+
+  &--glavni {
+    background-color: $color-primary;
+    color: $color-surface;
+
+    &:hover {
+      background-color: $color-primary-hover;
+    }
+  }
+}
