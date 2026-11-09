@@ -60,3 +60,13 @@ function db_jedan_redak($sql, $parametri = [])
 
     return $redak ?: null;
 }
+
+// Izvršava INSERT, UPDATE ili DELETE i vraća broj promijenjenih redaka.
+function db_izvrsi($sql, $parametri = [])
+{
+    $naredba = db_upit($sql, $parametri);
+    $broj = mysqli_stmt_affected_rows($naredba);
+    mysqli_stmt_close($naredba);
+
+    return $broj;
+}

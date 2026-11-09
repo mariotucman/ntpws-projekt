@@ -10,15 +10,18 @@ $color-background: #f4f5f8;
 $color-surface: #ffffff;
 $color-text: #1a1f36;
 $color-text-muted: #5c6078;
+$color-error: #c0392b;
 
 // Izvedene boje
 $color-primary-hover: color.mix($color-text, $color-primary, 20%);
+$color-accent-light: color.mix($color-accent, $color-surface, 25%);
 
 // Pismo
 $font-family: "Roboto", system-ui, sans-serif;
 
 // Zaobljenja
 $radius-block: 28px;
+$radius-image: 16px; // slike u karticama i poruke
 $radius-button: 14px; // gumbi i polja obrazaca
 $radius-pill: 999px;
 

@@ -1,0 +1,11 @@
+@use 'varijable' as *;
+
+.poruka {
+  padding: 14px 18px;
+  border-radius: $radius-image;
+
+  &--uspjeh {
+    background-color: $color-accent-light;
+    color: $color-text;
+  }
+}
