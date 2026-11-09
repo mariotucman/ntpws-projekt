@@ -1,0 +1,24 @@
+@use 'varijable' as *;
+
+.podnozje {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 32px 36px;
+  border-radius: $radius-block;
+  background-color: $color-text;
+  color: $color-surface;
+  font-size: 14px;
+
+  :focus-visible {
+    outline-color: $color-surface;
+  }
+
+  &__naziv {
+    margin-bottom: $spacing-xs;
+    font-size: 20px;
+    font-weight: 700;
+  }
+}

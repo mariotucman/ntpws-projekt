@@ -1,0 +1,15 @@
+@use 'varijable' as *;
+
+.stranica {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  min-height: 100vh;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: $spacing-l;
+}
+
+.sadrzaj {
+  flex: 1;
+}

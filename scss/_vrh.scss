@@ -1,0 +1,111 @@
+@use 'varijable' as *;
+
+.vrh {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: $spacing-l $spacing-l 32px;
+  border-radius: $radius-block;
+  background-color: $color-primary;
+  color: $color-surface;
+
+  :focus-visible {
+    outline-color: $color-surface;
+  }
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: 18px 24px 40px;
+  }
+
+  &__naslov {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+
+    @media (min-width: $breakpoint-mobile) {
+      font-size: 48px;
+    }
+  }
+
+  &__opis {
+    max-width: 640px;
+    margin-top: $spacing-m;
+  }
+
+  &__natpis {
+    margin-bottom: $spacing-m;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  &--pocetna {
+    gap: $spacing-xxl;
+
+    @media (min-width: $breakpoint-mobile) {
+      padding-bottom: $spacing-xxl;
+    }
+  }
+
+  &--pocetna &__naslov {
+    font-size: 40px;
+    letter-spacing: -2px;
+    line-height: 1;
+
+    @media (min-width: $breakpoint-mobile) {
+      font-size: 64px;
+    }
+  }
+}
+
+.zaglavlje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  min-height: $touch-min;
+  color: $color-surface;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-surface;
+  }
+}
+
+.izbornik {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $spacing-xs;
+
+  &__stavka {
+    display: flex;
+    align-items: center;
+    min-height: $touch-min;
+    padding: 0 $spacing-l;
+    border-radius: $radius-pill;
+    color: $color-surface;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-primary-hover;
+      color: $color-surface;
+    }
+
+    &[aria-current='page'] {
+      background-color: $color-surface;
+      color: $color-primary;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+// Varijable koje koriste svi ostali SCSS dijelovi
+// Hover stanja i svijetle nijanse izvode se iz osnovnih boja
+
+@use "sass:color";
+
+// Boje
+$color-primary: #5064dc;
+$color-background: #f4f5f8;
+$color-surface: #ffffff;
+$color-text: #1a1f36;
+
+// Izvedene boje
+$color-primary-hover: color.mix($color-text, $color-primary, 20%);
+
+// Pismo
+$font-family: "Roboto", system-ui, sans-serif;
+
+// Zaobljenja
+$radius-block: 28px;
+$radius-pill: 999px;
+
+// Razmaci
+$spacing-xs: 4px;
+$spacing-m: 12px;
+$spacing-l: 16px;
+$spacing-xl: 28px;
+$spacing-xxl: 48px;
+
+// Raspored
+$max-width: 1320px;
+$touch-min: 44px; // najmanja visina svega što se klikne
+
+// Točke prijeloma
+$breakpoint-mobile: 600px;
