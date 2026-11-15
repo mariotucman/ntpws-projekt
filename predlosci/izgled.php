@@ -19,7 +19,21 @@
                 <a class="izbornik__stavka" href="index.php"<?= ($aktivno ?? '') === 'pocetna' ? ' aria-current="page"' : '' ?>>Početna</a>
             </nav>
 
-            <a class="zaglavlje__registracija" href="index.php?stranica=registracija"<?= ($aktivno ?? '') === 'registracija' ? ' aria-current="page"' : '' ?>>Registracija</a>
+            <div class="racun">
+                <?php if (trenutni_korisnik() !== null): ?>
+                    <span class="racun__korisnik">
+                        <span class="racun__inicijali" aria-hidden="true"><?= e(inicijali(trenutni_korisnik()['ime'])) ?></span>
+                        <?= e(trenutni_korisnik()['ime']) ?>
+                    </span>
+                    <form method="post" action="index.php?stranica=odjava">
+                        <?= csrf_polje() ?>
+                        <button class="racun__gumb" type="submit">Odjava</button>
+                    </form>
+                <?php else: ?>
+                    <a class="racun__gumb" href="index.php?stranica=prijava"<?= ($aktivno ?? '') === 'prijava' ? ' aria-current="page"' : '' ?>>Prijava</a>
+                    <a class="racun__gumb racun__gumb--naglasak" href="index.php?stranica=registracija"<?= ($aktivno ?? '') === 'registracija' ? ' aria-current="page"' : '' ?>>Registracija</a>
+                <?php endif; ?>
+            </div>
         </div>
 
         <div>
@@ -34,6 +48,11 @@
     </header>
 
     <main class="sadrzaj">
+        <?php $poruka = uzmi_poruku(); ?>
+        <?php if ($poruka !== null): ?>
+            <p class="poruka poruka--<?= e($poruka['vrsta']) ?>" role="<?= $poruka['vrsta'] === 'greska' ? 'alert' : 'status' ?>"><?= e($poruka['tekst']) ?></p>
+        <?php endif; ?>
+
         <?= $sadrzaj ?>
     </main>
 

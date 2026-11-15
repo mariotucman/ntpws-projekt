@@ -1,13 +1,5 @@
 <?php
 
-// Vraća tekst poslan obrascem. Ako polje ne postoji ili nije tekst, vraća prazan tekst.
-function post_tekst($kljuc)
-{
-    $vrijednost = $_POST[$kljuc] ?? '';
-
-    return is_string($vrijednost) ? $vrijednost : '';
-}
-
 // Provjerava podatke za registraciju.
 function provjeri_registraciju($ime, $email, $lozinka, $lozinka_ponovo)
 {
@@ -54,9 +46,8 @@ function stranica_registracija()
 
         if (count($greske) === 0) {
             korisnik_dodaj($ime, $email, $lozinka);
-            // Preusmjeravanje
-            header('Location: index.php?stranica=registracija&uspjeh=1');
-            exit;
+            postavi_poruku('uspjeh', 'Račun je napravljen. Sada se možeš prijaviti.');
+            preusmjeri('index.php?stranica=prijava');
         }
     }
 
@@ -64,6 +55,49 @@ function stranica_registracija()
         'ime' => $ime,
         'email' => $email,
         'greske' => $greske,
-        'uspjeh' => isset($_GET['uspjeh']),
     ]);
+}
+
+function stranica_prijava()
+{
+    // Već prijavljeni korisnik se redirecta na početnu stranicu
+    if (trenutni_korisnik() !== null) {
+        preusmjeri('index.php');
+    }
+
+    $email = '';
+    $greska = '';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $email = trim(post_tekst('email'));
+        $lozinka = post_tekst('lozinka');
+
+        $korisnik = korisnik_po_emailu($email);
+
+        if ($korisnik === null || !password_verify($lozinka, $korisnik['lozinka_hash'])) {
+            $greska = 'Pogrešan email ili lozinka.';
+        } elseif (!$korisnik['aktivan']) {
+            $greska = 'Ovaj račun je deaktiviran.';
+        } else {
+            prijavi($korisnik['id']);
+            postavi_poruku('uspjeh', 'Dobro došao, ' . $korisnik['ime'] . '!');
+            preusmjeri('index.php');
+        }
+    }
+
+    prikazi('prijava', [
+        'email' => $email,
+        'greska' => $greska,
+    ]);
+}
+
+// Odjava je dopuštena samo POST zahtjevom
+function stranica_odjava()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        odjavi();
+        postavi_poruku('uspjeh', 'Odjavljen si.');
+    }
+
+    preusmjeri('index.php');
 }

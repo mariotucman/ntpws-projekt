@@ -16,3 +16,10 @@ function stranica_nije_pronadena()
 
     prikazi('greska-404');
 }
+
+function stranica_zabranjeno()
+{
+    http_response_code(403);
+
+    prikazi('greska-403');
+}

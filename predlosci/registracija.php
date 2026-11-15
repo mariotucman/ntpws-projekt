@@ -4,11 +4,8 @@ $opis = 'Napravi račun i spremaj lokacije, piši recenzije i složi svoj plan p
 $aktivno = 'registracija';
 ?>
 <form class="obrazac-kartica" method="post" action="index.php?stranica=registracija" novalidate>
+    <?= csrf_polje() ?>
     <h2 class="obrazac-kartica__naslov">Napravi račun</h2>
-
-    <?php if ($uspjeh): ?>
-        <p class="poruka poruka--uspjeh" role="status">Račun je napravljen. Sada se možeš prijaviti.</p>
-    <?php endif; ?>
 
     <div class="polje">
         <label class="polje__oznaka" for="ime">Ime</label>

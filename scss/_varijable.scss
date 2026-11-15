@@ -15,6 +15,8 @@ $color-error: #c0392b;
 // Izvedene boje
 $color-primary-hover: color.mix($color-text, $color-primary, 20%);
 $color-accent-light: color.mix($color-accent, $color-surface, 25%);
+$color-error-light: color.mix($color-error, $color-surface, 10%);
+$color-line: color.mix($color-text, $color-surface, 10%);
 
 // Pismo
 $font-family: "Roboto", system-ui, sans-serif;

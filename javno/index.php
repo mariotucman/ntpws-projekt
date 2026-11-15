@@ -5,6 +5,8 @@ require __DIR__ . '/../aplikacija/konfiguracija.php';
 require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/podaci/korisnici.php';
+require __DIR__ . '/../aplikacija/autentifikacija.php';
+require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
 require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 
@@ -12,11 +14,15 @@ require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 $stranice = [
     'pocetna' => 'stranica_pocetna',
     'registracija' => 'stranica_registracija',
+    'prijava' => 'stranica_prijava',
+    'odjava' => 'stranica_odjava',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';
 
-if (is_string($stranica) && isset($stranice[$stranica])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_ispravan()) {
+    stranica_zabranjeno(); // 403 error
+} elseif (is_string($stranica) && isset($stranice[$stranica])) {
     $stranice[$stranica]();
 } else {
     stranica_nije_pronadena(); // 404 error
