@@ -9,6 +9,8 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS vijesti;
+DROP TABLE IF EXISTS kategorije;
 DROP TABLE IF EXISTS korisnici;
 DROP TABLE IF EXISTS uloge;
 DROP TABLE IF EXISTS naselja;
@@ -90,4 +92,42 @@ CREATE TABLE naselja (
     UNIQUE KEY uq_naselja_grad_opcina_naziv (grad_opcina_id, naziv),
     KEY ix_naselja_naziv (naziv),
     CONSTRAINT fk_naselja_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- Tablica kategorije
+-- Kategorije vijesti. Kategorija se ne može obrisati dok je koristi neka vijest.
+CREATE TABLE kategorije (
+    id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    naziv VARCHAR(60) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_kategorije_naziv (naziv)
+);
+
+-- Tablica vijesti
+-- grad_opcina_id NULL znači da je vijest za cijelu Hrvatsku.
+-- Javno se prikazuju samo vijesti sa statusom 'objavljeno' kojima je objavljeno_u već prošlo.
+-- Nacrt nema datum objave. Autor se ne briše nego deaktivira pa vijest ostaje.
+CREATE TABLE vijesti (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    kategorija_id TINYINT UNSIGNED NOT NULL,
+    grad_opcina_id SMALLINT UNSIGNED NULL,
+    autor_id INT UNSIGNED NOT NULL,
+    naslov VARCHAR(200) NOT NULL,
+    sazetak VARCHAR(400) NOT NULL,
+    sadrzaj MEDIUMTEXT NOT NULL,
+    status ENUM('nacrt', 'objavljeno', 'povuceno') NOT NULL DEFAULT 'nacrt',
+    istaknuto TINYINT(1) NOT NULL DEFAULT 0,
+    objavljeno_u DATETIME NULL,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY ix_vijesti_objava (status, objavljeno_u),
+    KEY ix_vijesti_kategorija (kategorija_id),
+    KEY ix_vijesti_grad_opcina (grad_opcina_id),
+    KEY ix_vijesti_autor (autor_id),
+    CONSTRAINT fk_vijesti_kategorija FOREIGN KEY (kategorija_id) REFERENCES kategorije (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_vijesti_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_vijesti_autor FOREIGN KEY (autor_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT ck_vijesti_istaknuto CHECK (istaknuto IN (0, 1)),
+    CONSTRAINT ck_vijesti_objava CHECK (status = 'nacrt' OR objavljeno_u IS NOT NULL)
 );
