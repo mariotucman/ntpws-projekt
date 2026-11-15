@@ -16,6 +16,8 @@ $stranice = [
     'registracija' => 'stranica_registracija',
     'prijava' => 'stranica_prijava',
     'odjava' => 'stranica_odjava',
+    'profil' => 'stranica_profil',
+    'lozinka' => 'stranica_lozinka',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

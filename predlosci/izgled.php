@@ -21,10 +21,10 @@
 
             <div class="racun">
                 <?php if (trenutni_korisnik() !== null): ?>
-                    <span class="racun__korisnik">
+                    <a class="racun__korisnik" href="index.php?stranica=profil">
                         <span class="racun__inicijali" aria-hidden="true"><?= e(inicijali(trenutni_korisnik()['ime'])) ?></span>
                         <?= e(trenutni_korisnik()['ime']) ?>
-                    </span>
+                    </a>
                     <form method="post" action="index.php?stranica=odjava">
                         <?= csrf_polje() ?>
                         <button class="racun__gumb" type="submit">Odjava</button>

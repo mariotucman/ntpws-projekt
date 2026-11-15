@@ -116,8 +116,14 @@
     padding: 0 $spacing-l 0 $spacing-xs;
     border-radius: $radius-pill;
     background-color: $color-primary-hover;
+    color: $color-surface;
     font-size: 15px;
     font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-surface;
+    }
   }
 
   &__inicijali {

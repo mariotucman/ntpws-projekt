@@ -37,3 +37,14 @@ function trenutni_korisnik()
 
     return $korisnik;
 }
+
+// Neprijavljenog posjetitelja se šalje na prijavu
+function zahtijevaj_prijavu()
+{
+    if (trenutni_korisnik() === null) {
+        postavi_poruku('greska', 'Za ovu stranicu se prvo prijavi.');
+        preusmjeri('index.php?stranica=prijava');
+    }
+
+    return trenutni_korisnik();
+}
