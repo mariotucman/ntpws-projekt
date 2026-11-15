@@ -22,6 +22,9 @@ $stranice = [
 
 $stranica = $_GET['stranica'] ?? 'pocetna';
 
+// Prijavljeni korisnik se provjerava prije svake stranice, a deaktivirani se odjavljuje
+trenutni_korisnik();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_ispravan()) {
     stranica_zabranjeno(); // 403 error
 } elseif (is_string($stranica) && isset($stranice[$stranica])) {

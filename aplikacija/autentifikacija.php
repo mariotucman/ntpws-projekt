@@ -24,6 +24,8 @@ function odjavi()
     session_regenerate_id(true);
 }
 
+// Korisnik se na svakom zahtjevu dohvaća iz baze.
+// Ako je račun u međuvremenu deaktiviran ili obrisan, korisnika se odjavljuje.
 function trenutni_korisnik()
 {
     static $korisnik = false;
@@ -32,6 +34,12 @@ function trenutni_korisnik()
         $korisnik = null;
         if (isset($_SESSION['korisnik_id'])) {
             $korisnik = korisnik_po_id($_SESSION['korisnik_id']);
+
+            if ($korisnik === null || !$korisnik['aktivan']) {
+                $korisnik = null;
+                odjavi();
+                postavi_poruku('greska', 'Tvoj račun je deaktiviran pa si odjavljen.');
+            }
         }
     }
 
@@ -47,4 +55,25 @@ function zahtijevaj_prijavu()
     }
 
     return trenutni_korisnik();
+}
+
+// Vraća true ako je korisnik prijavljen i ima jednu od navedenih uloga
+function ima_ulogu($uloge)
+{
+    $korisnik = trenutni_korisnik();
+
+    return $korisnik !== null && in_array($korisnik['uloga'], $uloge, true);
+}
+
+// Neprijavljenog posjetitelja šalje na prijavu, a prijavljenom bez potrebne uloge prikazuje stranicu 403
+function zahtijevaj_ulogu($uloge)
+{
+    $korisnik = zahtijevaj_prijavu();
+
+    if (!ima_ulogu($uloge)) {
+        stranica_zabranjeno('Nemaš ovlasti za ovu stranicu.');
+        exit;
+    }
+
+    return $korisnik;
 }

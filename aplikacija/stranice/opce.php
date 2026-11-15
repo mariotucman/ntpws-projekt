@@ -17,9 +17,11 @@ function stranica_nije_pronadena()
     prikazi('greska-404');
 }
 
-function stranica_zabranjeno()
+function stranica_zabranjeno($razlog = 'Obrazac je istekao ili nije poslan s ove stranice. Vrati se, osvježi stranicu i pokušaj ponovno.')
 {
     http_response_code(403);
 
-    prikazi('greska-403');
+    prikazi('greska-403', [
+        'razlog' => $razlog,
+    ]);
 }
