@@ -6,6 +6,7 @@ require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/podaci/korisnici.php';
 require __DIR__ . '/../aplikacija/podaci/podrucja.php';
+require __DIR__ . '/../aplikacija/podaci/kategorije.php';
 require __DIR__ . '/../aplikacija/podaci/vijesti.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';

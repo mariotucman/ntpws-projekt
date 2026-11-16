@@ -40,6 +40,14 @@ function get_broj($kljuc)
     return is_string($vrijednost) && ctype_digit($vrijednost) ? (int) $vrijednost : 0;
 }
 
+// Vraća tekst iz adrese, bez razmaka na početku i kraju i najviše $najvise znakova.
+function get_tekst($kljuc, $najvise = 100)
+{
+    $vrijednost = $_GET[$kljuc] ?? '';
+
+    return is_string($vrijednost) ? mb_substr(trim($vrijednost), 0, $najvise) : '';
+}
+
 // Sprema poruku koja će se prikazati na sljedećoj stranici (nakon preusmjeravanja).
 // Vrsta je 'uspjeh' ili 'greska'.
 function postavi_poruku($vrsta, $tekst)

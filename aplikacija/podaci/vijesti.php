@@ -2,17 +2,30 @@
 
 // Grad/općina i županija mogu biti NULL (vijest za cijelu Hrvatsku)
 // Bez filtra se vide sve vijesti
-function vijesti_javne($zupanija_id = 0, $grad_opcina_id = 0)
+// $filtar: zupanija, grad_opcina, kategorija (id-ovi, 0 = bez filtra) i trazi (tekst u naslovu ili sažetku)
+function vijesti_javne($filtar = [])
 {
     $uvjeti = "v.status = 'objavljeno' AND v.objavljeno_u <= NOW()";
     $parametri = [];
 
-    if ($grad_opcina_id > 0) {
+    if (($filtar['grad_opcina'] ?? 0) > 0) {
         $uvjeti .= ' AND v.grad_opcina_id = ?';
-        $parametri[] = (int) $grad_opcina_id;
-    } elseif ($zupanija_id > 0) {
+        $parametri[] = (int) $filtar['grad_opcina'];
+    } elseif (($filtar['zupanija'] ?? 0) > 0) {
         $uvjeti .= ' AND g.zupanija_id = ?';
-        $parametri[] = (int) $zupanija_id;
+        $parametri[] = (int) $filtar['zupanija'];
+    }
+
+    if (($filtar['kategorija'] ?? 0) > 0) {
+        $uvjeti .= ' AND v.kategorija_id = ?';
+        $parametri[] = (int) $filtar['kategorija'];
+    }
+
+    if (($filtar['trazi'] ?? '') !== '') {
+        $uzorak = '%' . str_replace(['|', '%', '_'], ['||', '|%', '|_'], $filtar['trazi']) . '%';
+        $uvjeti .= " AND (v.naslov LIKE ? ESCAPE '|' OR v.sazetak LIKE ? ESCAPE '|')";
+        $parametri[] = $uzorak;
+        $parametri[] = $uzorak;
     }
 
     return db_svi_retci(
