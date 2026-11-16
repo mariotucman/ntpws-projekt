@@ -5,10 +5,13 @@ require __DIR__ . '/../aplikacija/konfiguracija.php';
 require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/podaci/korisnici.php';
+require __DIR__ . '/../aplikacija/podaci/podrucja.php';
+require __DIR__ . '/../aplikacija/podaci/vijesti.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
 require __DIR__ . '/../aplikacija/stranice/korisnici.php';
+require __DIR__ . '/../aplikacija/stranice/vijesti.php';
 
 // Popis dopuštenih stranica
 $stranice = [
@@ -18,6 +21,7 @@ $stranice = [
     'odjava' => 'stranica_odjava',
     'profil' => 'stranica_profil',
     'lozinka' => 'stranica_lozinka',
+    'vijesti' => 'stranica_vijesti',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

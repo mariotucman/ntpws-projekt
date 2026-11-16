@@ -32,6 +32,14 @@ function post_tekst($kljuc)
     return is_string($vrijednost) ? $vrijednost : '';
 }
 
+// Vraća pozitivan cijeli broj iz adrese. Ako ga nema ili nije ispravan, vraća 0.
+function get_broj($kljuc)
+{
+    $vrijednost = $_GET[$kljuc] ?? '';
+
+    return is_string($vrijednost) && ctype_digit($vrijednost) ? (int) $vrijednost : 0;
+}
+
 // Sprema poruku koja će se prikazati na sljedećoj stranici (nakon preusmjeravanja).
 // Vrsta je 'uspjeh' ili 'greska'.
 function postavi_poruku($vrsta, $tekst)
