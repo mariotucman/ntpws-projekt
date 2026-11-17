@@ -1,0 +1,72 @@
+@use 'varijable' as *;
+
+// Kartica vijesti na popisu vijesti
+.vijest-kartica {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-s;
+  padding: 20px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  &__naslov {
+    font-size: 18px;
+    font-weight: 700;
+
+    a {
+      color: $color-text;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__podaci {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+
+  &__sazetak {
+    color: $color-text-muted;
+    font-size: 14px;
+  }
+}
+
+// Članak na stranici vijesti, u bijeloj kartici čitljive širine
+.vijest {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 820px;
+  padding: 24px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: 40px;
+  }
+
+  &__sazetak {
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  // Sadržaj je HTML iz uređivača (odlomci, naslovi, popisi), pa razmak dobiva svaki element osim prvog
+  &__sadrzaj {
+    font-size: 17px;
+    line-height: 1.7;
+
+    > * + * {
+      margin-top: 1em;
+    }
+  }
+
+  &__dno {
+    padding-top: 20px;
+    border-top: 1px solid $color-line;
+  }
+}

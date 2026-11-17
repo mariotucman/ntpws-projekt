@@ -13,4 +13,10 @@
     background-color: $color-error-light;
     color: $color-error;
   }
+
+  // Prazni rezultati, npr. nema vijesti za odabrani filtar
+  &--prazno {
+    background-color: $color-surface;
+    color: $color-text-muted;
+  }
 }

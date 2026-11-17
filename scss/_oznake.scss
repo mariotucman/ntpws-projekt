@@ -1,0 +1,15 @@
+@use 'varijable' as *;
+
+// Pilula s kratkim podatkom, npr. kategorija vijesti
+.oznaka {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  color: $color-text;
+  font-size: 12px;
+  font-weight: 500;
+
+  &--kategorija {
+    background-color: $color-accent-light;
+  }
+}

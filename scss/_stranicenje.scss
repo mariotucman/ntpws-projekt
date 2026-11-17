@@ -1,0 +1,33 @@
+@use 'varijable' as *;
+
+// Red okruglih pilula s brojevima stranica
+.stranicenje {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-s;
+
+  &__poveznica {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: $touch-min;
+    min-height: $touch-min;
+    padding: 0 $spacing-l;
+    border-radius: $radius-pill;
+    background-color: $color-surface;
+    color: $color-text;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary;
+    }
+
+    &--trenutna,
+    &--trenutna:hover {
+      background-color: $color-primary;
+      color: $color-surface;
+    }
+  }
+}

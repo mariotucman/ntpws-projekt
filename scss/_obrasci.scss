@@ -68,3 +68,20 @@
     font-size: 13px;
   }
 }
+
+// Kartica s filtrima iznad popisa (pretraga, županija, grad/općina, kategorija)
+.filtar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-l;
+  padding: 20px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  &__radnje {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    gap: $spacing-m;
+  }
+}
