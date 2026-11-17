@@ -1,0 +1,66 @@
+@use 'varijable' as *;
+
+// Administracija: samo plavo zaglavlje visine 72px, a naslov stranice je u sadržaju
+.vrh--admin {
+  justify-content: center;
+  min-height: 72px;
+  padding: $spacing-m $spacing-l;
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: $spacing-m 24px;
+  }
+}
+
+.admin-naslov {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+// Bijela kartica u kojoj su tablica i gumbi
+.admin-kartica {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-l;
+  padding: 20px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+}
+
+// Široka tablica na mobitelu se pomiče vodoravno, a stranica ne
+.tablica-omotac {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tablica {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: $spacing-s $spacing-m;
+    border-bottom: 1px solid $color-line;
+    color: $color-text-muted;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  td {
+    height: 52px;
+    padding: 0 $spacing-m;
+    border-bottom: 1px solid $color-line;
+  }
+
+  // Poveznice Uredi i Obriši u retku, dovoljno velike za klik
+  &__radnje {
+    white-space: nowrap;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: $touch-min;
+      padding: 0 $spacing-s;
+    }
+  }
+}

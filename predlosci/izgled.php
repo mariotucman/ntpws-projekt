@@ -1,3 +1,7 @@
+<?php
+// Stranice administracije imaju samo zaglavlje, a naslov stranice je u sadržaju
+$admin = ($aktivno ?? '') === 'administracija';
+?>
 <!doctype html>
 <html lang="hr">
 <head>
@@ -11,7 +15,7 @@
 </head>
 <body>
 <div class="stranica">
-    <header class="vrh<?= isset($natpis) ? ' vrh--pocetna' : '' ?>">
+    <header class="vrh<?= isset($natpis) ? ' vrh--pocetna' : '' ?><?= $admin ? ' vrh--admin' : '' ?>">
         <div class="zaglavlje">
             <a class="logo" href="index.php">Mjestopis</a>
 
@@ -40,6 +44,7 @@
             </div>
         </div>
 
+        <?php if (!$admin): ?>
         <div>
             <?php if (isset($natpis)): ?>
                 <p class="vrh__natpis"><?= e($natpis) ?></p>
@@ -49,9 +54,14 @@
                 <p class="vrh__opis"><?= e($opis) ?></p>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
     </header>
 
     <main class="sadrzaj">
+        <?php if ($admin): ?>
+            <h1 class="admin-naslov"><?= e($naslov ?? 'Administracija') ?></h1>
+        <?php endif; ?>
+
         <?php $poruka = uzmi_poruku(); ?>
         <?php if ($poruka !== null): ?>
             <p class="poruka poruka--<?= e($poruka['vrsta']) ?>" role="<?= $poruka['vrsta'] === 'greska' ? 'alert' : 'status' ?>"><?= e($poruka['tekst']) ?></p>

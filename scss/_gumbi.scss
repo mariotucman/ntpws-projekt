@@ -34,4 +34,15 @@
       filter: brightness(0.95);
     }
   }
+
+  // Brisanje, uvijek uz potvrdu
+  &--opasno {
+    background-color: $color-error;
+    color: $color-surface;
+
+    &:hover {
+      color: $color-surface;
+      filter: brightness(0.95);
+    }
+  }
 }

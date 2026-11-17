@@ -22,7 +22,7 @@ $aktivno = 'administracija';
                         <tr>
                             <td><?= e($kategorija['naziv']) ?></td>
                             <td><?= e($kategorija['broj_vijesti']) ?></td>
-                            <td>
+                            <td class="tablica__radnje">
                                 <a href="index.php?stranica=admin-kategorija&amp;id=<?= e($kategorija['id']) ?>" aria-label="Uredi kategoriju <?= e($kategorija['naziv']) ?>">Uredi</a>
                                 <a href="index.php?stranica=admin-kategorija-obrisi&amp;id=<?= e($kategorija['id']) ?>" aria-label="Obriši kategoriju <?= e($kategorija['naziv']) ?>">Obriši</a>
                             </td>
