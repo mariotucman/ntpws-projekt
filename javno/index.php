@@ -26,6 +26,8 @@ $stranice = [
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
     'admin-kategorije' => 'stranica_admin_kategorije',
+    'admin-kategorija' => 'stranica_admin_kategorija',
+    'admin-kategorija-obrisi' => 'stranica_admin_kategorija_obrisi',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

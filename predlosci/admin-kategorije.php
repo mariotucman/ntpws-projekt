@@ -3,6 +3,8 @@ $naslov = 'Kategorije vijesti';
 $aktivno = 'administracija';
 ?>
 <section class="admin-kartica">
+    <p><a class="gumb gumb--glavni" href="index.php?stranica=admin-kategorija">Nova kategorija</a></p>
+
     <?php if (count($kategorije) === 0): ?>
         <p class="poruka poruka--prazno">Još nema nijedne kategorije.</p>
     <?php else: ?>
@@ -12,6 +14,7 @@ $aktivno = 'administracija';
                     <tr>
                         <th scope="col">Naziv</th>
                         <th scope="col">Broj vijesti</th>
+                        <th scope="col">Radnje</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -19,6 +22,10 @@ $aktivno = 'administracija';
                         <tr>
                             <td><?= e($kategorija['naziv']) ?></td>
                             <td><?= e($kategorija['broj_vijesti']) ?></td>
+                            <td>
+                                <a href="index.php?stranica=admin-kategorija&amp;id=<?= e($kategorija['id']) ?>" aria-label="Uredi kategoriju <?= e($kategorija['naziv']) ?>">Uredi</a>
+                                <a href="index.php?stranica=admin-kategorija-obrisi&amp;id=<?= e($kategorija['id']) ?>" aria-label="Obriši kategoriju <?= e($kategorija['naziv']) ?>">Obriši</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
