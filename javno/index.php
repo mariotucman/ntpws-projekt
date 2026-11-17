@@ -13,6 +13,7 @@ require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
 require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 require __DIR__ . '/../aplikacija/stranice/vijesti.php';
+require __DIR__ . '/../aplikacija/stranice/administracija.php';
 
 // Popis dopuštenih stranica
 $stranice = [
@@ -24,6 +25,7 @@ $stranice = [
     'lozinka' => 'stranica_lozinka',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
+    'admin-kategorije' => 'stranica_admin_kategorije',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

@@ -18,6 +18,9 @@
             <nav class="izbornik" aria-label="Glavni izbornik">
                 <a class="izbornik__stavka" href="index.php"<?= ($aktivno ?? '') === 'pocetna' ? ' aria-current="page"' : '' ?>>Početna</a>
                 <a class="izbornik__stavka" href="index.php?stranica=vijesti"<?= ($aktivno ?? '') === 'vijesti' ? ' aria-current="page"' : '' ?>>Vijesti</a>
+                <?php if (ima_ulogu(['administrator'])): ?>
+                    <a class="izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= ($aktivno ?? '') === 'administracija' ? ' aria-current="page"' : '' ?>>Administracija</a>
+                <?php endif; ?>
             </nav>
 
             <div class="racun">
