@@ -1,5 +1,7 @@
 <?php
 
+const VIJESTI_PO_STRANICI = 4;
+
 // Odabir županije i grada/općine
 // Ako je odabran samo grad, županija se postavlja prema njemu
 function odabrano_podrucje($zupanije)
@@ -42,8 +44,25 @@ function stranica_vijesti()
         'trazi' => get_tekst('trazi'),
     ];
 
+    // Straničenje: ?str=2. Broj veći od zadnje stranice prikazuje zadnju stranicu.
+    $ukupno = vijesti_javne_broj($filtar);
+    $broj_stranica = max(1, (int) ceil($ukupno / VIJESTI_PO_STRANICI));
+    $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
+
+    // Parametri adrese bez stranice, da poveznice straničenja zadrže filtar
+    $adresa = array_filter([
+        'stranica' => 'vijesti',
+        'trazi' => $filtar['trazi'],
+        'zupanija' => $zupanija_id,
+        'grad_opcina' => $grad_opcina_id,
+        'kategorija' => $kategorija_id,
+    ]);
+
     prikazi('vijesti', [
-        'vijesti' => vijesti_javne($filtar),
+        'vijesti' => vijesti_javne($filtar, VIJESTI_PO_STRANICI, ($trenutna_stranica - 1) * VIJESTI_PO_STRANICI),
+        'trenutna_stranica' => $trenutna_stranica,
+        'broj_stranica' => $broj_stranica,
+        'adresa' => $adresa,
         'zupanije' => $zupanije,
         'gradovi_opcine' => gradovi_opcine_svi(),
         'kategorije' => $kategorije,

@@ -45,4 +45,6 @@ $aktivno = 'vijesti';
             <p class="vijest-kartica__sazetak"><?= e($vijest['sazetak']) ?></p>
         </article>
     <?php endforeach; ?>
+
+    <?php require __DIR__ . '/dijelovi/stranicenje.php'; ?>
 <?php endif; ?>
