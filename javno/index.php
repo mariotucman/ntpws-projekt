@@ -23,6 +23,7 @@ $stranice = [
     'profil' => 'stranica_profil',
     'lozinka' => 'stranica_lozinka',
     'vijesti' => 'stranica_vijesti',
+    'vijest' => 'stranica_vijest',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

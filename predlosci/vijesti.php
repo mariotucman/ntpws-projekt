@@ -36,7 +36,7 @@ $aktivno = 'vijesti';
     <?php foreach ($vijesti as $vijest): ?>
         <article class="vijest-kartica">
             <p class="vijest-kartica__kategorija"><?= e($vijest['kategorija']) ?></p>
-            <h2 class="vijest-kartica__naslov"><?= e($vijest['naslov']) ?></h2>
+            <h2 class="vijest-kartica__naslov"><a href="index.php?stranica=vijest&amp;id=<?= e($vijest['id']) ?>"><?= e($vijest['naslov']) ?></a></h2>
             <p class="vijest-kartica__podaci">
                 <?= $vijest['grad_opcina'] !== null ? e($vijest['grad_opcina'] . ', ' . $vijest['zupanija']) : 'Cijela Hrvatska' ?>
                 &middot;

@@ -72,3 +72,18 @@ function stranica_vijesti()
         'trazi' => $filtar['trazi'],
     ]);
 }
+
+// Detalj vijesti: ?stranica=vijest&id=5. Neobjavljena ili nepostojeća vijest daje 404.
+function stranica_vijest()
+{
+    $vijest = vijest_javna_po_id(get_broj('id'));
+
+    if ($vijest === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    prikazi('vijest', [
+        'vijest' => $vijest,
+    ]);
+}
