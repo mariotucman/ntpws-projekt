@@ -4,6 +4,8 @@ $opis = $vijest['autor'] . ' · ' . datum($vijest['objavljeno_u'], 'j. n. Y. \u 
     . ($vijest['grad_opcina'] !== null ? $vijest['grad_opcina'] . ', ' . $vijest['zupanija'] : 'Cijela Hrvatska');
 $aktivno = 'vijesti';
 ?>
+<img class="vijest__slika" src="<?= e(adresa_slike_vijesti($vijest['slika_id'])) ?>" alt="<?= $vijest['slika_id'] !== null ? e($vijest['naslov']) : '' ?>">
+
 <article class="vijest">
     <p><span class="oznaka oznaka--kategorija"><?= e($vijest['kategorija']) ?></span></p>
 

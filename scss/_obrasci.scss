@@ -63,6 +63,51 @@
     }
   }
 
+  // Polje za odabir datoteke: gumb „Odaberi” izgleda kao sporedni gumb
+  input[type='file'].polje__unos {
+    padding: 6px;
+    font-size: 15px;
+
+    &::file-selector-button {
+      min-height: 34px;
+      margin-right: $spacing-m;
+      padding: 0 $spacing-l;
+      border: 1px solid $color-primary;
+      border-radius: 10px;
+      background-color: transparent;
+      color: $color-primary;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  }
+
+  // Pregled trenutne slike u obrascu
+  &__slika {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    border-radius: $radius-image;
+    object-fit: cover;
+  }
+
+  // Kvačica s tekstom, npr. „Ukloni sliku”
+  &__kvacica {
+    display: flex;
+    align-items: center;
+    gap: $spacing-s;
+    min-height: $touch-min;
+    cursor: pointer;
+
+    input {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: $color-primary;
+    }
+  }
+
   textarea.polje__unos {
     min-height: 120px;
     padding: $spacing-m 14px;

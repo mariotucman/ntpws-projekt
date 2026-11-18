@@ -83,3 +83,9 @@ function datum($vrijednost, $oblik = 'j. n. Y.')
 {
     return date($oblik, strtotime($vrijednost));
 }
+
+// Adresa slike vijesti. Vijest bez svoje slike dobiva zadanu sliku.
+function adresa_slike_vijesti($slika_id)
+{
+    return $slika_id !== null ? 'index.php?stranica=slika&id=' . $slika_id : 'img/vijest-zadana.jpg';
+}

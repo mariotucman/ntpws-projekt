@@ -37,6 +37,7 @@ $aktivno = 'vijesti';
 <?php else: ?>
     <?php foreach ($vijesti as $vijest): ?>
         <article class="vijest-kartica">
+            <img class="vijest-kartica__slika" src="<?= e(adresa_slike_vijesti($vijest['slika_id'])) ?>" alt="" loading="lazy">
             <p><span class="oznaka oznaka--kategorija"><?= e($vijest['kategorija']) ?></span></p>
             <h2 class="vijest-kartica__naslov"><a href="index.php?stranica=vijest&amp;id=<?= e($vijest['id']) ?>"><?= e($vijest['naslov']) ?></a></h2>
             <p class="vijest-kartica__podaci">
