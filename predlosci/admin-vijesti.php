@@ -45,7 +45,7 @@ $admin_stavka = 'vijesti';
                                 <?php endif; ?>
                             </td>
                             <td class="tablica__radnje">
-                                <a href="index.php?stranica=admin-vijest&amp;id=<?= e($vijest['id']) ?>" aria-label="Uredi vijest <?= e($vijest['naslov']) ?>">Uredi</a>
+                                <a href="index.php?stranica=admin-vijest&amp;id=<?= e($vijest['id']) ?>">Uredi</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

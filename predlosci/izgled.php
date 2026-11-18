@@ -4,9 +4,9 @@ $aktivno ??= '';
 $admin = $aktivno === 'administracija';
 $prijavljeni = trenutni_korisnik();
 
-// Poveznica na stranicu na kojoj se korisnik nalazi dobiva aria-current
-$trenutna = function ($stranica) use ($aktivno) {
-    return $aktivno === $stranica ? ' aria-current="page"' : '';
+// Klase poveznice: stavka stranice na kojoj se korisnik nalazi dobiva i klasu --trenutna
+$klase = function ($blok, $stranica) use ($aktivno) {
+    return $aktivno === $stranica ? $blok . ' ' . $blok . '--trenutna' : $blok;
 };
 ?>
 <!doctype html>
@@ -26,18 +26,18 @@ $trenutna = function ($stranica) use ($aktivno) {
         <div class="zaglavlje">
             <a class="logo" href="index.php">Mjestopis</a>
 
-            <nav class="izbornik" aria-label="Glavni izbornik">
-                <a class="izbornik__stavka" href="index.php"<?= $trenutna('pocetna') ?>>Početna</a>
-                <a class="izbornik__stavka" href="index.php?stranica=vijesti"<?= $trenutna('vijesti') ?>>Vijesti</a>
+            <nav class="izbornik">
+                <a class="<?= $klase('izbornik__stavka', 'pocetna') ?>" href="index.php">Početna</a>
+                <a class="<?= $klase('izbornik__stavka', 'vijesti') ?>" href="index.php?stranica=vijesti">Vijesti</a>
                 <?php if (ima_ulogu(['administrator', 'urednik'])): ?>
-                    <a class="izbornik__stavka" href="index.php?stranica=admin-vijesti"<?= $trenutna('administracija') ?>>Administracija</a>
+                    <a class="<?= $klase('izbornik__stavka', 'administracija') ?>" href="index.php?stranica=admin-vijesti">Administracija</a>
                 <?php endif; ?>
             </nav>
 
             <div class="racun">
                 <?php if ($prijavljeni !== null): ?>
                     <a class="racun__korisnik" href="index.php?stranica=profil">
-                        <span class="racun__inicijali" aria-hidden="true"><?= e(inicijali($prijavljeni['ime'])) ?></span>
+                        <span class="racun__inicijali"><?= e(inicijali($prijavljeni['ime'])) ?></span>
                         <?= e($prijavljeni['ime']) ?>
                     </a>
                     <form method="post" action="index.php?stranica=odjava">
@@ -45,8 +45,8 @@ $trenutna = function ($stranica) use ($aktivno) {
                         <button class="racun__gumb" type="submit">Odjava</button>
                     </form>
                 <?php else: ?>
-                    <a class="racun__gumb" href="index.php?stranica=prijava"<?= $trenutna('prijava') ?>>Prijava</a>
-                    <a class="racun__gumb racun__gumb--naglasak" href="index.php?stranica=registracija"<?= $trenutna('registracija') ?>>Registracija</a>
+                    <a class="<?= $klase('racun__gumb', 'prijava') ?>" href="index.php?stranica=prijava">Prijava</a>
+                    <a class="<?= $klase('racun__gumb', 'registracija') ?> racun__gumb--naglasak" href="index.php?stranica=registracija">Registracija</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -66,10 +66,10 @@ $trenutna = function ($stranica) use ($aktivno) {
 
     <main class="sadrzaj">
         <?php if ($admin): ?>
-            <nav class="admin-izbornik" aria-label="Administracija">
-                <a class="admin-izbornik__stavka" href="index.php?stranica=admin-vijesti"<?= ($admin_stavka ?? '') === 'vijesti' ? ' aria-current="page"' : '' ?>>Vijesti</a>
+            <nav class="admin-izbornik">
+                <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'vijesti' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-vijesti">Vijesti</a>
                 <?php if (ima_ulogu(['administrator'])): ?>
-                    <a class="admin-izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= ($admin_stavka ?? '') === 'kategorije' ? ' aria-current="page"' : '' ?>>Kategorije</a>
+                    <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'kategorije' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-kategorije">Kategorije</a>
                 <?php endif; ?>
             </nav>
 
@@ -78,7 +78,7 @@ $trenutna = function ($stranica) use ($aktivno) {
 
         <?php $poruka = uzmi_poruku(); ?>
         <?php if ($poruka !== null): ?>
-            <p class="poruka poruka--<?= e($poruka['vrsta']) ?>" role="<?= $poruka['vrsta'] === 'greska' ? 'alert' : 'status' ?>"><?= e($poruka['tekst']) ?></p>
+            <p class="poruka poruka--<?= e($poruka['vrsta']) ?>"><?= e($poruka['tekst']) ?></p>
         <?php endif; ?>
 
         <?= $sadrzaj ?>

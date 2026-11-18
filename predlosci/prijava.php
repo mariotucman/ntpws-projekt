@@ -8,7 +8,7 @@ $aktivno = 'prijava';
     <h2 class="obrazac-kartica__naslov">Dobro došao natrag</h2>
 
     <?php if ($greska !== ''): ?>
-        <p class="poruka poruka--greska" role="alert"><?= e($greska) ?></p>
+        <p class="poruka poruka--greska"><?= e($greska) ?></p>
     <?php endif; ?>
 
     <div class="polje">

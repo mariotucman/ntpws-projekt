@@ -90,14 +90,14 @@
       color: $color-surface;
     }
 
-    &[aria-current='page'] {
+    &--trenutna {
       background-color: $color-surface;
       color: $color-primary;
     }
 
     &--naglasak,
     &--naglasak:hover,
-    &--naglasak[aria-current='page'] {
+    &--naglasak.racun__gumb--trenutna {
       border-color: $color-accent;
       background-color: $color-accent;
       color: $color-text;
@@ -178,7 +178,7 @@
       color: $color-surface;
     }
 
-    &[aria-current='page'] {
+    &--trenutna {
       background-color: $color-surface;
       color: $color-primary;
     }

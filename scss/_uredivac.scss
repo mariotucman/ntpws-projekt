@@ -69,8 +69,8 @@
     }
   }
 
-  // Neispravan sadržaj (aria-invalid prenosi uredivac-vijesti.js)
-  &:has(.ql-editor[aria-invalid="true"]) {
+  // Neispravan sadržaj (skriveno tekstualno polje ima klasu polje__unos--greska)
+  &:has(.polje__unos--greska) {
     .ql-toolbar.ql-snow,
     .ql-container.ql-snow {
       border: 2px solid $color-error;

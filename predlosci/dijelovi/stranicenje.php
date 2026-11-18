@@ -9,14 +9,14 @@ $poveznica = function ($broj) use ($adresa) {
     return 'index.php?' . http_build_query($broj > 1 ? $adresa + ['str' => $broj] : $adresa);
 };
 ?>
-<nav class="stranicenje" aria-label="Straničenje">
+<nav class="stranicenje">
     <?php if ($trenutna_stranica > 1): ?>
         <a class="stranicenje__poveznica" href="<?= e($poveznica($trenutna_stranica - 1)) ?>" rel="prev">Prethodna</a>
     <?php endif; ?>
 
     <?php for ($broj = 1; $broj <= $broj_stranica; $broj++): ?>
         <?php if ($broj === $trenutna_stranica): ?>
-            <span class="stranicenje__poveznica stranicenje__poveznica--trenutna" aria-current="page"><?= $broj ?></span>
+            <span class="stranicenje__poveznica stranicenje__poveznica--trenutna"><?= $broj ?></span>
         <?php else: ?>
             <a class="stranicenje__poveznica" href="<?= e($poveznica($broj)) ?>"><?= $broj ?></a>
         <?php endif; ?>

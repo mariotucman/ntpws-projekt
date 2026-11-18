@@ -3,9 +3,9 @@ $naslov = $postojeca === null ? 'Nova vijest' : 'Uredi vijest';
 $aktivno = 'administracija';
 $admin_stavka = 'vijesti';
 
-// Atributi polja s greškom: aria-invalid i poveznica na poruku greške
-$greska_atributi = function ($polje) use ($greske) {
-    return isset($greske[$polje]) ? ' aria-invalid="true" aria-describedby="' . $polje . '-greska"' : '';
+// Polje s greškom dobiva crveni obrub
+$greska_klasa = function ($polje) use ($greske) {
+    return isset($greske[$polje]) ? ' polje__unos--greska' : '';
 };
 ?>
 <form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-vijest<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" novalidate>
@@ -17,7 +17,7 @@ $greska_atributi = function ($polje) use ($greske) {
 
     <div class="polje">
         <label class="polje__oznaka" for="naslov">Naslov</label>
-        <input class="polje__unos" type="text" id="naslov" name="naslov" value="<?= e($vijest['naslov']) ?>" maxlength="200" required<?= $greska_atributi('naslov') ?>>
+        <input class="polje__unos<?= $greska_klasa('naslov') ?>" type="text" id="naslov" name="naslov" value="<?= e($vijest['naslov']) ?>" maxlength="200" required>
         <?php if (isset($greske['naslov'])): ?>
             <p class="polje__greska" id="naslov-greska"><?= e($greske['naslov']) ?></p>
         <?php endif; ?>
@@ -25,7 +25,7 @@ $greska_atributi = function ($polje) use ($greske) {
 
     <div class="polje">
         <label class="polje__oznaka" for="sazetak">Sažetak</label>
-        <textarea class="polje__unos" id="sazetak" name="sazetak" rows="3" maxlength="400" required<?= $greska_atributi('sazetak') ?>><?= e($vijest['sazetak']) ?></textarea>
+        <textarea class="polje__unos<?= $greska_klasa('sazetak') ?>" id="sazetak" name="sazetak" rows="3" maxlength="400" required><?= e($vijest['sazetak']) ?></textarea>
         <?php if (isset($greske['sazetak'])): ?>
             <p class="polje__greska" id="sazetak-greska"><?= e($greske['sazetak']) ?></p>
         <?php endif; ?>
@@ -33,7 +33,7 @@ $greska_atributi = function ($polje) use ($greske) {
 
     <div class="polje">
         <label class="polje__oznaka" for="kategorija">Kategorija</label>
-        <select class="polje__unos" id="kategorija" name="kategorija" required<?= $greska_atributi('kategorija') ?>>
+        <select class="polje__unos<?= $greska_klasa('kategorija') ?>" id="kategorija" name="kategorija" required>
             <option value="">Odaberi kategoriju</option>
             <?php foreach ($kategorije as $kategorija): ?>
                 <option value="<?= e($kategorija['id']) ?>"<?= (int) $kategorija['id'] === $vijest['kategorija_id'] ? ' selected' : '' ?>><?= e($kategorija['naziv']) ?></option>
@@ -46,13 +46,13 @@ $greska_atributi = function ($polje) use ($greske) {
 
     <?php require __DIR__ . '/dijelovi/filtar-podrucja.php'; ?>
     <?php if (isset($greske['grad_opcina'])): ?>
-        <p class="polje__greska" role="alert"><?= e($greske['grad_opcina']) ?></p>
+        <p class="polje__greska"><?= e($greske['grad_opcina']) ?></p>
     <?php endif; ?>
 
     <div class="polje polje--uredivac">
         <label class="polje__oznaka" for="sadrzaj">Sadržaj</label>
         <p class="polje__pomoc" id="sadrzaj-pomoc">Odlomke odvoji praznim retkom.</p>
-        <textarea class="polje__unos" id="sadrzaj" name="sadrzaj" rows="15" required aria-describedby="sadrzaj-pomoc<?= isset($greske['sadrzaj']) ? ' sadrzaj-greska' : '' ?>"<?= isset($greske['sadrzaj']) ? ' aria-invalid="true"' : '' ?>><?= e($vijest['sadrzaj']) ?></textarea>
+        <textarea class="polje__unos<?= $greska_klasa('sadrzaj') ?>" id="sadrzaj" name="sadrzaj" rows="15" required><?= e($vijest['sadrzaj']) ?></textarea>
         <?php if (isset($greske['sadrzaj'])): ?>
             <p class="polje__greska" id="sadrzaj-greska"><?= e($greske['sadrzaj']) ?></p>
         <?php endif; ?>

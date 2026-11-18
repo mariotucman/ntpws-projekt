@@ -9,8 +9,7 @@ $aktivno = 'profil';
 
     <div class="polje">
         <label class="polje__oznaka" for="trenutna">Trenutna lozinka</label>
-        <input class="polje__unos" type="password" id="trenutna" name="trenutna" autocomplete="current-password" required
-            <?= isset($greske['trenutna']) ? 'aria-invalid="true" aria-describedby="trenutna-greska"' : '' ?>>
+        <input class="polje__unos<?= isset($greske['trenutna']) ? ' polje__unos--greska' : '' ?>" type="password" id="trenutna" name="trenutna" autocomplete="current-password" required>
         <?php if (isset($greske['trenutna'])): ?>
             <p class="polje__greska" id="trenutna-greska"><?= e($greske['trenutna']) ?></p>
         <?php endif; ?>
@@ -18,9 +17,7 @@ $aktivno = 'profil';
 
     <div class="polje">
         <label class="polje__oznaka" for="lozinka">Nova lozinka</label>
-        <input class="polje__unos" type="password" id="lozinka" name="lozinka" autocomplete="new-password" required
-            aria-describedby="lozinka-pomoc<?= isset($greske['lozinka']) ? ' lozinka-greska' : '' ?>"
-            <?= isset($greske['lozinka']) ? 'aria-invalid="true"' : '' ?>>
+        <input class="polje__unos<?= isset($greske['lozinka']) ? ' polje__unos--greska' : '' ?>" type="password" id="lozinka" name="lozinka" autocomplete="new-password" required>
         <p class="polje__pomoc" id="lozinka-pomoc">Najmanje 8 znakova.</p>
         <?php if (isset($greske['lozinka'])): ?>
             <p class="polje__greska" id="lozinka-greska"><?= e($greske['lozinka']) ?></p>
@@ -29,8 +26,7 @@ $aktivno = 'profil';
 
     <div class="polje">
         <label class="polje__oznaka" for="lozinka_ponovo">Ponovi novu lozinku</label>
-        <input class="polje__unos" type="password" id="lozinka_ponovo" name="lozinka_ponovo" autocomplete="new-password" required
-            <?= isset($greske['lozinka_ponovo']) ? 'aria-invalid="true" aria-describedby="lozinka_ponovo-greska"' : '' ?>>
+        <input class="polje__unos<?= isset($greske['lozinka_ponovo']) ? ' polje__unos--greska' : '' ?>" type="password" id="lozinka_ponovo" name="lozinka_ponovo" autocomplete="new-password" required>
         <?php if (isset($greske['lozinka_ponovo'])): ?>
             <p class="polje__greska" id="lozinka_ponovo-greska"><?= e($greske['lozinka_ponovo']) ?></p>
         <?php endif; ?>

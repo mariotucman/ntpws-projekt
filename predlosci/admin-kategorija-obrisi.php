@@ -5,7 +5,7 @@ $admin_stavka = 'kategorije';
 ?>
 <div class="obrazac-kartica">
     <?php if ($broj_vijesti > 0): ?>
-        <p class="poruka poruka--greska" role="alert">
+        <p class="poruka poruka--greska">
             Kategorija „<?= e($kategorija['naziv']) ?>” se ne može obrisati jer je koristi <?= e($broj_vijesti) ?>
             <?= $broj_vijesti === 1 ? 'vijest' : 'vijesti' ?>. Prvo premjesti te vijesti u drugu kategoriju.
         </p>

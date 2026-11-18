@@ -42,41 +42,6 @@
   // Postojeći sadržaj (pri uređivanju ili nakon greške) prelazi iz polja u editor
   quill.setContents(quill.clipboard.convert({ html: polje.value }), "silent");
 
-  const naziviGumba = {
-    'ql-header[value="2"]': "Podnaslov",
-    'ql-header[value="3"]': "Manji podnaslov",
-    "ql-bold": "Podebljano",
-    "ql-italic": "Kurziv",
-    "ql-link": "Poveznica",
-    'ql-list[value="bullet"]': "Popis s točkama",
-    'ql-list[value="ordered"]': "Numerirani popis",
-    "ql-blockquote": "Citat",
-    "ql-clean": "Ukloni oblikovanje",
-  };
-  const alatnaTraka = quill.getModule("toolbar").container;
-
-  for (const [klasa, naziv] of Object.entries(naziviGumba)) {
-    const gumb = alatnaTraka.querySelector(`button.${klasa}`);
-
-    if (gumb) {
-      gumb.setAttribute("aria-label", naziv);
-      gumb.title = naziv;
-    }
-  }
-
-  alatnaTraka.setAttribute("aria-label", "Oblikovanje teksta");
-
-  // Područje za pisanje dobiva naziv i opis greške skrivenog polja
-  quill.root.setAttribute("role", "textbox");
-  quill.root.setAttribute("aria-multiline", "true");
-  quill.root.setAttribute("aria-label", "Sadržaj");
-
-  for (const atribut of ["aria-invalid", "aria-describedby"]) {
-    if (polje.hasAttribute(atribut)) {
-      quill.root.setAttribute(atribut, polje.getAttribute(atribut));
-    }
-  }
-
   // Kod slanja obrasca HTML iz editora se upisuje u skriveno polje.
   // Prazan editor šalje prazno polje.
   // Quill razmake piše kao &nbsp; pa se vraćaju u obične razmake.
