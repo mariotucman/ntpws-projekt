@@ -139,7 +139,7 @@ function vijesti_admin($trazi = '', $koliko = 20, $preskoci = 0)
 function vijest_po_id($id)
 {
     return db_jedan_redak(
-        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.naslov, v.sazetak, v.sadrzaj, v.status
+        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj, v.status
          FROM vijesti v
          LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
          WHERE v.id = ?',
@@ -151,9 +151,9 @@ function vijest_po_id($id)
 function vijest_dodaj($vijest, $autor_id)
 {
     db_izvrsi(
-        'INSERT INTO vijesti (kategorija_id, grad_opcina_id, autor_id, naslov, sazetak, sadrzaj)
-         VALUES (?, ?, ?, ?, ?, ?)',
-        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], (int) $autor_id, $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj']]
+        'INSERT INTO vijesti (kategorija_id, grad_opcina_id, autor_id, slika_id, naslov, sazetak, sadrzaj)
+         VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], (int) $autor_id, $vijest['slika_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj']]
     );
 }
 
@@ -162,8 +162,8 @@ function vijest_uredi($id, $vijest)
 {
     db_izvrsi(
         'UPDATE vijesti
-         SET kategorija_id = ?, grad_opcina_id = ?, naslov = ?, sazetak = ?, sadrzaj = ?
+         SET kategorija_id = ?, grad_opcina_id = ?, slika_id = ?, naslov = ?, sazetak = ?, sadrzaj = ?
          WHERE id = ?',
-        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj'], (int) $id]
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], $vijest['slika_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj'], (int) $id]
     );
 }

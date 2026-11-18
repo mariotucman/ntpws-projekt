@@ -189,6 +189,50 @@ function provjeri_vijest($vijest, $zupanija_id)
     return $greske;
 }
 
+// Sprema vijest zajedno sa slikom u jednoj transakciji. Ako bilo što ne uspije, u bazi se ništa ne mijenja.
+// $nova_slika su podaci iz prijenos_slike() ili null, a $ukloni_sliku je true ako je označeno Ukloni sliku.
+function spremi_vijest($postojeca, $vijest, $nova_slika, $ukloni_sliku, $autor_id)
+{
+    $stara_slika = $postojeca !== null && $postojeca['slika_id'] !== null ? slika_po_id($postojeca['slika_id']) : null;
+    $obrisi_staru = $stara_slika !== null && ($nova_slika !== null || $ukloni_sliku);
+
+    $vijest['slika_id'] = $stara_slika['id'] ?? null;
+
+    mysqli_begin_transaction(db());
+
+    try {
+        if ($nova_slika !== null) {
+            $vijest['slika_id'] = slika_dodaj($nova_slika, $autor_id);
+        } elseif ($ukloni_sliku) {
+            $vijest['slika_id'] = null;
+        }
+
+        if ($postojeca === null) {
+            vijest_dodaj($vijest, $autor_id);
+        } else {
+            vijest_uredi($postojeca['id'], $vijest);
+        }
+
+        if ($obrisi_staru) {
+            slika_obrisi($stara_slika['id']);
+        }
+
+        mysqli_commit(db());
+    } catch (Throwable $greska) {
+        // Baza se vraća na stanje prije spremanja, a nova slika se briše iz mape prijenosi/
+        mysqli_rollback(db());
+        if ($nova_slika !== null) {
+            obrisi_datoteku_slike($nova_slika['datoteka']);
+        }
+        throw $greska;
+    }
+
+    // Datoteka stare slike briše se tek kad je sve spremljeno u bazu
+    if ($obrisi_staru) {
+        obrisi_datoteku_slike($stara_slika['datoteka']);
+    }
+}
+
 // Dodavanje vijesti i uređivanje postojeće
 function stranica_admin_vijest()
 {
@@ -234,12 +278,24 @@ function stranica_admin_vijest()
         $zupanija_id = post_broj('zupanija');
         $greske = provjeri_vijest($vijest, $zupanija_id);
 
+        // Slika se prenosi tek kad su ostala polja ispravna, inače bi u mapi prijenosi/ ostala slika bez vijesti
+        $nova_slika = null;
+        $poslana_slika = ($_FILES['slika']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+
+        if (count($greske) === 0 && $poslana_slika) {
+            [$nova_slika, $greska_slike] = prijenos_slike($_FILES['slika']);
+
+            if ($greska_slike !== null) {
+                $greske['slika'] = $greska_slike;
+            }
+        }
+
         if (count($greske) === 0) {
+            spremi_vijest($postojeca, $vijest, $nova_slika, post_tekst('ukloni_sliku') === '1', $korisnik['id']);
+
             if ($postojeca === null) {
-                vijest_dodaj($vijest, $korisnik['id']);
                 postavi_poruku('uspjeh', 'Vijest „' . $vijest['naslov'] . '” je spremljena kao nacrt.');
             } else {
-                vijest_uredi($id, $vijest);
                 postavi_poruku('uspjeh', 'Vijest „' . $vijest['naslov'] . '” je spremljena.');
             }
             preusmjeri('index.php?stranica=admin-vijesti');
@@ -248,6 +304,7 @@ function stranica_admin_vijest()
 
     prikazi('admin-vijest', [
         'postojeca' => $postojeca,
+        'slika' => $postojeca !== null && $postojeca['slika_id'] !== null ? slika_po_id($postojeca['slika_id']) : null,
         'vijest' => $vijest,
         'greske' => $greske,
         'kategorije' => kategorije_sve(),

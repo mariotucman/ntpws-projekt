@@ -19,3 +19,20 @@ function slika_javna($id)
 
     return $redak !== null;
 }
+
+// Upisuje podatke o prenesenoj slici i vraća njezin id
+function slika_dodaj($slika, $prenio_id)
+{
+    db_izvrsi(
+        'INSERT INTO slike (datoteka, izvorni_naziv, vrsta, velicina, sirina, visina, prenio_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [$slika['datoteka'], $slika['izvorni_naziv'], $slika['vrsta'], $slika['velicina'], $slika['sirina'], $slika['visina'], (int) $prenio_id]
+    );
+
+    return mysqli_insert_id(db());
+}
+
+// Briše podatke o slici (datoteku briše obrisi_datoteku_slike())
+function slika_obrisi($id)
+{
+    db_izvrsi('DELETE FROM slike WHERE id = ?', [(int) $id]);
+}

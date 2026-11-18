@@ -8,7 +8,7 @@ $greska_klasa = function ($polje) use ($greske) {
     return isset($greske[$polje]) ? ' polje__unos--greska' : '';
 };
 ?>
-<form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-vijest<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" novalidate>
+<form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-vijest<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" enctype="multipart/form-data" novalidate>
     <?= csrf_polje() ?>
 
     <?php if ($postojeca === null): ?>
@@ -55,6 +55,25 @@ $greska_klasa = function ($polje) use ($greske) {
         <textarea class="polje__unos<?= $greska_klasa('sadrzaj') ?>" id="sadrzaj" name="sadrzaj" rows="15" required><?= e($vijest['sadrzaj']) ?></textarea>
         <?php if (isset($greske['sadrzaj'])): ?>
             <p class="polje__greska" id="sadrzaj-greska"><?= e($greske['sadrzaj']) ?></p>
+        <?php endif; ?>
+    </div>
+
+    <div class="polje">
+        <label class="polje__oznaka" for="slika">Slika</label>
+
+        <?php if ($slika !== null): ?>
+            <img class="polje__slika" src="index.php?stranica=slika&amp;id=<?= e($slika['id']) ?>" width="<?= e($slika['sirina']) ?>" height="<?= e($slika['visina']) ?>" alt="Trenutna slika vijesti">
+            <p class="polje__pomoc">Trenutna slika: <?= e($slika['izvorni_naziv']) ?></p>
+            <label class="polje__kvacica">
+                <input type="checkbox" name="ukloni_sliku" value="1">
+                Ukloni sliku
+            </label>
+        <?php endif; ?>
+
+        <input class="polje__unos<?= $greska_klasa('slika') ?>" type="file" id="slika" name="slika" accept="image/jpeg,image/png,image/webp">
+        <p class="polje__pomoc">JPEG, PNG ili WebP, najviše 5 MB.<?= $slika !== null ? ' Nova slika zamjenjuje trenutnu.' : '' ?></p>
+        <?php if (isset($greske['slika'])): ?>
+            <p class="polje__greska"><?= e($greske['slika']) ?></p>
         <?php endif; ?>
     </div>
 
