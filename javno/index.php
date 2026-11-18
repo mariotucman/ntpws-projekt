@@ -9,6 +9,7 @@ require __DIR__ . '/../aplikacija/podaci/korisnici.php';
 require __DIR__ . '/../aplikacija/podaci/podrucja.php';
 require __DIR__ . '/../aplikacija/podaci/kategorije.php';
 require __DIR__ . '/../aplikacija/podaci/vijesti.php';
+require __DIR__ . '/../aplikacija/podaci/slike.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
@@ -26,6 +27,7 @@ $stranice = [
     'lozinka' => 'stranica_lozinka',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
+    'slika' => 'stranica_slika',
     'admin-vijesti' => 'stranica_admin_vijesti',
     'admin-vijest' => 'stranica_admin_vijest',
     'admin-kategorije' => 'stranica_admin_kategorije',

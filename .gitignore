@@ -12,3 +12,6 @@
 
 # Composer paketi (composer install)
 /vendor/
+
+# Prenesene slike (stvaraju se kroz aplikaciju)
+/prijenosi/
