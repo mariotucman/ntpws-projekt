@@ -84,3 +84,60 @@ function vijest_javna_po_id($id)
         [(int) $id]
     );
 }
+
+// Broj svih vijesti, bez obzira na status (za administraciju)
+function vijesti_admin_broj()
+{
+    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM vijesti');
+
+    return (int) $redak['broj'];
+}
+
+// Jedna stranica svih vijesti za administraciju, zadnje izmijenjene prve
+function vijesti_admin($koliko = 20, $preskoci = 0)
+{
+    return db_svi_retci(
+        "SELECT v.id, v.naslov, v.status, v.objavljeno_u, v.azurirano,
+                k.naziv AS kategorija, g.naziv AS grad_opcina, a.ime AS autor
+         FROM vijesti v
+         JOIN kategorije k ON k.id = v.kategorija_id
+         JOIN korisnici a ON a.id = v.autor_id
+         LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
+         ORDER BY v.azurirano DESC, v.id DESC
+         LIMIT ? OFFSET ?",
+        [(int) $koliko, (int) $preskoci]
+    );
+}
+
+// Jedna vijest bilo kojeg statusa, za uređivanje. Nepostojeća vraća null.
+function vijest_po_id($id)
+{
+    return db_jedan_redak(
+        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.naslov, v.sazetak, v.sadrzaj, v.status
+         FROM vijesti v
+         LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
+         WHERE v.id = ?',
+        [(int) $id]
+    );
+}
+
+// Nova vijest se uvijek sprema kao nacrt
+function vijest_dodaj($vijest, $autor_id)
+{
+    db_izvrsi(
+        'INSERT INTO vijesti (kategorija_id, grad_opcina_id, autor_id, naslov, sazetak, sadrzaj)
+         VALUES (?, ?, ?, ?, ?, ?)',
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], (int) $autor_id, $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj']]
+    );
+}
+
+// Uređivanje ne mijenja autora ni status
+function vijest_uredi($id, $vijest)
+{
+    db_izvrsi(
+        'UPDATE vijesti
+         SET kategorija_id = ?, grad_opcina_id = ?, naslov = ?, sazetak = ?, sadrzaj = ?
+         WHERE id = ?',
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj'], (int) $id]
+    );
+}

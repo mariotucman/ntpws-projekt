@@ -1,6 +1,7 @@
 <?php
 $naslov = $kategorija === null ? 'Nova kategorija' : 'Uredi kategoriju';
 $aktivno = 'administracija';
+$admin_stavka = 'kategorije';
 ?>
 <form class="obrazac-kartica" method="post" action="index.php?stranica=admin-kategorija<?= $kategorija !== null ? '&amp;id=' . e($kategorija['id']) : '' ?>" novalidate>
     <?= csrf_polje() ?>

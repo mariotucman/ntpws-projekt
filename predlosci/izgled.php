@@ -29,8 +29,8 @@ $trenutna = function ($stranica) use ($aktivno) {
             <nav class="izbornik" aria-label="Glavni izbornik">
                 <a class="izbornik__stavka" href="index.php"<?= $trenutna('pocetna') ?>>Početna</a>
                 <a class="izbornik__stavka" href="index.php?stranica=vijesti"<?= $trenutna('vijesti') ?>>Vijesti</a>
-                <?php if (ima_ulogu(['administrator'])): ?>
-                    <a class="izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= $trenutna('administracija') ?>>Administracija</a>
+                <?php if (ima_ulogu(['administrator', 'urednik'])): ?>
+                    <a class="izbornik__stavka" href="index.php?stranica=admin-vijesti"<?= $trenutna('administracija') ?>>Administracija</a>
                 <?php endif; ?>
             </nav>
 
@@ -66,6 +66,13 @@ $trenutna = function ($stranica) use ($aktivno) {
 
     <main class="sadrzaj">
         <?php if ($admin): ?>
+            <nav class="admin-izbornik" aria-label="Administracija">
+                <a class="admin-izbornik__stavka" href="index.php?stranica=admin-vijesti"<?= ($admin_stavka ?? '') === 'vijesti' ? ' aria-current="page"' : '' ?>>Vijesti</a>
+                <?php if (ima_ulogu(['administrator'])): ?>
+                    <a class="admin-izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= ($admin_stavka ?? '') === 'kategorije' ? ' aria-current="page"' : '' ?>>Kategorije</a>
+                <?php endif; ?>
+            </nav>
+
             <h1 class="admin-naslov"><?= e($naslov ?? 'Administracija') ?></h1>
         <?php endif; ?>
 

@@ -1,6 +1,7 @@
 <?php
 $naslov = 'Kategorije vijesti';
 $aktivno = 'administracija';
+$admin_stavka = 'kategorije';
 ?>
 <section class="admin-kartica">
     <p><a class="gumb gumb--glavni" href="index.php?stranica=admin-kategorija">Nova kategorija</a></p>

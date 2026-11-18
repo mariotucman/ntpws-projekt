@@ -40,6 +40,14 @@ function get_broj($kljuc)
     return is_string($vrijednost) && ctype_digit($vrijednost) ? (int) $vrijednost : 0;
 }
 
+// Vraća pozitivan cijeli broj poslan obrascem. Ako ga nema ili nije ispravan, vraća 0.
+function post_broj($kljuc)
+{
+    $vrijednost = post_tekst($kljuc);
+
+    return ctype_digit($vrijednost) ? (int) $vrijednost : 0;
+}
+
 // Vraća tekst iz adrese, bez razmaka na početku i kraju i najviše $najvise znakova.
 function get_tekst($kljuc, $najvise = 100)
 {

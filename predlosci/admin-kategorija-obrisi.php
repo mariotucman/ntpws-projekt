@@ -1,6 +1,7 @@
 <?php
 $naslov = 'Brisanje kategorije';
 $aktivno = 'administracija';
+$admin_stavka = 'kategorije';
 ?>
 <div class="obrazac-kartica">
     <?php if ($broj_vijesti > 0): ?>
