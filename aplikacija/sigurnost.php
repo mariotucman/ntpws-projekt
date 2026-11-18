@@ -25,3 +25,32 @@ function csrf_ispravan()
 
     return $poslani !== '' && hash_equals(csrf_token(), $poslani);
 }
+
+// Čišćenje HTML-a iz editora (Quill) prije spremanja u bazu, a kao zaštita od XSS napada.
+// Symfony HtmlSanitizer ostavlja samo oznake i atribute s popisa dopuštenih, a briše sve ostalo.
+function ocisti_html($html)
+{
+    static $sanitizer = null;
+
+    if ($sanitizer === null) {
+        $postavke = (new Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig())
+            ->allowElement('p')
+            ->allowElement('br')
+            ->allowElement('h2')
+            ->allowElement('h3')
+            ->allowElement('strong')
+            ->allowElement('em')
+            ->allowElement('a', ['href'])
+            ->allowElement('ul')
+            ->allowElement('ol')
+            ->allowElement('li')
+            ->allowElement('blockquote')
+            ->allowLinkSchemes(['http', 'https', 'mailto'])
+            // Bez ograničenja duljine
+            ->withMaxInputLength(-1);
+
+        $sanitizer = new Symfony\Component\HtmlSanitizer\HtmlSanitizer($postavke);
+    }
+
+    return trim($sanitizer->sanitize($html));
+}

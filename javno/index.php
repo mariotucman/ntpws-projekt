@@ -1,5 +1,6 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../aplikacija/greske.php';
 require __DIR__ . '/../aplikacija/konfiguracija.php';
 require __DIR__ . '/../aplikacija/baza.php';

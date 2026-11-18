@@ -9,3 +9,6 @@
 
 # Kompajlirani CSS (npm run scss)
 /javno/css
+
+# Composer paketi (composer install)
+/vendor/
