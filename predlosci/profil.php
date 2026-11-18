@@ -1,6 +1,6 @@
 <?php
 $naslov = 'Profil';
-$opis = $korisnik['uloga_naziv'] . ' od ' . date('j. n. Y.', strtotime($korisnik['kreirano']));
+$opis = $korisnik['uloga_naziv'] . ' od ' . datum($korisnik['kreirano']);
 $aktivno = 'profil';
 ?>
 <form class="obrazac-kartica" method="post" action="index.php?stranica=profil" novalidate>

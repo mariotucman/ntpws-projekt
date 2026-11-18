@@ -42,7 +42,7 @@ $aktivno = 'vijesti';
             <p class="vijest-kartica__podaci">
                 <?= $vijest['grad_opcina'] !== null ? e($vijest['grad_opcina'] . ', ' . $vijest['zupanija']) : 'Cijela Hrvatska' ?>
                 &middot;
-                <time datetime="<?= e(date('Y-m-d', strtotime($vijest['objavljeno_u']))) ?>"><?= e(date('j. n. Y.', strtotime($vijest['objavljeno_u']))) ?></time>
+                <time datetime="<?= e(datum($vijest['objavljeno_u'], 'Y-m-d')) ?>"><?= e(datum($vijest['objavljeno_u'])) ?></time>
             </p>
             <p class="vijest-kartica__sazetak"><?= e($vijest['sazetak']) ?></p>
         </article>

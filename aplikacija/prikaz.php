@@ -69,3 +69,9 @@ function inicijali($ime)
 {
     return mb_strtoupper(mb_substr(trim($ime), 0, 1));
 }
+
+// Datum iz baze u hrvatskom obliku npr. "23. 12. 2026."
+function datum($vrijednost, $oblik = 'j. n. Y.')
+{
+    return date($oblik, strtotime($vrijednost));
+}

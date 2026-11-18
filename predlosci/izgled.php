@@ -1,6 +1,13 @@
 <?php
 // Stranice administracije imaju samo zaglavlje, a naslov stranice je u sadržaju
-$admin = ($aktivno ?? '') === 'administracija';
+$aktivno ??= '';
+$admin = $aktivno === 'administracija';
+$prijavljeni = trenutni_korisnik();
+
+// Poveznica na stranicu na kojoj se korisnik nalazi dobiva aria-current
+$trenutna = function ($stranica) use ($aktivno) {
+    return $aktivno === $stranica ? ' aria-current="page"' : '';
+};
 ?>
 <!doctype html>
 <html lang="hr">
@@ -20,26 +27,26 @@ $admin = ($aktivno ?? '') === 'administracija';
             <a class="logo" href="index.php">Mjestopis</a>
 
             <nav class="izbornik" aria-label="Glavni izbornik">
-                <a class="izbornik__stavka" href="index.php"<?= ($aktivno ?? '') === 'pocetna' ? ' aria-current="page"' : '' ?>>Početna</a>
-                <a class="izbornik__stavka" href="index.php?stranica=vijesti"<?= ($aktivno ?? '') === 'vijesti' ? ' aria-current="page"' : '' ?>>Vijesti</a>
+                <a class="izbornik__stavka" href="index.php"<?= $trenutna('pocetna') ?>>Početna</a>
+                <a class="izbornik__stavka" href="index.php?stranica=vijesti"<?= $trenutna('vijesti') ?>>Vijesti</a>
                 <?php if (ima_ulogu(['administrator'])): ?>
-                    <a class="izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= ($aktivno ?? '') === 'administracija' ? ' aria-current="page"' : '' ?>>Administracija</a>
+                    <a class="izbornik__stavka" href="index.php?stranica=admin-kategorije"<?= $trenutna('administracija') ?>>Administracija</a>
                 <?php endif; ?>
             </nav>
 
             <div class="racun">
-                <?php if (trenutni_korisnik() !== null): ?>
+                <?php if ($prijavljeni !== null): ?>
                     <a class="racun__korisnik" href="index.php?stranica=profil">
-                        <span class="racun__inicijali" aria-hidden="true"><?= e(inicijali(trenutni_korisnik()['ime'])) ?></span>
-                        <?= e(trenutni_korisnik()['ime']) ?>
+                        <span class="racun__inicijali" aria-hidden="true"><?= e(inicijali($prijavljeni['ime'])) ?></span>
+                        <?= e($prijavljeni['ime']) ?>
                     </a>
                     <form method="post" action="index.php?stranica=odjava">
                         <?= csrf_polje() ?>
                         <button class="racun__gumb" type="submit">Odjava</button>
                     </form>
                 <?php else: ?>
-                    <a class="racun__gumb" href="index.php?stranica=prijava"<?= ($aktivno ?? '') === 'prijava' ? ' aria-current="page"' : '' ?>>Prijava</a>
-                    <a class="racun__gumb racun__gumb--naglasak" href="index.php?stranica=registracija"<?= ($aktivno ?? '') === 'registracija' ? ' aria-current="page"' : '' ?>>Registracija</a>
+                    <a class="racun__gumb" href="index.php?stranica=prijava"<?= $trenutna('prijava') ?>>Prijava</a>
+                    <a class="racun__gumb racun__gumb--naglasak" href="index.php?stranica=registracija"<?= $trenutna('registracija') ?>>Registracija</a>
                 <?php endif; ?>
             </div>
         </div>

@@ -1,6 +1,6 @@
 <?php
 $naslov = $vijest['naslov'];
-$opis = $vijest['autor'] . ' · ' . date('j. n. Y. \u H:i', strtotime($vijest['objavljeno_u'])) . ' · '
+$opis = $vijest['autor'] . ' · ' . datum($vijest['objavljeno_u'], 'j. n. Y. \u H:i') . ' · '
     . ($vijest['grad_opcina'] !== null ? $vijest['grad_opcina'] . ', ' . $vijest['zupanija'] : 'Cijela Hrvatska');
 $aktivno = 'vijesti';
 ?>
