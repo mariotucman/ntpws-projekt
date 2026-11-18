@@ -1,5 +1,12 @@
 <?php
 
+// Uzorak za pretragu: traženi tekst može biti bilo gdje u stupcu.
+// Znakovi % i _ traže se kao obični znakovi.
+function uzorak_pretrage($tekst)
+{
+    return '%' . str_replace(['|', '%', '_'], ['||', '|%', '|_'], $tekst) . '%';
+}
+
 // Grad/općina i županija mogu biti NULL (vijest za cijelu Hrvatsku)
 // Bez filtra se vide sve vijesti
 // $filtar: zupanija, grad_opcina, kategorija (id-ovi, 0 = bez filtra) i trazi (tekst u naslovu ili sažetku)
@@ -23,7 +30,7 @@ function vijesti_javne_uvjeti($filtar)
     }
 
     if (($filtar['trazi'] ?? '') !== '') {
-        $uzorak = '%' . str_replace(['|', '%', '_'], ['||', '|%', '|_'], $filtar['trazi']) . '%';
+        $uzorak = uzorak_pretrage($filtar['trazi']);
         $uvjeti .= " AND (v.naslov LIKE ? ESCAPE '|' OR v.sazetak LIKE ? ESCAPE '|')";
         $parametri[] = $uzorak;
         $parametri[] = $uzorak;
@@ -85,17 +92,35 @@ function vijest_javna_po_id($id)
     );
 }
 
-// Broj svih vijesti, bez obzira na status (za administraciju)
-function vijesti_admin_broj()
+// WHERE uvjet za administraciju: sve vijesti bez obzira na status, uz pretragu po naslovu ili sažetku
+function vijesti_admin_uvjeti($trazi)
 {
-    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM vijesti');
+    if ($trazi === '') {
+        return ['1 = 1', []];
+    }
+
+    $uzorak = uzorak_pretrage($trazi);
+
+    return ["(v.naslov LIKE ? ESCAPE '|' OR v.sazetak LIKE ? ESCAPE '|')", [$uzorak, $uzorak]];
+}
+
+// Broj vijesti za administraciju (za straničenje)
+function vijesti_admin_broj($trazi = '')
+{
+    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi);
+
+    $redak = db_jedan_redak("SELECT COUNT(*) AS broj FROM vijesti v WHERE $uvjeti", $parametri);
 
     return (int) $redak['broj'];
 }
 
-// Jedna stranica svih vijesti za administraciju, zadnje izmijenjene prve
-function vijesti_admin($koliko = 20, $preskoci = 0)
+// Jedna stranica vijesti za administraciju, zadnje izmijenjene prve
+function vijesti_admin($trazi = '', $koliko = 20, $preskoci = 0)
 {
+    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi);
+    $parametri[] = (int) $koliko;
+    $parametri[] = (int) $preskoci;
+
     return db_svi_retci(
         "SELECT v.id, v.naslov, v.status, v.objavljeno_u, v.azurirano,
                 k.naziv AS kategorija, g.naziv AS grad_opcina, a.ime AS autor
@@ -103,9 +128,10 @@ function vijesti_admin($koliko = 20, $preskoci = 0)
          JOIN kategorije k ON k.id = v.kategorija_id
          JOIN korisnici a ON a.id = v.autor_id
          LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
+         WHERE $uvjeti
          ORDER BY v.azurirano DESC, v.id DESC
          LIMIT ? OFFSET ?",
-        [(int) $koliko, (int) $preskoci]
+        $parametri
     );
 }
 

@@ -109,20 +109,24 @@ function stranica_admin_kategorija_obrisi()
     ]);
 }
 
-// Popis svih vijesti sa straničenjem
+// Popis svih vijesti s pretragom i straničenjem
 function stranica_admin_vijesti()
 {
     zahtijevaj_ulogu(['administrator', 'urednik']);
 
-    $ukupno = vijesti_admin_broj();
+    $trazi = get_tekst('trazi');
+
+    $ukupno = vijesti_admin_broj($trazi);
     $broj_stranica = max(1, (int) ceil($ukupno / ADMIN_VIJESTI_PO_STRANICI));
     $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
 
     prikazi('admin-vijesti', [
-        'vijesti' => vijesti_admin(ADMIN_VIJESTI_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_VIJESTI_PO_STRANICI),
+        'vijesti' => vijesti_admin($trazi, ADMIN_VIJESTI_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_VIJESTI_PO_STRANICI),
+        'trazi' => $trazi,
         'trenutna_stranica' => $trenutna_stranica,
         'broj_stranica' => $broj_stranica,
-        'adresa' => ['stranica' => 'admin-vijesti'],
+        // Poveznice straničenja zadržavaju pretragu
+        'adresa' => array_filter(['stranica' => 'admin-vijesti', 'trazi' => $trazi]),
     ]);
 }
 
