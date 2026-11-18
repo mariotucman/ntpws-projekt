@@ -36,7 +36,7 @@ $admin_stavka = 'vijesti';
                             <td><?= e($vijest['kategorija']) ?></td>
                             <td><?= e($vijest['grad_opcina'] ?? 'Cijela Hrvatska') ?></td>
                             <td><?= e($vijest['autor']) ?></td>
-                            <td><span class="oznaka oznaka--<?= e($status) ?>"><?= e(STATUSI_VIJESTI[$status]) ?></span></td>
+                            <td><span class="oznaka oznaka--status<?= $status === 'objavljeno' ? ' oznaka--objavljeno' : '' ?>"><?= e(STATUSI_VIJESTI[$status]) ?></span></td>
                             <td>
                                 <?php if ($vijest['objavljeno_u'] !== null): ?>
                                     <time datetime="<?= e(datum($vijest['objavljeno_u'], 'Y-m-d')) ?>"><?= e(datum($vijest['objavljeno_u'])) ?></time>

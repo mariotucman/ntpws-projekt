@@ -14,6 +14,7 @@ $color-error: #c0392b;
 
 // Izvedene boje
 $color-primary-hover: color.mix($color-text, $color-primary, 20%);
+$color-primary-light: color.mix($color-primary, $color-surface, 15%);
 $color-accent-light: color.mix($color-accent, $color-surface, 25%);
 $color-error-light: color.mix($color-error, $color-surface, 10%);
 $color-line: color.mix($color-text, $color-surface, 10%);

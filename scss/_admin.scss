@@ -1,4 +1,4 @@
-@use 'varijable' as *;
+@use "varijable" as *;
 
 // Administracija: samo plavo zaglavlje visine 72px, a naslov stranice je u sadržaju
 .vrh--admin {
@@ -8,6 +8,37 @@
 
   @media (min-width: $breakpoint-mobile) {
     padding: $spacing-m 24px;
+  }
+}
+
+// Izbornik administracije (Vijesti, Kategorije)
+.admin-izbornik {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-s;
+  margin-bottom: $spacing-l;
+
+  &__stavka {
+    display: inline-flex;
+    align-items: center;
+    min-height: $touch-min;
+    padding: 0 20px;
+    border-radius: $radius-pill;
+    background-color: $color-surface;
+    color: $color-text;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text;
+      background-color: $color-primary-light;
+    }
+
+    &[aria-current="page"] {
+      background-color: $color-text;
+      color: $color-surface;
+    }
   }
 }
 

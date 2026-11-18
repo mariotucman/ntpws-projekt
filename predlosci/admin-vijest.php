@@ -49,7 +49,7 @@ $greska_atributi = function ($polje) use ($greske) {
         <p class="polje__greska" role="alert"><?= e($greske['grad_opcina']) ?></p>
     <?php endif; ?>
 
-    <div class="polje">
+    <div class="polje polje--uredivac">
         <label class="polje__oznaka" for="sadrzaj">Sadržaj</label>
         <p class="polje__pomoc" id="sadrzaj-pomoc">Odlomke odvoji praznim retkom.</p>
         <textarea class="polje__unos" id="sadrzaj" name="sadrzaj" rows="15" required aria-describedby="sadrzaj-pomoc<?= isset($greske['sadrzaj']) ? ' sadrzaj-greska' : '' ?>"<?= isset($greske['sadrzaj']) ? ' aria-invalid="true"' : '' ?>><?= e($vijest['sadrzaj']) ?></textarea>

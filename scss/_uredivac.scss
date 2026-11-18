@@ -1,0 +1,177 @@
+@use "varijable" as *;
+
+// Quillov CSS
+.polje--uredivac {
+  .ql-toolbar.ql-snow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    padding: $spacing-xs;
+    border: 1px solid $color-text-muted;
+    border-bottom-color: $color-line;
+    border-radius: $radius-button $radius-button 0 0;
+    font-family: inherit;
+
+    .ql-formats {
+      display: flex;
+      margin-right: 0;
+    }
+
+    button {
+      width: $touch-min;
+      height: $touch-min;
+      padding: 12px;
+      border-radius: 10px;
+
+      &:hover,
+      &:focus-visible,
+      &.ql-active {
+        background-color: $color-primary-light;
+
+        .ql-stroke,
+        .ql-stroke-miter {
+          stroke: $color-primary;
+        }
+
+        .ql-fill {
+          fill: $color-primary;
+        }
+      }
+
+      &:focus-visible {
+        outline: 2px solid $color-primary;
+        outline-offset: 0;
+      }
+    }
+
+    .ql-stroke,
+    .ql-stroke-miter {
+      stroke: $color-text;
+    }
+
+    .ql-fill {
+      fill: $color-text;
+    }
+  }
+
+  .ql-container.ql-snow {
+    border: 1px solid $color-text-muted;
+    border-top: 0;
+    border-radius: 0 0 $radius-button $radius-button;
+    background-color: $color-surface;
+    font-family: inherit;
+    font-size: 17px;
+
+    // Quill uklanja obrub fokusa s područja za pisanje, pa se fokus prikazuje na cijelom polju
+    &:focus-within {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  // Neispravan sadržaj (aria-invalid prenosi uredivac-vijesti.js)
+  &:has(.ql-editor[aria-invalid="true"]) {
+    .ql-toolbar.ql-snow,
+    .ql-container.ql-snow {
+      border: 2px solid $color-error;
+    }
+
+    .ql-toolbar.ql-snow {
+      border-bottom: 1px solid $color-line;
+    }
+
+    .ql-container.ql-snow {
+      border-top: 0;
+    }
+  }
+
+  // Tekst izgleda kao na stranici vijesti
+  .ql-editor {
+    min-height: 320px;
+    padding: $spacing-l;
+    line-height: 1.7;
+
+    > * + * {
+      margin-top: 0.6em;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    h3 {
+      font-size: 19px;
+    }
+
+    a {
+      color: $color-primary;
+    }
+
+    blockquote {
+      border-left: 4px solid $color-line;
+    }
+  }
+
+  .ql-snow .ql-tooltip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-s;
+    padding: $spacing-s $spacing-m;
+    border: 1px solid $color-text-muted;
+    border-radius: $radius-button;
+    box-shadow: none;
+    color: $color-text;
+    font-size: 15px;
+
+    &.ql-hidden {
+      display: none;
+    }
+
+    &::before {
+      content: "Adresa:";
+      margin-right: 0;
+    }
+
+    &[data-mode="link"]::before {
+      content: "Upiši adresu:";
+    }
+
+    input[type="text"] {
+      height: $touch-min;
+      padding: 0 $spacing-m;
+      border: 1px solid $color-text-muted;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: $touch-min;
+      line-height: 1.2;
+    }
+
+    a.ql-preview {
+      color: $color-primary;
+    }
+
+    a.ql-action::after {
+      content: "Uredi";
+      margin-left: 0;
+      padding: 0 $spacing-s;
+      border-right: 1px solid $color-line;
+    }
+
+    a.ql-remove::before {
+      content: "Ukloni";
+      margin-left: 0;
+    }
+
+    &.ql-editing a.ql-action::after {
+      content: "Spremi";
+      border-right: 0;
+    }
+  }
+}

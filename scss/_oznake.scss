@@ -12,4 +12,14 @@
   &--kategorija {
     background-color: $color-accent-light;
   }
+
+  // Status vijesti u administraciji (nacrt, zakazano, povučeno)
+  &--status {
+    background-color: $color-line;
+  }
+
+  // Objavljena vijest se razlikuje od ostalih statusa
+  &--objavljeno {
+    background-color: $color-accent-light;
+  }
 }
