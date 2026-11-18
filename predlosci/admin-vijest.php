@@ -62,3 +62,8 @@ $greska_atributi = function ($polje) use ($greske) {
 
     <p class="obrazac-kartica__dno"><a href="index.php?stranica=admin-vijesti">Natrag na vijesti</a></p>
 </form>
+
+<!-- Quill editor. Ako se ne učita, sadržaj se upisuje u obično tekstualno polje. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" integrity="sha384-ecIckRi4QlKYya/FQUbBUjS4qp65jF/J87Guw5uzTbO1C1Jfa/6kYmd6dXUF6D7i" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js" integrity="sha384-utBUCeG4SYaCm4m7GQZYr8Hy8Fpy3V4KGjBZaf4WTKOcwhCYpt/0PfeEe3HNlwx8" crossorigin="anonymous" defer></script>
+<script src="js/uredivac-vijesti.js" defer></script>
