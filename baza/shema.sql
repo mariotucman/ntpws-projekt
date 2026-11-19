@@ -140,7 +140,6 @@ CREATE TABLE vijesti (
     sazetak VARCHAR(400) NOT NULL,
     sadrzaj MEDIUMTEXT NOT NULL,
     status ENUM('nacrt', 'objavljeno', 'povuceno') NOT NULL DEFAULT 'nacrt',
-    istaknuto TINYINT(1) NOT NULL DEFAULT 0,
     objavljeno_u DATETIME NULL,
     kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -154,6 +153,5 @@ CREATE TABLE vijesti (
     CONSTRAINT fk_vijesti_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_vijesti_autor FOREIGN KEY (autor_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_vijesti_slika FOREIGN KEY (slika_id) REFERENCES slike (id) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT ck_vijesti_istaknuto CHECK (istaknuto IN (0, 1)),
     CONSTRAINT ck_vijesti_objava CHECK (status = 'nacrt' OR objavljeno_u IS NOT NULL)
 );
