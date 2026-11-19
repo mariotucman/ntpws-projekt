@@ -33,6 +33,7 @@ $stranice = [
     'admin-vijest-obrisi' => 'stranica_admin_vijest_obrisi',
     'admin-kategorije' => 'stranica_admin_kategorije',
     'admin-korisnici' => 'stranica_admin_korisnici',
+    'admin-korisnik' => 'stranica_admin_korisnik',
     'admin-kategorija' => 'stranica_admin_kategorija',
     'admin-kategorija-obrisi' => 'stranica_admin_kategorija_obrisi',
 ];

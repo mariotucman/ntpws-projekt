@@ -447,3 +447,50 @@ function stranica_admin_korisnici()
         'adresa' => array_filter(['stranica' => 'admin-korisnici', 'trazi' => $trazi]),
     ]);
 }
+
+// Promjena uloge i aktivnosti korisnika (samo administrator).
+// Administrator ne može mijenjati sam sebe, da aplikacija ne ostane bez administratora.
+function stranica_admin_korisnik()
+{
+    $prijavljeni = zahtijevaj_ulogu(['administrator']);
+
+    $korisnik = korisnik_po_id(get_broj('id'));
+
+    if ($korisnik === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    if ((int) $korisnik['id'] === (int) $prijavljeni['id']) {
+        stranica_zabranjeno('Ne možeš mijenjati vlastitu ulogu ni deaktivirati vlastiti račun.');
+        return;
+    }
+
+    $uloge = uloge_sve();
+    $uloga = $korisnik['uloga'];
+    $aktivan = (bool) $korisnik['aktivan'];
+    $greske = [];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $uloga = post_tekst('uloga');
+        $aktivan = post_tekst('aktivan') === '1';
+
+        if (!in_array($uloga, array_column($uloge, 'oznaka'), true)) {
+            $greske['uloga'] = 'Odaberi ulogu.';
+        }
+
+        if (count($greske) === 0) {
+            korisnik_promijeni_ulogu($korisnik['id'], $uloga, $aktivan);
+            postavi_poruku('uspjeh', 'Promjene za korisnika ' . $korisnik['ime'] . ' su spremljene.');
+            preusmjeri('index.php?stranica=admin-korisnici');
+        }
+    }
+
+    prikazi('admin-korisnik', [
+        'korisnik' => $korisnik,
+        'uloge' => $uloge,
+        'uloga' => $uloga,
+        'aktivan' => $aktivan,
+        'greske' => $greske,
+    ]);
+}

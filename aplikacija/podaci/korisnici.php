@@ -91,3 +91,17 @@ function korisnici_admin($trazi, $koliko, $preskoci)
         $parametri
     );
 }
+
+function uloge_sve()
+{
+    return db_svi_retci('SELECT oznaka, naziv FROM uloge ORDER BY id');
+}
+
+// Mijenja ulogu i aktivnost računa
+function korisnik_promijeni_ulogu($id, $uloga, $aktivan)
+{
+    db_izvrsi(
+        'UPDATE korisnici SET uloga_id = (SELECT id FROM uloge WHERE oznaka = ?), aktivan = ? WHERE id = ?',
+        [$uloga, $aktivan ? 1 : 0, (int) $id]
+    );
+}
