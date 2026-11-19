@@ -112,16 +112,18 @@ function stranica_admin_kategorija_obrisi()
 // Popis svih vijesti s pretragom i straničenjem
 function stranica_admin_vijesti()
 {
-    zahtijevaj_ulogu(['administrator', 'urednik']);
+    $korisnik = zahtijevaj_ulogu(['administrator', 'urednik']);
 
     $trazi = get_tekst('trazi');
+    // Administrator vidi sve vijesti, a urednik samo svoje
+    $autor_id = $korisnik['uloga'] === 'administrator' ? 0 : $korisnik['id'];
 
-    $ukupno = vijesti_admin_broj($trazi);
+    $ukupno = vijesti_admin_broj($trazi, $autor_id);
     $broj_stranica = max(1, (int) ceil($ukupno / ADMIN_VIJESTI_PO_STRANICI));
     $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
 
     prikazi('admin-vijesti', [
-        'vijesti' => vijesti_admin($trazi, ADMIN_VIJESTI_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_VIJESTI_PO_STRANICI),
+        'vijesti' => vijesti_admin($trazi, $autor_id, ADMIN_VIJESTI_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_VIJESTI_PO_STRANICI),
         'trazi' => $trazi,
         'trenutna_stranica' => $trenutna_stranica,
         'broj_stranica' => $broj_stranica,
@@ -246,6 +248,11 @@ function stranica_admin_vijest()
 
         if ($postojeca === null) {
             stranica_nije_pronadena();
+            return;
+        }
+
+        if (!smije_urediti_vijest($postojeca)) {
+            stranica_zabranjeno('Možeš uređivati samo svoje vijesti.');
             return;
         }
     }

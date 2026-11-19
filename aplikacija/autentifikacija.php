@@ -77,3 +77,16 @@ function zahtijevaj_ulogu($uloge)
 
     return $korisnik;
 }
+
+// Administrator smije uređivati sve vijesti, a urednik samo one kojima je autor
+function smije_urediti_vijest($vijest)
+{
+    $korisnik = trenutni_korisnik();
+
+    if ($korisnik === null) {
+        return false;
+    }
+
+    return $korisnik['uloga'] === 'administrator'
+        || ($korisnik['uloga'] === 'urednik' && (int) $vijest['autor_id'] === (int) $korisnik['id']);
+}

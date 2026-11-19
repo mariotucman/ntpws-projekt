@@ -93,21 +93,31 @@ function vijest_javna_po_id($id)
 }
 
 // WHERE uvjet za administraciju: sve vijesti bez obzira na status, uz pretragu po naslovu ili sažetku
-function vijesti_admin_uvjeti($trazi)
+function vijesti_admin_uvjeti($trazi, $autor_id)
 {
-    if ($trazi === '') {
-        return ['1 = 1', []];
+    $uvjeti = ['1 = 1'];
+    $parametri = [];
+
+    // Urednik vidi samo svoje vijesti (0 = sve vijesti, za administratora)
+    if ($autor_id > 0) {
+        $uvjeti[] = 'v.autor_id = ?';
+        $parametri[] = (int) $autor_id;
     }
 
-    $uzorak = uzorak_pretrage($trazi);
+    if ($trazi !== '') {
+        $uzorak = uzorak_pretrage($trazi);
+        $uvjeti[] = "(v.naslov LIKE ? ESCAPE '|' OR v.sazetak LIKE ? ESCAPE '|')";
+        $parametri[] = $uzorak;
+        $parametri[] = $uzorak;
+    }
 
-    return ["(v.naslov LIKE ? ESCAPE '|' OR v.sazetak LIKE ? ESCAPE '|')", [$uzorak, $uzorak]];
+    return [implode(' AND ', $uvjeti), $parametri];
 }
 
 // Broj vijesti za administraciju (za straničenje)
-function vijesti_admin_broj($trazi = '')
+function vijesti_admin_broj($trazi, $autor_id)
 {
-    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi);
+    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi, $autor_id);
 
     $redak = db_jedan_redak("SELECT COUNT(*) AS broj FROM vijesti v WHERE $uvjeti", $parametri);
 
@@ -115,9 +125,9 @@ function vijesti_admin_broj($trazi = '')
 }
 
 // Jedna stranica vijesti za administraciju, zadnje izmijenjene prve
-function vijesti_admin($trazi = '', $koliko = 20, $preskoci = 0)
+function vijesti_admin($trazi, $autor_id, $koliko, $preskoci)
 {
-    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi);
+    [$uvjeti, $parametri] = vijesti_admin_uvjeti($trazi, $autor_id);
     $parametri[] = (int) $koliko;
     $parametri[] = (int) $preskoci;
 
@@ -139,7 +149,7 @@ function vijesti_admin($trazi = '', $koliko = 20, $preskoci = 0)
 function vijest_po_id($id)
 {
     return db_jedan_redak(
-        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj, v.status
+        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.autor_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj, v.status
          FROM vijesti v
          LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
          WHERE v.id = ?',
