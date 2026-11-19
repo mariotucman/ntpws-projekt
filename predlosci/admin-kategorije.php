@@ -25,7 +25,7 @@ $admin_stavka = 'kategorije';
                             <td><?= e($kategorija['broj_vijesti']) ?></td>
                             <td class="tablica__radnje">
                                 <a href="index.php?stranica=admin-kategorija&amp;id=<?= e($kategorija['id']) ?>">Uredi</a>
-                                <a href="index.php?stranica=admin-kategorija-obrisi&amp;id=<?= e($kategorija['id']) ?>">Obriši</a>
+                                <a class="tablica__obrisi" href="index.php?stranica=admin-kategorija-obrisi&amp;id=<?= e($kategorija['id']) ?>">Obriši</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

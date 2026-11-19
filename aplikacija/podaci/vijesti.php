@@ -180,3 +180,8 @@ function vijest_uredi($id, $vijest)
          $vijest['sadrzaj'], $vijest['status'], $vijest['objavljeno_u'], (int) $id]
     );
 }
+
+function vijest_obrisi($id)
+{
+    db_izvrsi('DELETE FROM vijesti WHERE id = ?', [(int) $id]);
+}

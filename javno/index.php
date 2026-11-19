@@ -30,6 +30,7 @@ $stranice = [
     'slika' => 'stranica_slika',
     'admin-vijesti' => 'stranica_admin_vijesti',
     'admin-vijest' => 'stranica_admin_vijest',
+    'admin-vijest-obrisi' => 'stranica_admin_vijest_obrisi',
     'admin-kategorije' => 'stranica_admin_kategorije',
     'admin-kategorija' => 'stranica_admin_kategorija',
     'admin-kategorija-obrisi' => 'stranica_admin_kategorija_obrisi',

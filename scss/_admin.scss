@@ -94,4 +94,10 @@
       padding: 0 $spacing-s;
     }
   }
+
+  // Poveznica Obriši je crvena
+  &__obrisi,
+  &__obrisi:hover {
+    color: $color-error;
+  }
 }

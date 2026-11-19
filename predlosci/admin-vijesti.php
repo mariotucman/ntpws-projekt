@@ -62,6 +62,7 @@ $admin_stavka = 'vijesti';
                             </td>
                             <td class="tablica__radnje">
                                 <a href="index.php?stranica=admin-vijest&amp;id=<?= e($vijest['id']) ?>">Uredi</a>
+                                <a class="tablica__obrisi" href="index.php?stranica=admin-vijest-obrisi&amp;id=<?= e($vijest['id']) ?>">Obriši</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

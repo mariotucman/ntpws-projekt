@@ -375,3 +375,53 @@ function stranica_admin_vijest()
         'oznaka_svi_gradovi' => 'Odaberi grad ili općinu',
     ]);
 }
+
+// Brisanje vijesti uz potvrdu. Briše se i slika vijesti.
+function stranica_admin_vijest_obrisi()
+{
+    zahtijevaj_ulogu(['administrator', 'urednik']);
+
+    $vijest = vijest_po_id(get_broj('id'));
+
+    if ($vijest === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    if (!smije_urediti_vijest($vijest)) {
+        stranica_zabranjeno('Možeš brisati samo svoje vijesti.');
+        return;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $slika = $vijest['slika_id'] !== null ? slika_po_id($vijest['slika_id']) : null;
+
+        // Vijest i podaci o njezinoj slici brišu se zajedno ili se ne briše ništa
+        mysqli_begin_transaction(db());
+
+        try {
+            vijest_obrisi($vijest['id']);
+
+            if ($slika !== null) {
+                slika_obrisi($slika['id']);
+            }
+
+            mysqli_commit(db());
+        } catch (Throwable $greska) {
+            mysqli_rollback(db());
+            throw $greska;
+        }
+
+        // Datoteka slike briše se tek kad je brisanje u bazi uspjelo
+        if ($slika !== null) {
+            obrisi_datoteku_slike($slika['datoteka']);
+        }
+
+        postavi_poruku('uspjeh', 'Vijest „' . $vijest['naslov'] . '” je obrisana.');
+        preusmjeri('index.php?stranica=admin-vijesti');
+    }
+
+    prikazi('admin-vijest-obrisi', [
+        'vijest' => $vijest,
+    ]);
+}
