@@ -182,6 +182,16 @@ function provjeri_vijest($vijest, $zupanija_id)
         }
     }
 
+    if (!in_array($vijest['status'], ['nacrt', 'objavljeno', 'povuceno'], true)) {
+        $greske['status'] = 'Odaberi status vijesti.';
+    }
+
+    if ($vijest['objavljeno_u'] === false) {
+        $greske['objavljeno_u'] = 'Upiši ispravan datum i vrijeme objave.';
+    } elseif ($vijest['status'] === 'povuceno' && strtotime($vijest['objavljeno_u']) > time()) {
+        $greske['objavljeno_u'] = 'Povučena vijest ne može imati datum objave u budućnosti.';
+    }
+
     if (trim(html_entity_decode(strip_tags($vijest['sadrzaj']))) === '') {
         $greske['sadrzaj'] = 'Upiši sadržaj vijesti.';
     } elseif (mb_strlen($vijest['sadrzaj']) > NAJVECI_SADRZAJ_VIJESTI) {
@@ -235,6 +245,48 @@ function spremi_vijest($postojeca, $vijest, $nova_slika, $ukloni_sliku, $autor_i
     }
 }
 
+// Datum objave iz obrasca (polje datetime-local, npr. 2026-11-20T09:30) u obliku za bazu.
+// Nacrt nema datum objave. Ostali statusi uz prazno polje dobivaju trenutno vrijeme.
+function datum_objave($tekst, $status)
+{
+    if ($status === 'nacrt') {
+        return null;
+    }
+
+    if ($tekst === '') {
+        return date('Y-m-d H:i:s');
+    }
+
+    $datum = date_create_from_format('Y-m-d\TH:i', $tekst);
+
+    // Nepostojeći datum (npr. 31. 2.)
+    if ($datum === false || date_get_last_errors() !== false) {
+        return false;
+    }
+
+    return date_format($datum, 'Y-m-d H:i:00');
+}
+
+// Poruka nakon spremanja, prema statusu vijesti
+function poruka_spremanja_vijesti($vijest)
+{
+    $naslov = '„' . $vijest['naslov'] . '”';
+
+    if ($vijest['status'] === 'nacrt') {
+        return 'Vijest ' . $naslov . ' je spremljena kao nacrt.';
+    }
+
+    if ($vijest['status'] === 'povuceno') {
+        return 'Vijest ' . $naslov . ' je povučena iz javnog prikaza.';
+    }
+
+    if (strtotime($vijest['objavljeno_u']) > time()) {
+        return 'Vijest ' . $naslov . ' će biti objavljena ' . datum($vijest['objavljeno_u'], 'j. n. Y. \u H:i') . '.';
+    }
+
+    return 'Vijest ' . $naslov . ' je objavljena.';
+}
+
 // Dodavanje vijesti i uređivanje postojeće
 function stranica_admin_vijest()
 {
@@ -263,6 +315,8 @@ function stranica_admin_vijest()
         'naslov' => $postojeca['naslov'] ?? '',
         'sazetak' => $postojeca['sazetak'] ?? '',
         'sadrzaj' => $postojeca['sadrzaj'] ?? '',
+        'status' => $postojeca['status'] ?? 'nacrt',
+        'objavljeno_u' => $postojeca['objavljeno_u'] ?? null,
     ];
     $zupanija_id = (int) ($postojeca['zupanija_id'] ?? 0);
     $greske = [];
@@ -281,6 +335,8 @@ function stranica_admin_vijest()
             'naslov' => trim(post_tekst('naslov')),
             'sazetak' => trim(post_tekst('sazetak')),
             'sadrzaj' => ocisti_html($sadrzaj),
+            'status' => post_tekst('status'),
+            'objavljeno_u' => datum_objave(trim(post_tekst('objavljeno_u')), post_tekst('status')),
         ];
         $zupanija_id = post_broj('zupanija');
         $greske = provjeri_vijest($vijest, $zupanija_id);
@@ -300,11 +356,7 @@ function stranica_admin_vijest()
         if (count($greske) === 0) {
             spremi_vijest($postojeca, $vijest, $nova_slika, post_tekst('ukloni_sliku') === '1', $korisnik['id']);
 
-            if ($postojeca === null) {
-                postavi_poruku('uspjeh', 'Vijest „' . $vijest['naslov'] . '” je spremljena kao nacrt.');
-            } else {
-                postavi_poruku('uspjeh', 'Vijest „' . $vijest['naslov'] . '” je spremljena.');
-            }
+            postavi_poruku('uspjeh', poruka_spremanja_vijesti($vijest));
             preusmjeri('index.php?stranica=admin-vijesti');
         }
     }

@@ -11,8 +11,12 @@ $greska_klasa = function ($polje) use ($greske) {
 <form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-vijest<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" enctype="multipart/form-data" novalidate>
     <?= csrf_polje() ?>
 
-    <?php if ($postojeca === null): ?>
-        <p class="polje__pomoc">Nova vijest se sprema kao nacrt i javno se ne prikazuje dok se ne objavi.</p>
+    <?php if ($postojeca !== null): ?>
+        <p class="polje__pomoc">
+            Autor: <?= e($postojeca['autor']) ?>
+            &middot; izrađeno <?= e(datum($postojeca['kreirano'], 'j. n. Y. \u H:i')) ?>
+            &middot; zadnja izmjena <?= e(datum($postojeca['azurirano'], 'j. n. Y. \u H:i')) ?>
+        </p>
     <?php endif; ?>
 
     <div class="polje">
@@ -74,6 +78,28 @@ $greska_klasa = function ($polje) use ($greske) {
         <p class="polje__pomoc">JPEG, PNG ili WebP, najviše 5 MB.<?= $slika !== null ? ' Nova slika zamjenjuje trenutnu.' : '' ?></p>
         <?php if (isset($greske['slika'])): ?>
             <p class="polje__greska"><?= e($greske['slika']) ?></p>
+        <?php endif; ?>
+    </div>
+
+    <div class="polje">
+        <label class="polje__oznaka" for="status">Status</label>
+        <select class="polje__unos<?= $greska_klasa('status') ?>" id="status" name="status">
+            <option value="nacrt"<?= $vijest['status'] === 'nacrt' ? ' selected' : '' ?>>Nacrt (ne vidi se javno)</option>
+            <option value="objavljeno"<?= $vijest['status'] === 'objavljeno' ? ' selected' : '' ?>>Objavljeno</option>
+            <option value="povuceno"<?= $vijest['status'] === 'povuceno' ? ' selected' : '' ?>>Povučeno (uklonjeno iz javnog prikaza)</option>
+        </select>
+        <?php if (isset($greske['status'])): ?>
+            <p class="polje__greska"><?= e($greske['status']) ?></p>
+        <?php endif; ?>
+    </div>
+
+    <div class="polje">
+        <label class="polje__oznaka" for="objavljeno_u">Datum objave</label>
+        <input class="polje__unos<?= $greska_klasa('objavljeno_u') ?>" type="datetime-local" id="objavljeno_u" name="objavljeno_u"
+            value="<?= is_string($vijest['objavljeno_u']) ? e(datum($vijest['objavljeno_u'], 'Y-m-d\TH:i')) : '' ?>">
+        <p class="polje__pomoc">Vrijedi samo za status Objavljeno. Prazno znači objava odmah, a datum u budućnosti zakazanu objavu.</p>
+        <?php if (isset($greske['objavljeno_u'])): ?>
+            <p class="polje__greska"><?= e($greske['objavljeno_u']) ?></p>
         <?php endif; ?>
     </div>
 

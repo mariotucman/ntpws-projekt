@@ -149,31 +149,34 @@ function vijesti_admin($trazi, $autor_id, $koliko, $preskoci)
 function vijest_po_id($id)
 {
     return db_jedan_redak(
-        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.autor_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj, v.status
+        'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.autor_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj,
+                v.status, v.objavljeno_u, v.kreirano, v.azurirano, a.ime AS autor
          FROM vijesti v
+         JOIN korisnici a ON a.id = v.autor_id
          LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
          WHERE v.id = ?',
         [(int) $id]
     );
 }
 
-// Nova vijest se uvijek sprema kao nacrt
 function vijest_dodaj($vijest, $autor_id)
 {
     db_izvrsi(
-        'INSERT INTO vijesti (kategorija_id, grad_opcina_id, autor_id, slika_id, naslov, sazetak, sadrzaj)
-         VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], (int) $autor_id, $vijest['slika_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj']]
+        'INSERT INTO vijesti (kategorija_id, grad_opcina_id, autor_id, slika_id, naslov, sazetak, sadrzaj, status, objavljeno_u)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], (int) $autor_id, $vijest['slika_id'], $vijest['naslov'],
+         $vijest['sazetak'], $vijest['sadrzaj'], $vijest['status'], $vijest['objavljeno_u']]
     );
 }
 
-// Uređivanje ne mijenja autora ni status
+// Uređivanje ne mijenja autora
 function vijest_uredi($id, $vijest)
 {
     db_izvrsi(
         'UPDATE vijesti
-         SET kategorija_id = ?, grad_opcina_id = ?, slika_id = ?, naslov = ?, sazetak = ?, sadrzaj = ?
+         SET kategorija_id = ?, grad_opcina_id = ?, slika_id = ?, naslov = ?, sazetak = ?, sadrzaj = ?, status = ?, objavljeno_u = ?
          WHERE id = ?',
-        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], $vijest['slika_id'], $vijest['naslov'], $vijest['sazetak'], $vijest['sadrzaj'], (int) $id]
+        [$vijest['kategorija_id'], $vijest['grad_opcina_id'], $vijest['slika_id'], $vijest['naslov'], $vijest['sazetak'],
+         $vijest['sadrzaj'], $vijest['status'], $vijest['objavljeno_u'], (int) $id]
     );
 }
