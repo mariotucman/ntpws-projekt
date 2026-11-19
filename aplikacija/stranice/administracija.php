@@ -2,6 +2,7 @@
 // Administracija. Vijesti uređuju administrator i urednik, a kategorije samo administrator.
 
 const ADMIN_VIJESTI_PO_STRANICI = 20;
+const ADMIN_KORISNIKA_PO_STRANICI = 20;
 
 // Najveća duljina sadržaja vijesti (HTML) u znakovima
 const NAJVECI_SADRZAJ_VIJESTI = 100000;
@@ -423,5 +424,26 @@ function stranica_admin_vijest_obrisi()
 
     prikazi('admin-vijest-obrisi', [
         'vijest' => $vijest,
+    ]);
+}
+
+// Popis korisnika s pretragom i straničenjem (samo administrator)
+function stranica_admin_korisnici()
+{
+    $prijavljeni = zahtijevaj_ulogu(['administrator']);
+
+    $trazi = get_tekst('trazi');
+
+    $ukupno = korisnici_admin_broj($trazi);
+    $broj_stranica = max(1, (int) ceil($ukupno / ADMIN_KORISNIKA_PO_STRANICI));
+    $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
+
+    prikazi('admin-korisnici', [
+        'korisnici' => korisnici_admin($trazi, ADMIN_KORISNIKA_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_KORISNIKA_PO_STRANICI),
+        'prijavljeni_id' => (int) $prijavljeni['id'],
+        'trazi' => $trazi,
+        'trenutna_stranica' => $trenutna_stranica,
+        'broj_stranica' => $broj_stranica,
+        'adresa' => array_filter(['stranica' => 'admin-korisnici', 'trazi' => $trazi]),
     ]);
 }

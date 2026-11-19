@@ -50,3 +50,44 @@ function korisnik_po_id($id)
         [(int) $id]
     );
 }
+
+// WHERE uvjet za popis korisnika u administraciji: pretraga po imenu ili emailu
+function korisnici_admin_uvjeti($trazi)
+{
+    if ($trazi === '') {
+        return ['1 = 1', []];
+    }
+
+    $uzorak = uzorak_pretrage($trazi);
+
+    return ["(k.ime LIKE ? ESCAPE '|' OR k.email LIKE ? ESCAPE '|')", [$uzorak, $uzorak]];
+}
+
+// Broj korisnika za administraciju (za straničenje)
+function korisnici_admin_broj($trazi)
+{
+    [$uvjeti, $parametri] = korisnici_admin_uvjeti($trazi);
+
+    $redak = db_jedan_redak("SELECT COUNT(*) AS broj FROM korisnici k WHERE $uvjeti", $parametri);
+
+    return (int) $redak['broj'];
+}
+
+// Jedna stranica korisnika s ulogom i brojem vijesti, po imenu
+function korisnici_admin($trazi, $koliko, $preskoci)
+{
+    [$uvjeti, $parametri] = korisnici_admin_uvjeti($trazi);
+    $parametri[] = (int) $koliko;
+    $parametri[] = (int) $preskoci;
+
+    return db_svi_retci(
+        "SELECT k.id, k.ime, k.email, k.aktivan, k.kreirano, u.naziv AS uloga,
+                (SELECT COUNT(*) FROM vijesti v WHERE v.autor_id = k.id) AS broj_vijesti
+         FROM korisnici k
+         JOIN uloge u ON u.id = k.uloga_id
+         WHERE $uvjeti
+         ORDER BY k.ime, k.id
+         LIMIT ? OFFSET ?",
+        $parametri
+    );
+}
