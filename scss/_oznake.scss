@@ -18,8 +18,9 @@
     background-color: $color-line;
   }
 
-  // Objavljena vijest se razlikuje od ostalih statusa
-  &--objavljeno {
+  // Objavljena vijest i aktivan račun razlikuju se od ostalih stanja
+  &--objavljeno,
+  &--aktivan {
     background-color: $color-accent-light;
   }
 }
