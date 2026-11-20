@@ -71,3 +71,45 @@ function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
         $parametri
     );
 }
+
+// Jedna javna lokacija s vrstom i područjem. Skrivena ili nepostojeća vraća null.
+function lokacija_javna_po_id($id)
+{
+    return db_jedan_redak(
+        'SELECT l.id, l.naziv, l.opis, l.adresa, l.lat, l.lng, l.radno_vrijeme,
+                v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija
+         FROM lokacije l
+         JOIN vrste_lokacija v ON v.id = l.vrsta_id
+         JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
+         JOIN zupanije z ON z.id = g.zupanija_id
+         WHERE l.id = ? AND l.objavljeno = 1',
+        [(int) $id]
+    );
+}
+
+// Radno vrijeme iz JSON-a za prikaz: ['dani' => [[dan, tekst, danas], …], 'napomena' => tekst ili null]
+// Lokacija bez radnog vremena (NULL ili neispravan JSON) vraća null, što znači da je uvijek otvorena.
+// Dan koji nema dva vremena smatra se zatvorenim.
+function radno_vrijeme_za_prikaz($json)
+{
+    $podaci = $json !== null ? json_decode($json, true) : null;
+
+    if (!is_array($podaci)) {
+        return null;
+    }
+
+    $nazivi = ['pon' => 'Ponedjeljak', 'uto' => 'Utorak', 'sri' => 'Srijeda', 'cet' => 'Četvrtak',
+        'pet' => 'Petak', 'sub' => 'Subota', 'ned' => 'Nedjelja'];
+    $danas = array_keys($nazivi)[(int) date('N') - 1];
+    $dani = [];
+
+    foreach ($nazivi as $kljuc => $naziv) {
+        $vrijeme = $podaci[$kljuc] ?? null;
+        $tekst = is_array($vrijeme) && count($vrijeme) === 2 ? $vrijeme[0] . ' – ' . $vrijeme[1] : 'Zatvoreno';
+        $dani[] = [$naziv, $tekst, $kljuc === $danas];
+    }
+
+    $napomena = $podaci['napomena'] ?? null;
+
+    return ['dani' => $dani, 'napomena' => is_string($napomena) && $napomena !== '' ? $napomena : null];
+}

@@ -49,3 +49,19 @@ function stranica_lokacije()
         'trazi' => $filtar['trazi'],
     ]);
 }
+
+// Detalj lokacije: ?stranica=lokacija&id=5. Skrivena ili nepostojeća lokacija daje 404.
+function stranica_lokacija()
+{
+    $lokacija = lokacija_javna_po_id(get_broj('id'));
+
+    if ($lokacija === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    prikazi('lokacija', [
+        'lokacija' => $lokacija,
+        'radno_vrijeme' => radno_vrijeme_za_prikaz($lokacija['radno_vrijeme']),
+    ]);
+}

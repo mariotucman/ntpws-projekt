@@ -1,6 +1,6 @@
 <?php
 $naslov = 'Lokacije';
-$opis = 'Znamenitosti, parkovi, staze, plaže i vidikovci diljem Hrvatske';
+$opis = 'Mjesta koja vrijedi posjetiti diljem Hrvatske';
 $aktivno = 'lokacije';
 ?>
 <?php $filtrirano = $odabrana_zupanija > 0 || $odabrana_vrsta > 0 || $trazi !== ''; ?>
