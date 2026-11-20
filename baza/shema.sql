@@ -9,6 +9,7 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS fotografije_lokacija;
 DROP TABLE IF EXISTS lokacije;
 DROP TABLE IF EXISTS vrste_lokacija;
 DROP TABLE IF EXISTS vijesti;
@@ -201,4 +202,19 @@ CREATE TABLE lokacije (
     CONSTRAINT ck_lokacije_lng CHECK (lng BETWEEN -180 AND 180),
     CONSTRAINT ck_lokacije_objavljeno CHECK (objavljeno IN (0, 1)),
     CONSTRAINT ck_lokacije_istaknuto CHECK (istaknuto IN (0, 1))
+);
+
+-- Tablica fotografije_lokacija
+-- Lokacija ima najviše 5 fotografija (provjerava aplikacija). Svaka slika pripada samo jednoj lokaciji.
+-- redoslijed određuje poredak u galeriji, a prva fotografija prikazuje se na kartici lokacije.
+-- Brisanjem lokacije ili slike briše se i veza između njih (datoteke slika briše aplikacija).
+CREATE TABLE fotografije_lokacija (
+    lokacija_id INT UNSIGNED NOT NULL,
+    slika_id INT UNSIGNED NOT NULL,
+    redoslijed TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY (lokacija_id, slika_id),
+    UNIQUE KEY uq_fotografije_lokacija_slika (slika_id),
+    CONSTRAINT fk_fotografije_lokacija_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_fotografije_lokacija_slika FOREIGN KEY (slika_id) REFERENCES slike (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT ck_fotografije_lokacija_redoslijed CHECK (redoslijed BETWEEN 1 AND 5)
 );
