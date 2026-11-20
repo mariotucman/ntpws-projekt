@@ -312,3 +312,9 @@ function fotografija_redoslijed($lokacija_id, $slika_id, $redoslijed)
         [(int) $redoslijed, (int) $lokacija_id, (int) $slika_id]
     );
 }
+
+// Briše lokaciju. Veze s fotografijama brišu se same (ON DELETE CASCADE), a slike briše pozivatelj.
+function lokacija_obrisi($id)
+{
+    db_izvrsi('DELETE FROM lokacije WHERE id = ?', [(int) $id]);
+}

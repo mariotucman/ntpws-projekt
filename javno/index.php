@@ -43,6 +43,7 @@ $stranice = [
     'admin-kategorija-obrisi' => 'stranica_admin_kategorija_obrisi',
     'admin-lokacije' => 'stranica_admin_lokacije',
     'admin-lokacija' => 'stranica_admin_lokacija',
+    'admin-lokacija-obrisi' => 'stranica_admin_lokacija_obrisi',
     'admin-vrste-lokacija' => 'stranica_admin_vrste_lokacija',
     'admin-vrsta-lokacije' => 'stranica_admin_vrsta_lokacije',
     'admin-vrsta-lokacije-obrisi' => 'stranica_admin_vrsta_lokacije_obrisi',

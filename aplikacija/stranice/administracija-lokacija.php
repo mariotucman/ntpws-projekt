@@ -491,3 +491,49 @@ function stranica_admin_lokacija()
         'oznaka_svi_gradovi' => 'Odaberi grad ili općinu',
     ]);
 }
+
+// Brisanje lokacije uz potvrdu, zajedno s njezinim fotografijama
+function stranica_admin_lokacija_obrisi()
+{
+    zahtijevaj_ulogu(['administrator', 'urednik']);
+
+    $lokacija = lokacija_po_id(get_broj('id'));
+
+    if ($lokacija === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    $fotografije = fotografije_lokacije($lokacija['id']);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Lokacija i podaci o njezinim slikama brišu se zajedno ili se ne briše ništa
+        mysqli_begin_transaction(db());
+
+        try {
+            foreach ($fotografije as $fotografija) {
+                slika_obrisi($fotografija['id']);
+            }
+
+            lokacija_obrisi($lokacija['id']);
+
+            mysqli_commit(db());
+        } catch (Throwable $greska) {
+            mysqli_rollback(db());
+            throw $greska;
+        }
+
+        // Datoteke slika brišu se tek kad je brisanje u bazi uspjelo
+        foreach ($fotografije as $fotografija) {
+            obrisi_datoteku_slike($fotografija['datoteka']);
+        }
+
+        postavi_poruku('uspjeh', 'Lokacija „' . $lokacija['naziv'] . '” je obrisana.');
+        preusmjeri('index.php?stranica=admin-lokacije');
+    }
+
+    prikazi('admin-lokacija-obrisi', [
+        'lokacija' => $lokacija,
+        'broj_fotografija' => count($fotografije),
+    ]);
+}

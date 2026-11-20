@@ -58,6 +58,7 @@ $admin_stavka = 'lokacije';
                             <td><time datetime="<?= e(datum($lokacija['azurirano'], 'Y-m-d')) ?>"><?= e(datum($lokacija['azurirano'])) ?></time></td>
                             <td class="tablica__radnje">
                                 <a href="index.php?stranica=admin-lokacija&amp;id=<?= e($lokacija['id']) ?>">Uredi</a>
+                                <a class="tablica__obrisi" href="index.php?stranica=admin-lokacija-obrisi&amp;id=<?= e($lokacija['id']) ?>">Obriši</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
