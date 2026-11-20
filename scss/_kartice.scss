@@ -1,8 +1,37 @@
 @use "varijable" as *;
 
+// Cijela kartica je klikabilna. Poveznica u naslovu rasteže se preko kartice nevidljivim slojem (::after).
+// $naslov je klasa elementa u kojem je poveznica, npr "vijest-kartica__naslov".
+@mixin cijela-kartica-klikabilna($naslov) {
+  position: relative;
+
+  #{$naslov} a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  // Prelazak mišem bilo gdje po kartici označava naslov
+  &:hover #{$naslov} a {
+    color: $color-primary;
+  }
+
+  // Fokus tipkovnicom prikazuje se oko cijele kartice, a ne samo oko naslova
+  #{$naslov} a:focus-visible {
+    outline: none;
+  }
+
+  &:has(#{$naslov} a:focus-visible) {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
 // Kartica vijesti na popisu vijesti
 // Na mobitelu je slika iznad teksta, a od 600px lijevo od njega
 .vijest-kartica {
+  @include cijela-kartica-klikabilna(".vijest-kartica__naslov");
+
   display: grid;
   gap: $spacing-s;
   padding: 20px;
@@ -64,6 +93,8 @@
 // Velika kartica lokacije: fotografija na vrhu, ispod tekst
 // Gumb Spremi i traka s ocjenom dolaze uz spremljene lokacije i recenzije
 .lokacija-kartica {
+  @include cijela-kartica-klikabilna(".lokacija-kartica__naziv");
+
   display: flex;
   flex-direction: column;
   padding: $spacing-s;
