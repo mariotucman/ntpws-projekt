@@ -1,5 +1,16 @@
 <?php
 
+// Dani u tjednu: ključ u JSON-u radnog vremena => naziv za prikaz
+const DANI_U_TJEDNU = [
+    'pon' => 'Ponedjeljak',
+    'uto' => 'Utorak',
+    'sri' => 'Srijeda',
+    'cet' => 'Četvrtak',
+    'pet' => 'Petak',
+    'sub' => 'Subota',
+    'ned' => 'Nedjelja',
+];
+
 function vrste_lokacija_sve()
 {
     return db_svi_retci('SELECT id, naziv FROM vrste_lokacija ORDER BY naziv');
@@ -156,12 +167,10 @@ function radno_vrijeme_za_prikaz($json)
         return null;
     }
 
-    $nazivi = ['pon' => 'Ponedjeljak', 'uto' => 'Utorak', 'sri' => 'Srijeda', 'cet' => 'Četvrtak',
-        'pet' => 'Petak', 'sub' => 'Subota', 'ned' => 'Nedjelja'];
-    $danas = array_keys($nazivi)[(int) date('N') - 1];
+    $danas = array_keys(DANI_U_TJEDNU)[(int) date('N') - 1];
     $dani = [];
 
-    foreach ($nazivi as $kljuc => $naziv) {
+    foreach (DANI_U_TJEDNU as $kljuc => $naziv) {
         $vrijeme = $podaci[$kljuc] ?? null;
         $tekst = is_array($vrijeme) && count($vrijeme) === 2 ? $vrijeme[0] . ' – ' . $vrijeme[1] : 'Zatvoreno';
         $dani[] = [$naziv, $tekst, $kljuc === $danas];
@@ -170,4 +179,102 @@ function radno_vrijeme_za_prikaz($json)
     $napomena = $podaci['napomena'] ?? null;
 
     return ['dani' => $dani, 'napomena' => is_string($napomena) && $napomena !== '' ? $napomena : null];
+}
+
+// WHERE uvjet za administraciju: sve lokacije (i skrivene), uz pretragu po nazivu lokacije ili grada/općine
+function lokacije_admin_uvjeti($trazi)
+{
+    if ($trazi === '') {
+        return ['1 = 1', []];
+    }
+
+    $uzorak = uzorak_pretrage($trazi);
+
+    return ["(l.naziv LIKE ? ESCAPE '|' OR g.naziv LIKE ? ESCAPE '|')", [$uzorak, $uzorak]];
+}
+
+// Broj lokacija za administraciju (za straničenje)
+function lokacije_admin_broj($trazi)
+{
+    [$uvjeti, $parametri] = lokacije_admin_uvjeti($trazi);
+
+    $redak = db_jedan_redak(
+        "SELECT COUNT(*) AS broj
+         FROM lokacije l
+         JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
+         WHERE $uvjeti",
+        $parametri
+    );
+
+    return (int) $redak['broj'];
+}
+
+// Jedna stranica lokacija za administraciju, zadnje izmijenjene prve
+function lokacije_admin($trazi, $koliko, $preskoci)
+{
+    [$uvjeti, $parametri] = lokacije_admin_uvjeti($trazi);
+    $parametri[] = (int) $koliko;
+    $parametri[] = (int) $preskoci;
+
+    return db_svi_retci(
+        "SELECT l.id, l.naziv, l.objavljeno, l.istaknuto, l.azurirano,
+                v.naziv AS vrsta, g.naziv AS grad_opcina, a.ime AS autor
+         FROM lokacije l
+         JOIN vrste_lokacija v ON v.id = l.vrsta_id
+         JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
+         JOIN korisnici a ON a.id = l.autor_id
+         WHERE $uvjeti
+         ORDER BY l.azurirano DESC, l.id DESC
+         LIMIT ? OFFSET ?",
+        $parametri
+    );
+}
+
+// Jedna lokacija bilo kojeg statusa, za uređivanje. Nepostojeća vraća null.
+function lokacija_po_id($id)
+{
+    return db_jedan_redak(
+        'SELECT l.id, l.vrsta_id, l.grad_opcina_id, g.zupanija_id, l.autor_id, l.naziv, l.opis, l.adresa, l.lat, l.lng,
+                l.radno_vrijeme, l.objavljeno, l.istaknuto, l.kreirano, l.azurirano, a.ime AS autor
+         FROM lokacije l
+         JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
+         JOIN korisnici a ON a.id = l.autor_id
+         WHERE l.id = ?',
+        [(int) $id]
+    );
+}
+
+// Naziv je zauzet ako u istom gradu/općini već postoji druga lokacija s tim nazivom
+function lokacija_naziv_zauzet($naziv, $grad_opcina_id, $osim_id = 0)
+{
+    $redak = db_jedan_redak(
+        'SELECT id FROM lokacije WHERE naziv = ? AND grad_opcina_id = ? AND id <> ?',
+        [$naziv, (int) $grad_opcina_id, (int) $osim_id]
+    );
+
+    return $redak !== null;
+}
+
+function lokacija_dodaj($lokacija, $autor_id)
+{
+    db_izvrsi(
+        'INSERT INTO lokacije (vrsta_id, grad_opcina_id, autor_id, naziv, opis, adresa, lat, lng, radno_vrijeme, objavljeno, istaknuto)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [$lokacija['vrsta_id'], $lokacija['grad_opcina_id'], (int) $autor_id, $lokacija['naziv'], $lokacija['opis'],
+         $lokacija['adresa'], $lokacija['lat'], $lokacija['lng'], $lokacija['radno_vrijeme'], $lokacija['objavljeno'],
+         $lokacija['istaknuto']]
+    );
+}
+
+// Uređivanje ne mijenja autora
+function lokacija_uredi($id, $lokacija)
+{
+    db_izvrsi(
+        'UPDATE lokacije
+         SET vrsta_id = ?, grad_opcina_id = ?, naziv = ?, opis = ?, adresa = ?, lat = ?, lng = ?, radno_vrijeme = ?,
+             objavljeno = ?, istaknuto = ?
+         WHERE id = ?',
+        [$lokacija['vrsta_id'], $lokacija['grad_opcina_id'], $lokacija['naziv'], $lokacija['opis'], $lokacija['adresa'],
+         $lokacija['lat'], $lokacija['lng'], $lokacija['radno_vrijeme'], $lokacija['objavljeno'], $lokacija['istaknuto'], (int) $id]
+    );
 }

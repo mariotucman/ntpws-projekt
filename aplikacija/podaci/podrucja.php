@@ -12,7 +12,8 @@ function gradovi_opcine_svi()
     return db_svi_retci('SELECT id, zupanija_id, naziv FROM gradovi_opcine ORDER BY zupanija_id, naziv');
 }
 
+// Grad/općina s koordinatama sjedišta (lat, lng)
 function grad_opcina_po_id($id)
 {
-    return db_jedan_redak('SELECT id, zupanija_id, naziv FROM gradovi_opcine WHERE id = ?', [(int) $id]);
+    return db_jedan_redak('SELECT id, zupanija_id, naziv, lat, lng FROM gradovi_opcine WHERE id = ?', [(int) $id]);
 }

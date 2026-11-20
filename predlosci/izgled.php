@@ -71,6 +71,9 @@ $klase = function ($blok, $stranica) use ($aktivno) {
                 <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'vijesti' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-vijesti">Vijesti</a>
                 <?php if (ima_ulogu(['administrator'])): ?>
                     <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'kategorije' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-kategorije">Kategorije</a>
+                <?php endif; ?>
+                <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'lokacije' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-lokacije">Lokacije</a>
+                <?php if (ima_ulogu(['administrator'])): ?>
                     <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'vrste-lokacija' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-vrste-lokacija">Vrste lokacija</a>
                     <a class="admin-izbornik__stavka<?= ($admin_stavka ?? '') === 'korisnici' ? ' admin-izbornik__stavka--trenutna' : '' ?>" href="index.php?stranica=admin-korisnici">Korisnici</a>
                 <?php endif; ?>
