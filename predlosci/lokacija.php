@@ -3,6 +3,16 @@ $naslov = $lokacija['naziv'];
 $opis = $lokacija['grad_opcina'] . ', ' . $lokacija['zupanija'];
 $aktivno = 'lokacije';
 ?>
+<div class="galerija">
+    <?php if (count($fotografije) === 0): ?>
+        <img class="galerija__slika" src="<?= e(adresa_slike_lokacije(null)) ?>" alt="">
+    <?php endif; ?>
+    <?php foreach ($fotografije as $broj => $fotografija): ?>
+        <img class="galerija__slika" src="<?= e(adresa_slike_lokacije($fotografija['id'])) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>"
+            alt="<?= e($lokacija['naziv']) ?>, fotografija <?= $broj + 1 ?>"<?= $broj > 0 ? ' loading="lazy"' : '' ?>>
+    <?php endforeach; ?>
+</div>
+
 <div class="dva-stupca">
     <article class="lokacija dva-stupca__glavni">
         <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>

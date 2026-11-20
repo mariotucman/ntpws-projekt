@@ -62,6 +62,7 @@ function stranica_lokacija()
 
     prikazi('lokacija', [
         'lokacija' => $lokacija,
+        'fotografije' => fotografije_lokacije($lokacija['id']),
         'radno_vrijeme' => radno_vrijeme_za_prikaz($lokacija['radno_vrijeme']),
     ]);
 }

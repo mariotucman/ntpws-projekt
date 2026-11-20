@@ -122,6 +122,7 @@ function lokacije_javne_broj($filtar = [])
 }
 
 // Jedna stranica javnih lokacija za filtar, poredanih po nazivu
+// slika_id je prva fotografija po redoslijedu (NULL ako lokacija nema fotografija)
 function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
 {
     [$uvjeti, $parametri] = lokacije_javne_uvjeti($filtar);
@@ -129,7 +130,9 @@ function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
     $parametri[] = (int) $preskoci;
 
     return db_svi_retci(
-        "SELECT l.id, l.naziv, l.opis, v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija
+        "SELECT l.id, l.naziv, l.opis, v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija,
+                (SELECT f.slika_id FROM fotografije_lokacija f WHERE f.lokacija_id = l.id
+                 ORDER BY f.redoslijed, f.slika_id LIMIT 1) AS slika_id
          FROM lokacije l
          JOIN vrste_lokacija v ON v.id = l.vrsta_id
          JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
@@ -255,6 +258,7 @@ function lokacija_naziv_zauzet($naziv, $grad_opcina_id, $osim_id = 0)
     return $redak !== null;
 }
 
+// Dodaje lokaciju i vraća njezin id
 function lokacija_dodaj($lokacija, $autor_id)
 {
     db_izvrsi(
@@ -264,6 +268,7 @@ function lokacija_dodaj($lokacija, $autor_id)
          $lokacija['adresa'], $lokacija['lat'], $lokacija['lng'], $lokacija['radno_vrijeme'], $lokacija['objavljeno'],
          $lokacija['istaknuto']]
     );
+    return mysqli_insert_id(db());
 }
 
 // Uređivanje ne mijenja autora
@@ -276,5 +281,34 @@ function lokacija_uredi($id, $lokacija)
          WHERE id = ?',
         [$lokacija['vrsta_id'], $lokacija['grad_opcina_id'], $lokacija['naziv'], $lokacija['opis'], $lokacija['adresa'],
          $lokacija['lat'], $lokacija['lng'], $lokacija['radno_vrijeme'], $lokacija['objavljeno'], $lokacija['istaknuto'], (int) $id]
+    );
+}
+
+// Fotografije lokacije po redoslijedu (podaci o slikama iz tablice slike)
+function fotografije_lokacije($lokacija_id)
+{
+    return db_svi_retci(
+        'SELECT s.id, s.izvorni_naziv, s.sirina, s.visina, s.datoteka, f.redoslijed
+         FROM fotografije_lokacija f
+         JOIN slike s ON s.id = f.slika_id
+         WHERE f.lokacija_id = ?
+         ORDER BY f.redoslijed, s.id',
+        [(int) $lokacija_id]
+    );
+}
+
+function fotografija_dodaj($lokacija_id, $slika_id, $redoslijed)
+{
+    db_izvrsi(
+        'INSERT INTO fotografije_lokacija (lokacija_id, slika_id, redoslijed) VALUES (?, ?, ?)',
+        [(int) $lokacija_id, (int) $slika_id, (int) $redoslijed]
+    );
+}
+
+function fotografija_redoslijed($lokacija_id, $slika_id, $redoslijed)
+{
+    db_izvrsi(
+        'UPDATE fotografije_lokacija SET redoslijed = ? WHERE lokacija_id = ? AND slika_id = ?',
+        [(int) $redoslijed, (int) $lokacija_id, (int) $slika_id]
     );
 }

@@ -6,6 +6,9 @@ const ADMIN_LOKACIJA_PO_STRANICI = 20;
 // Najveća duljina opisa lokacije u znakovima
 const NAJVECI_OPIS_LOKACIJE = 5000;
 
+// Najveći broj fotografija jedne lokacije
+const NAJVISE_FOTOGRAFIJA = 5;
+
 // Koordinate lokacije moraju biti unutar pravokutnika oko Hrvatske
 const GRANICE_HRVATSKE = ['lat_min' => 42.3, 'lat_max' => 46.6, 'lng_min' => 13.4, 'lng_max' => 19.5];
 
@@ -266,6 +269,109 @@ function provjeri_lokaciju($lokacija, $zupanija_id, $osim_id = 0)
     return $greske;
 }
 
+// Datoteke poslane poljem s atributom multiple (name="fotografije[]"), kao popis zasebnih datoteka.
+// PHP ih šalje kao polje po svojstvima (name => […], tmp_name => […]), pa se preslažu po datoteci.
+// Prazna polja (ništa nije odabrano) se preskaču.
+function datoteke_iz_obrasca($kljuc)
+{
+    $poslano = $_FILES[$kljuc] ?? null;
+
+    if (!is_array($poslano) || !is_array($poslano['error'] ?? null)) {
+        return [];
+    }
+
+    $datoteke = [];
+
+    foreach (array_keys($poslano['error']) as $i) {
+        if ($poslano['error'][$i] === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+
+        $datoteke[] = [
+            'name' => $poslano['name'][$i],
+            'tmp_name' => $poslano['tmp_name'][$i],
+            'size' => $poslano['size'][$i],
+            'error' => $poslano['error'][$i],
+        ];
+    }
+
+    return $datoteke;
+}
+
+// Fotografije iz obrasca: koje se uklanjaju i kojim redom ostaju postojeće.
+// Vraća [id-evi slika za uklanjanje, id-evi preostalih slika po novom redoslijedu].
+function fotografije_iz_posta($postojece)
+{
+    $ids = array_map('intval', array_column($postojece, 'id'));
+    $ukloni = is_array($_POST['ukloni_fotografije'] ?? null) ? array_map('intval', $_POST['ukloni_fotografije']) : [];
+    $ukloni = array_values(array_intersect($ids, $ukloni));
+    $redoslijed = is_array($_POST['redoslijed'] ?? null) ? $_POST['redoslijed'] : [];
+
+    // Preostale slike slažu se po upisanom broju, a uz isti broj ostaje dosadašnji poredak
+    $preostale = [];
+    foreach ($ids as $i => $id) {
+        if (!in_array($id, $ukloni, true)) {
+            $broj = is_string($redoslijed[$id] ?? null) && ctype_digit($redoslijed[$id]) ? (int) $redoslijed[$id] : 99;
+            $preostale[] = [$broj, $i, $id];
+        }
+    }
+    sort($preostale);
+
+    return [$ukloni, array_column($preostale, 2)];
+}
+
+// Sprema lokaciju i njezine fotografije u jednoj transakciji. Ako bilo što ne uspije, u bazi se ništa ne mijenja.
+// $nove_slike su podaci iz prijenos_slike(), $ukloni id-evi slika za brisanje, a $poredak id-evi preostalih slika.
+// Vraća id lokacije.
+function spremi_lokaciju($postojeca, $lokacija, $nove_slike, $ukloni, $poredak, $autor_id)
+{
+    $slike_za_brisanje = array_map('slika_po_id', $ukloni);
+
+    mysqli_begin_transaction(db());
+
+    try {
+        if ($postojeca === null) {
+            $id = lokacija_dodaj($lokacija, $autor_id);
+        } else {
+            $id = (int) $postojeca['id'];
+            lokacija_uredi($id, $lokacija);
+        }
+
+        // Brisanjem slike briše se i njezina veza s lokacijom (ON DELETE CASCADE)
+        foreach ($ukloni as $slika_id) {
+            slika_obrisi($slika_id);
+        }
+
+        $redoslijed = 1;
+        foreach ($poredak as $slika_id) {
+            fotografija_redoslijed($id, $slika_id, $redoslijed++);
+        }
+
+        // Nove fotografije dolaze iza postojećih
+        foreach ($nove_slike as $slika) {
+            fotografija_dodaj($id, slika_dodaj($slika, $autor_id), $redoslijed++);
+        }
+
+        mysqli_commit(db());
+    } catch (Throwable $greska) {
+        // Baza se vraća na stanje prije spremanja, a nove slike brišu se iz mape prijenosi/
+        mysqli_rollback(db());
+        foreach ($nove_slike as $slika) {
+            obrisi_datoteku_slike($slika['datoteka']);
+        }
+        throw $greska;
+    }
+
+    // Datoteke uklonjenih slika brišu se tek kad je sve spremljeno u bazu
+    foreach ($slike_za_brisanje as $slika) {
+        if ($slika !== null) {
+            obrisi_datoteku_slike($slika['datoteka']);
+        }
+    }
+
+    return $id;
+}
+
 // Dodavanje lokacije i uređivanje postojeće (administrator i urednik, sve lokacije)
 function stranica_admin_lokacija()
 {
@@ -296,6 +402,8 @@ function stranica_admin_lokacija()
         'istaknuto' => (int) ($postojeca['istaknuto'] ?? 0),
     ];
     $radno_vrijeme = radno_vrijeme_za_obrazac($lokacija['radno_vrijeme']);
+    $fotografije = $postojeca !== null ? fotografije_lokacije($postojeca['id']) : [];
+    $ukloni = [];
     $zupanija_id = (int) ($postojeca['zupanija_id'] ?? 0);
     $greske = [];
     $greske_radnog_vremena = [];
@@ -319,6 +427,37 @@ function stranica_admin_lokacija()
         $zupanija_id = post_broj('zupanija');
         $greske = provjeri_lokaciju($lokacija, $zupanija_id, $id);
 
+        [$ukloni, $poredak] = fotografije_iz_posta($fotografije);
+        $datoteke = datoteke_iz_obrasca('fotografije');
+
+        if (count($poredak) + count($datoteke) > NAJVISE_FOTOGRAFIJA) {
+            $greske['fotografije'] = 'Lokacija može imati najviše ' . NAJVISE_FOTOGRAFIJA . ' fotografija. '
+                . 'Sada bi ih imala ' . (count($poredak) + count($datoteke)) . '.';
+        }
+
+        // Slike se prenose tek kad su ostala polja ispravna, inače bi u mapi prijenosi/ ostale slike bez lokacije
+        $nove_slike = [];
+
+        if (count($greske) === 0 && count($greske_radnog_vremena) === 0) {
+            foreach ($datoteke as $datoteka) {
+                [$slika, $greska_slike] = prijenos_slike($datoteka);
+
+                if ($greska_slike !== null) {
+                    $greske['fotografije'] = $datoteka['name'] . ': ' . $greska_slike;
+                    break;
+                }
+
+                $nove_slike[] = $slika;
+            }
+
+            // Ako jedna slika ne prođe, već prenesene se brišu
+            if (isset($greske['fotografije'])) {
+                foreach ($nove_slike as $slika) {
+                    obrisi_datoteku_slike($slika['datoteka']);
+                }
+            }
+        }
+
         if (count($greske) === 0 && count($greske_radnog_vremena) === 0) {
             // Bez upisanih koordinata lokacija dobiva koordinate sjedišta grada/općine
             if ($lokacija['lat'] === null) {
@@ -327,11 +466,7 @@ function stranica_admin_lokacija()
                 $lokacija['lng'] = (float) $grad_opcina['lng'];
             }
 
-            if ($postojeca === null) {
-                lokacija_dodaj($lokacija, $korisnik['id']);
-            } else {
-                lokacija_uredi($postojeca['id'], $lokacija);
-            }
+            spremi_lokaciju($postojeca, $lokacija, $nove_slike, $ukloni, $poredak, $korisnik['id']);
 
             $stanje = $lokacija['objavljeno'] === 1 ? 'objavljena' : 'spremljena kao skrivena';
             postavi_poruku('uspjeh', 'Lokacija „' . $lokacija['naziv'] . '” je ' . $stanje . '.');
@@ -343,6 +478,8 @@ function stranica_admin_lokacija()
         'postojeca' => $postojeca,
         'lokacija' => $lokacija,
         'radno_vrijeme' => $radno_vrijeme,
+        'fotografije' => $fotografije,
+        'ukloni' => $ukloni,
         'greske' => $greske,
         'greske_radnog_vremena' => $greske_radnog_vremena,
         'vrste' => vrste_lokacija_sve(),

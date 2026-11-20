@@ -13,7 +13,7 @@ $koordinata = function ($vrijednost) {
     return is_float($vrijednost) || is_string($vrijednost) ? (string) $vrijednost : '';
 };
 ?>
-<form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-lokacija<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" novalidate>
+<form class="obrazac-kartica obrazac-kartica--siroka" method="post" action="index.php?stranica=admin-lokacija<?= $postojeca !== null ? '&amp;id=' . e($postojeca['id']) : '' ?>" enctype="multipart/form-data" novalidate>
     <?= csrf_polje() ?>
 
     <?php if ($postojeca !== null): ?>
@@ -81,6 +81,35 @@ $koordinata = function ($vrijednost) {
             <p class="polje__greska"><?= e($greske['koordinate']) ?></p>
         <?php endif; ?>
     </div>
+
+    <fieldset class="polje fotografije-unos">
+        <legend class="polje__oznaka">Fotografije</legend>
+
+        <?php foreach ($fotografije as $broj => $fotografija): ?>
+            <div class="fotografije-unos__stavka">
+                <img class="polje__slika" src="index.php?stranica=slika&amp;id=<?= e($fotografija['id']) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>" alt="Fotografija <?= $broj + 1 ?>: <?= e($fotografija['izvorni_naziv']) ?>" loading="lazy">
+                <p class="polje__pomoc"><?= e($fotografija['izvorni_naziv']) ?></p>
+
+                <label class="polje__oznaka" for="redoslijed-<?= e($fotografija['id']) ?>">Redoslijed</label>
+                <input class="polje__unos" type="number" id="redoslijed-<?= e($fotografija['id']) ?>" name="redoslijed[<?= e($fotografija['id']) ?>]" value="<?= $broj + 1 ?>" min="1" max="<?= NAJVISE_FOTOGRAFIJA ?>">
+
+                <label class="polje__kvacica">
+                    <input type="checkbox" name="ukloni_fotografije[]" value="<?= e($fotografija['id']) ?>"<?= in_array((int) $fotografija['id'], $ukloni, true) ? ' checked' : '' ?>>
+                    Ukloni
+                </label>
+            </div>
+        <?php endforeach; ?>
+
+        <label class="polje__oznaka" for="fotografije"><?= count($fotografije) > 0 ? 'Dodaj fotografije' : 'Odaberi fotografije' ?></label>
+        <input class="polje__unos<?= $greska_klasa('fotografije') ?>" type="file" id="fotografije" name="fotografije[]" accept="image/jpeg,image/png,image/webp" multiple>
+        <p class="polje__pomoc">
+            Najviše <?= NAJVISE_FOTOGRAFIJA ?> fotografija, JPEG, PNG ili WebP do 5 MB svaka. Može se odabrati više odjednom.
+            Prva po redoslijedu prikazuje se na kartici lokacije, a nove dolaze iza postojećih.
+        </p>
+        <?php if (isset($greske['fotografije'])): ?>
+            <p class="polje__greska"><?= e($greske['fotografije']) ?></p>
+        <?php endif; ?>
+    </fieldset>
 
     <fieldset class="polje radno-vrijeme-unos">
         <legend class="polje__oznaka">Radno vrijeme</legend>
