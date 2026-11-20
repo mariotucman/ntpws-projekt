@@ -16,3 +16,24 @@
   flex-direction: column;
   gap: $spacing-l;
 }
+
+// Dva stupca, npr. detalj lokacije: lijevo glavni sadržaj, desno bočne kartice
+// Kad za oba stupca nema mjesta (560px + 320px), bočni stupac prelazi ispod glavnog
+.dva-stupca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: $spacing-l;
+
+  &__glavni {
+    flex: 999 1 560px;
+    min-width: 0;
+  }
+
+  &__bocni {
+    display: flex;
+    flex: 1 1 320px;
+    flex-direction: column;
+    gap: $spacing-l;
+  }
+}

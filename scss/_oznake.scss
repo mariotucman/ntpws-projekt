@@ -1,6 +1,6 @@
 @use 'varijable' as *;
 
-// Pilula s kratkim podatkom, npr. kategorija vijesti
+// Pilula s kratkim podatkom, npr. kategorija vijesti ili vrsta lokacije
 .oznaka {
   display: inline-block;
   padding: 3px 10px;
@@ -11,6 +11,10 @@
 
   &--kategorija {
     background-color: $color-accent-light;
+  }
+
+  &--vrsta {
+    background-color: $color-primary-light;
   }
 
   // Status vijesti u administraciji (nacrt, zakazano, povučeno)

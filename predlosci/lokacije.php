@@ -35,14 +35,16 @@ $aktivno = 'lokacije';
 <?php if (count($lokacije) === 0): ?>
     <p class="poruka poruka--prazno"><?= $filtrirano ? 'Nema lokacija za odabrani filtar.' : 'Trenutno nema objavljenih lokacija.' ?></p>
 <?php else: ?>
-    <?php foreach ($lokacije as $lokacija): ?>
-        <article class="lokacija-kartica">
-            <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
-            <h2 class="lokacija-kartica__naziv"><a href="index.php?stranica=lokacija&amp;id=<?= e($lokacija['id']) ?>"><?= e($lokacija['naziv']) ?></a></h2>
-            <p class="lokacija-kartica__podrucje"><?= e($lokacija['grad_opcina'] . ', ' . $lokacija['zupanija']) ?></p>
-            <p class="lokacija-kartica__opis"><?= e(mb_strimwidth($lokacija['opis'], 0, 160, '…')) ?></p>
-        </article>
-    <?php endforeach; ?>
+    <div class="mreza-lokacija">
+        <?php foreach ($lokacije as $lokacija): ?>
+            <article class="lokacija-kartica">
+                <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
+                <h2 class="lokacija-kartica__naziv"><a href="index.php?stranica=lokacija&amp;id=<?= e($lokacija['id']) ?>"><?= e($lokacija['naziv']) ?></a></h2>
+                <p class="lokacija-kartica__podrucje"><?= e($lokacija['grad_opcina'] . ', ' . $lokacija['zupanija']) ?></p>
+                <p class="lokacija-kartica__opis"><?= e(mb_strimwidth($lokacija['opis'], 0, 160, '…')) ?></p>
+            </article>
+        <?php endforeach; ?>
+    </div>
 
     <?php require __DIR__ . '/dijelovi/stranicenje.php'; ?>
 <?php endif; ?>

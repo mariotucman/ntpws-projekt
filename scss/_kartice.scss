@@ -1,4 +1,4 @@
-@use 'varijable' as *;
+@use "varijable" as *;
 
 // Kartica vijesti na popisu vijesti
 // Na mobitelu je slika iznad teksta, a od 600px lijevo od njega
@@ -53,6 +53,50 @@
   }
 }
 
+// Mreža kartica na popisu lokacija
+// auto-fill pazi da jedna ili dvije kartice ne zauzmu cijelu širinu
+.mreza-lokacija {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $spacing-l;
+}
+
+// Velika kartica lokacije
+// Slika, gumb Spremi i traka s ocjenom dolaze uz fotografije i recenzije
+.lokacija-kartica {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-s;
+  padding: 20px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  &__naziv {
+    font-size: 18px;
+    font-weight: 700;
+
+    a {
+      color: $color-text;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__podrucje {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+
+  &__opis {
+    color: $color-text-muted;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
 // Slika na vrhu stranice vijesti, preko cijele širine
 .vijest__slika {
   width: 100%;
@@ -99,5 +143,97 @@
   &__dno {
     padding-top: 20px;
     border-top: 1px solid $color-line;
+  }
+}
+
+// Glavni dio stranice lokacije, u bijeloj kartici
+.lokacija {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-l;
+  padding: 24px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: 32px;
+  }
+
+  &__naslov {
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  &__opis {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  &__dno {
+    padding-top: 20px;
+    border-top: 1px solid $color-line;
+  }
+}
+
+// Kartica u desnom stupcu, npr. radno vrijeme i adresa
+.bocna-kartica {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-m;
+  padding: 22px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  &__naslov {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  // Najvažniji podatak kartice, npr. „Uvijek otvoreno”
+  &__istaknuto {
+    padding: 10px 14px;
+    border-radius: $radius-button;
+    background-color: $color-accent-light;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__napomena {
+    color: $color-text-muted;
+    font-size: 14px;
+  }
+}
+
+// Radno vrijeme po danima: dan lijevo, vrijeme desno
+// Današnji dan je istaknut podlogom
+.radno-vrijeme {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &__dan {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: $spacing-m;
+    padding: 6px 14px;
+    border-radius: $radius-button;
+
+    dt {
+      color: $color-text-muted;
+    }
+
+    dd {
+      font-weight: 500;
+    }
+
+    &--danas {
+      background-color: $color-accent-light;
+
+      dt,
+      dd {
+        color: $color-text;
+        font-weight: 700;
+      }
+    }
   }
 }
