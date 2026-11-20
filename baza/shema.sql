@@ -9,6 +9,8 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS lokacije;
+DROP TABLE IF EXISTS vrste_lokacija;
 DROP TABLE IF EXISTS vijesti;
 DROP TABLE IF EXISTS slike;
 DROP TABLE IF EXISTS kategorije;
@@ -154,4 +156,48 @@ CREATE TABLE vijesti (
     CONSTRAINT fk_vijesti_autor FOREIGN KEY (autor_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_vijesti_slika FOREIGN KEY (slika_id) REFERENCES slike (id) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT ck_vijesti_objava CHECK (status = 'nacrt' OR objavljeno_u IS NOT NULL)
+);
+
+-- Tablica vrste_lokacija
+-- Vrste lokacija (znamenitost, park, plaža…) uređuje administrator. Vrsta se ne može obrisati dok je koristi neka lokacija.
+CREATE TABLE vrste_lokacija (
+    id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    naziv VARCHAR(60) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_vrste_lokacija_naziv (naziv)
+);
+
+-- Tablica lokacije
+-- Javno se prikazuju samo lokacije sa statusom 'objavljeno'.
+-- Isti grad/općina ne može imati dvije lokacije istog naziva.
+-- lat i lng su koordinate same lokacije (za kartu).
+-- radno_vrijeme je JSON po danima, npr. {"pon": ["09:00", "17:00"], …, "ned": null, "napomena": "Ljeti do 20 h"}, gdje null znači zatvoreno.
+-- radno_vrijeme NULL znači da lokacija nema radno vrijeme (uvijek otvoreno, npr. plaža ili vidikovac).
+-- Autor se ne briše nego deaktivira pa lokacija ostaje.
+CREATE TABLE lokacije (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    vrsta_id TINYINT UNSIGNED NOT NULL,
+    grad_opcina_id SMALLINT UNSIGNED NOT NULL,
+    autor_id INT UNSIGNED NOT NULL,
+    naziv VARCHAR(150) NOT NULL,
+    opis TEXT NOT NULL,
+    adresa VARCHAR(200) NULL,
+    lat DECIMAL(8,6) NOT NULL,
+    lng DECIMAL(9,6) NOT NULL,
+    radno_vrijeme JSON NULL,
+    status ENUM('nacrt', 'objavljeno', 'povuceno') NOT NULL DEFAULT 'nacrt',
+    istaknuto TINYINT(1) NOT NULL DEFAULT 0,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_lokacije_grad_opcina_naziv (grad_opcina_id, naziv),
+    KEY ix_lokacije_status (status, istaknuto),
+    KEY ix_lokacije_vrsta (vrsta_id),
+    KEY ix_lokacije_autor (autor_id),
+    CONSTRAINT fk_lokacije_vrsta FOREIGN KEY (vrsta_id) REFERENCES vrste_lokacija (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_lokacije_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_lokacije_autor FOREIGN KEY (autor_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT ck_lokacije_lat CHECK (lat BETWEEN -90 AND 90),
+    CONSTRAINT ck_lokacije_lng CHECK (lng BETWEEN -180 AND 180),
+    CONSTRAINT ck_lokacije_istaknuto CHECK (istaknuto IN (0, 1))
 );
