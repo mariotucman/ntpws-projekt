@@ -18,6 +18,7 @@ require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 require __DIR__ . '/../aplikacija/stranice/vijesti.php';
 require __DIR__ . '/../aplikacija/stranice/lokacije.php';
 require __DIR__ . '/../aplikacija/stranice/administracija.php';
+require __DIR__ . '/../aplikacija/stranice/administracija-lokacija.php';
 
 // Popis dopuštenih stranica
 $stranice = [
@@ -40,6 +41,9 @@ $stranice = [
     'admin-korisnik' => 'stranica_admin_korisnik',
     'admin-kategorija' => 'stranica_admin_kategorija',
     'admin-kategorija-obrisi' => 'stranica_admin_kategorija_obrisi',
+    'admin-vrste-lokacija' => 'stranica_admin_vrste_lokacija',
+    'admin-vrsta-lokacije' => 'stranica_admin_vrsta_lokacije',
+    'admin-vrsta-lokacije-obrisi' => 'stranica_admin_vrsta_lokacije_obrisi',
 ];
 
 $stranica = $_GET['stranica'] ?? 'pocetna';

@@ -5,6 +5,64 @@ function vrste_lokacija_sve()
     return db_svi_retci('SELECT id, naziv FROM vrste_lokacija ORDER BY naziv');
 }
 
+// Vrste s brojem lokacija svake vrste (za administraciju)
+function vrste_lokacija_s_brojem_lokacija()
+{
+    return db_svi_retci(
+        'SELECT v.id, v.naziv, COUNT(l.id) AS broj_lokacija
+         FROM vrste_lokacija v
+         LEFT JOIN lokacije l ON l.vrsta_id = v.id
+         GROUP BY v.id, v.naziv
+         ORDER BY v.naziv'
+    );
+}
+
+// Naziv je zauzet ako ga već ima druga vrsta
+function vrsta_lokacije_naziv_zauzet($naziv, $osim_id = 0)
+{
+    $redak = db_jedan_redak('SELECT id FROM vrste_lokacija WHERE naziv = ? AND id <> ?', [$naziv, (int) $osim_id]);
+
+    return $redak !== null;
+}
+
+function vrsta_lokacije_po_id($id)
+{
+    return db_jedan_redak('SELECT id, naziv FROM vrste_lokacija WHERE id = ?', [(int) $id]);
+}
+
+function vrsta_lokacije_dodaj($naziv)
+{
+    db_izvrsi('INSERT INTO vrste_lokacija (naziv) VALUES (?)', [$naziv]);
+}
+
+function vrsta_lokacije_uredi($id, $naziv)
+{
+    db_izvrsi('UPDATE vrste_lokacija SET naziv = ? WHERE id = ?', [$naziv, (int) $id]);
+}
+
+// Broj lokacija te vrste, uključujući skrivene
+function vrsta_lokacije_broj_lokacija($id)
+{
+    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM lokacije WHERE vrsta_id = ?', [(int) $id]);
+
+    return (int) $redak['broj'];
+}
+
+// Briše vrstu. Ako je koristi neka lokacija, baza to odbija (RESTRICT) i funkcija vraća false.
+function vrsta_lokacije_obrisi($id)
+{
+    try {
+        db_izvrsi('DELETE FROM vrste_lokacija WHERE id = ?', [(int) $id]);
+    } catch (mysqli_sql_exception $greska) {
+        if ($greska->getCode() === 1451) {
+            return false;
+        }
+        throw $greska;
+    }
+
+    return true;
+}
+
 // Javno se vide samo objavljene lokacije
 // $filtar: zupanija, grad_opcina, vrsta (id-ovi, 0 = bez filtra) i trazi (tekst u nazivu ili opisu)
 // Vraća WHERE uvjet i parametre, zajedničke za popis i za brojanje lokacija.
