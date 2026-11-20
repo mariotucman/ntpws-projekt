@@ -28,6 +28,7 @@ $klase = function ($blok, $stranica) use ($aktivno) {
 
             <nav class="izbornik">
                 <a class="<?= $klase('izbornik__stavka', 'pocetna') ?>" href="index.php">Početna</a>
+                <a class="<?= $klase('izbornik__stavka', 'lokacije') ?>" href="index.php?stranica=lokacije">Lokacije</a>
                 <a class="<?= $klase('izbornik__stavka', 'vijesti') ?>" href="index.php?stranica=vijesti">Vijesti</a>
                 <?php if (ima_ulogu(['administrator', 'urednik'])): ?>
                     <a class="<?= $klase('izbornik__stavka', 'administracija') ?>" href="index.php?stranica=admin-vijesti">Administracija</a>
