@@ -1,4 +1,4 @@
-@use 'varijable' as *;
+@use "varijable" as *;
 
 .obrazac-kartica {
   display: flex;
@@ -42,6 +42,19 @@
   flex-direction: column;
   gap: $spacing-xs;
 
+  // Skupina polja s naslovom (npr. radno vrijeme)
+  @at-root fieldset#{&} {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  legend#{&}__oznaka {
+    margin-bottom: $spacing-s;
+    padding: 0;
+  }
+
   &__oznaka {
     font-size: 13px;
     font-weight: 500;
@@ -64,7 +77,7 @@
   }
 
   // Polje za odabir datoteke: gumb „Odaberi” izgleda kao sporedni gumb
-  input[type='file'].polje__unos {
+  input[type="file"].polje__unos {
     padding: 6px;
     font-size: 15px;
 

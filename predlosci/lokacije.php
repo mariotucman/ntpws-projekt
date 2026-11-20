@@ -39,10 +39,12 @@ $aktivno = 'lokacije';
         <?php foreach ($lokacije as $lokacija): ?>
             <article class="lokacija-kartica">
                 <img class="lokacija-kartica__slika" src="<?= e(adresa_slike_lokacije($lokacija['slika_id'])) ?>" alt="" loading="lazy">
-                <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
-                <h2 class="lokacija-kartica__naziv"><a href="index.php?stranica=lokacija&amp;id=<?= e($lokacija['id']) ?>"><?= e($lokacija['naziv']) ?></a></h2>
-                <p class="lokacija-kartica__podrucje"><?= e($lokacija['grad_opcina'] . ', ' . $lokacija['zupanija']) ?></p>
-                <p class="lokacija-kartica__opis"><?= e(mb_strimwidth($lokacija['opis'], 0, 160, '…')) ?></p>
+                <div class="lokacija-kartica__tijelo">
+                    <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
+                    <h2 class="lokacija-kartica__naziv"><a href="index.php?stranica=lokacija&amp;id=<?= e($lokacija['id']) ?>"><?= e($lokacija['naziv']) ?></a></h2>
+                    <p class="lokacija-kartica__podrucje"><?= e($lokacija['grad_opcina'] . ', ' . $lokacija['zupanija']) ?></p>
+                    <p class="lokacija-kartica__opis"><?= e(mb_strimwidth($lokacija['opis'], 0, 160, '…')) ?></p>
+                </div>
             </article>
         <?php endforeach; ?>
     </div>

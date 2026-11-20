@@ -1,0 +1,77 @@
+@use "sass:color";
+@use "varijable" as *;
+
+// Povećana fotografija preko cijelog ekrana (galerija lokacije)
+// Pozadina je poluprozirna tamna boja
+$pozadina-povecanja: color.change($color-text, $alpha: 0.85);
+
+.povecanje {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: $spacing-l;
+  border: 0;
+  background-color: transparent;
+  color: $color-surface;
+
+  // Gore brojač i Zatvori, u sredini fotografija, dolje strelice
+  &[open] {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: $spacing-l;
+  }
+
+  &::backdrop {
+    background-color: $pozadina-povecanja;
+  }
+
+  &__vrh,
+  &__dno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-m;
+  }
+
+  &__brojac {
+    font-weight: 500;
+  }
+
+  // Fotografija je smanjena da stane u prostor između gornjeg i donjeg reda
+  &__slika {
+    justify-self: center;
+    align-self: center;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0;
+    border-radius: $radius-image;
+    object-fit: contain;
+  }
+
+  &__gumb {
+    min-width: $touch-min;
+    min-height: $touch-min;
+    padding: 0 $spacing-l;
+    border: 1px solid $color-surface;
+    border-radius: $radius-button;
+    // Puna podloga, da se kroz gumb ne vidi stranica iza prozirne pozadine
+    background-color: $color-text;
+    color: $color-surface;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $color-primary;
+      background-color: $color-primary;
+    }
+  }
+}
+
+// Stranica iza otvorenog povećanja se ne pomiče
+body:has(.povecanje[open]) {
+  overflow: hidden;
+}

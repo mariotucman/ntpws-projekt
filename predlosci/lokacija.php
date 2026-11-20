@@ -5,13 +5,36 @@ $aktivno = 'lokacije';
 ?>
 <div class="galerija">
     <?php if (count($fotografije) === 0): ?>
-        <img class="galerija__slika" src="<?= e(adresa_slike_lokacije(null)) ?>" alt="">
+        <img class="galerija__stavka galerija__slika" src="<?= e(adresa_slike_lokacije(null)) ?>" alt="">
     <?php endif; ?>
     <?php foreach ($fotografije as $broj => $fotografija): ?>
-        <img class="galerija__slika" src="<?= e(adresa_slike_lokacije($fotografija['id'])) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>"
-            alt="<?= e($lokacija['naziv']) ?>, fotografija <?= $broj + 1 ?>"<?= $broj > 0 ? ' loading="lazy"' : '' ?>>
+        <!-- Klik otvara fotografiju u punoj veličini, a uz JavaScript u povećanju preko stranice -->
+        <a class="galerija__stavka" href="<?= e(adresa_slike_lokacije($fotografija['id'])) ?>">
+            <img class="galerija__slika" src="<?= e(adresa_slike_lokacije($fotografija['id'])) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>"
+                alt="<?= e($lokacija['naziv']) ?>, fotografija <?= $broj + 1 ?>"<?= $broj > 0 ? ' loading="lazy"' : '' ?>>
+        </a>
     <?php endforeach; ?>
 </div>
+
+<?php if (count($fotografije) > 0): ?>
+    <dialog class="povecanje">
+        <div class="povecanje__vrh">
+            <p class="povecanje__brojac"></p>
+            <button class="povecanje__gumb povecanje__gumb--zatvori" type="button">Zatvori</button>
+        </div>
+
+        <img class="povecanje__slika" src="" alt="">
+
+        <?php if (count($fotografije) > 1): ?>
+            <div class="povecanje__dno">
+                <button class="povecanje__gumb povecanje__gumb--prethodna" type="button">&larr; Prethodna</button>
+                <button class="povecanje__gumb povecanje__gumb--sljedeca" type="button">Sljedeća &rarr;</button>
+            </div>
+        <?php endif; ?>
+    </dialog>
+
+    <script src="js/galerija.js" defer></script>
+<?php endif; ?>
 
 <div class="dva-stupca">
     <article class="lokacija dva-stupca__glavni">

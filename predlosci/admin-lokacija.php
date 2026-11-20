@@ -85,20 +85,24 @@ $koordinata = function ($vrijednost) {
     <fieldset class="polje fotografije-unos">
         <legend class="polje__oznaka">Fotografije</legend>
 
-        <?php foreach ($fotografije as $broj => $fotografija): ?>
-            <div class="fotografije-unos__stavka">
-                <img class="polje__slika" src="index.php?stranica=slika&amp;id=<?= e($fotografija['id']) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>" alt="Fotografija <?= $broj + 1 ?>: <?= e($fotografija['izvorni_naziv']) ?>" loading="lazy">
-                <p class="polje__pomoc"><?= e($fotografija['izvorni_naziv']) ?></p>
+        <?php if (count($fotografije) > 0): ?>
+            <div class="fotografije-unos__popis">
+                <?php foreach ($fotografije as $broj => $fotografija): ?>
+                    <div class="fotografije-unos__stavka">
+                        <img class="fotografije-unos__slika" src="index.php?stranica=slika&amp;id=<?= e($fotografija['id']) ?>" width="<?= e($fotografija['sirina']) ?>" height="<?= e($fotografija['visina']) ?>" alt="Fotografija <?= $broj + 1 ?>: <?= e($fotografija['izvorni_naziv']) ?>" loading="lazy">
+                        <p class="polje__pomoc"><?= e($fotografija['izvorni_naziv']) ?></p>
 
-                <label class="polje__oznaka" for="redoslijed-<?= e($fotografija['id']) ?>">Redoslijed</label>
-                <input class="polje__unos" type="number" id="redoslijed-<?= e($fotografija['id']) ?>" name="redoslijed[<?= e($fotografija['id']) ?>]" value="<?= $broj + 1 ?>" min="1" max="<?= NAJVISE_FOTOGRAFIJA ?>">
+                        <label class="polje__oznaka" for="redoslijed-<?= e($fotografija['id']) ?>">Redoslijed</label>
+                        <input class="polje__unos" type="number" id="redoslijed-<?= e($fotografija['id']) ?>" name="redoslijed[<?= e($fotografija['id']) ?>]" value="<?= $broj + 1 ?>" min="1" max="<?= NAJVISE_FOTOGRAFIJA ?>">
 
-                <label class="polje__kvacica">
-                    <input type="checkbox" name="ukloni_fotografije[]" value="<?= e($fotografija['id']) ?>"<?= in_array((int) $fotografija['id'], $ukloni, true) ? ' checked' : '' ?>>
-                    Ukloni
-                </label>
+                        <label class="polje__kvacica">
+                            <input type="checkbox" name="ukloni_fotografije[]" value="<?= e($fotografija['id']) ?>"<?= in_array((int) $fotografija['id'], $ukloni, true) ? ' checked' : '' ?>>
+                            Ukloni
+                        </label>
+                    </div>
+                <?php endforeach; ?>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
 
         <label class="polje__oznaka" for="fotografije"><?= count($fotografije) > 0 ? 'Dodaj fotografije' : 'Odaberi fotografije' ?></label>
         <input class="polje__unos<?= $greska_klasa('fotografije') ?>" type="file" id="fotografije" name="fotografije[]" accept="image/jpeg,image/png,image/webp" multiple>
@@ -125,11 +129,15 @@ $koordinata = function ($vrijednost) {
             <div class="radno-vrijeme-unos__dan">
                 <span class="radno-vrijeme-unos__naziv"><?= e($naziv_dana) ?></span>
 
-                <label for="rv-<?= e($dan) ?>-od">Od</label>
-                <input class="polje__unos<?= isset($greske_radnog_vremena[$dan]) ? ' polje__unos--greska' : '' ?>" type="time" id="rv-<?= e($dan) ?>-od" name="radno_vrijeme[<?= e($dan) ?>][od]" value="<?= e($od) ?>">
+                <div class="radno-vrijeme-unos__vrijeme">
+                    <label for="rv-<?= e($dan) ?>-od">Od</label>
+                    <input class="polje__unos<?= isset($greske_radnog_vremena[$dan]) ? ' polje__unos--greska' : '' ?>" type="time" id="rv-<?= e($dan) ?>-od" name="radno_vrijeme[<?= e($dan) ?>][od]" value="<?= e($od) ?>">
+                </div>
 
-                <label for="rv-<?= e($dan) ?>-do">Do</label>
-                <input class="polje__unos<?= isset($greske_radnog_vremena[$dan]) ? ' polje__unos--greska' : '' ?>" type="time" id="rv-<?= e($dan) ?>-do" name="radno_vrijeme[<?= e($dan) ?>][do]" value="<?= e($do) ?>">
+                <div class="radno-vrijeme-unos__vrijeme">
+                    <label for="rv-<?= e($dan) ?>-do">Do</label>
+                    <input class="polje__unos<?= isset($greske_radnog_vremena[$dan]) ? ' polje__unos--greska' : '' ?>" type="time" id="rv-<?= e($dan) ?>-do" name="radno_vrijeme[<?= e($dan) ?>][do]" value="<?= e($do) ?>">
+                </div>
 
                 <label class="polje__kvacica">
                     <input type="checkbox" name="radno_vrijeme[<?= e($dan) ?>][zatvoreno]" value="1"<?= $zatvoreno ? ' checked' : '' ?>>

@@ -101,3 +101,81 @@
     color: $color-error;
   }
 }
+
+// Fotografije u obrascu lokacije: pregled, redoslijed i Ukloni za svaku
+.fotografije-unos {
+  &__popis {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: $spacing-m;
+    margin-bottom: $spacing-m;
+  }
+
+  &__stavka {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    padding: $spacing-s;
+    border: 1px solid $color-line;
+    border-radius: $radius-image;
+
+    // Dugi naziv datoteke ne smije raširiti stavku
+    .polje__pomoc {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__slika {
+    width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+}
+
+// Radno vrijeme u obrascu lokacije: dan, od, do i Zatvoreno u jednom retku
+// Na mobitelu je naziv dana iznad, a kvačica ispod vremena
+.radno-vrijeme-unos {
+  &__dan {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: $spacing-s $spacing-m;
+    padding: $spacing-s 0;
+    border-bottom: 1px solid $color-line;
+
+    @media (min-width: $breakpoint-mobile) {
+      grid-template-columns: 110px 1fr 1fr auto;
+    }
+
+    .polje__kvacica {
+      grid-column: 1 / -1;
+
+      @media (min-width: $breakpoint-mobile) {
+        grid-column: auto;
+      }
+    }
+  }
+
+  &__naziv {
+    grid-column: 1 / -1;
+    font-weight: 500;
+
+    @media (min-width: $breakpoint-mobile) {
+      grid-column: auto;
+      align-self: center;
+    }
+  }
+
+  &__vrijeme {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    label {
+      color: $color-text-muted;
+      font-size: 13px;
+    }
+  }
+}
+
