@@ -31,6 +31,7 @@ $stranice = [
     'lozinka' => 'stranica_lozinka',
     'lokacije' => 'stranica_lokacije',
     'lokacija' => 'stranica_lokacija',
+    'recenzija-obrisi' => 'stranica_recenzija_obrisi',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
     'slika' => 'stranica_slika',

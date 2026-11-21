@@ -53,6 +53,58 @@ $aktivno = 'lokacije';
         <section class="recenzije" id="recenzije">
             <h2 class="recenzije__naslov">Recenzije</h2>
 
+            <?php if ($smije_recenzirati): ?>
+                <form class="recenzija-obrazac" method="post" action="index.php?stranica=lokacija&amp;id=<?= e($lokacija['id']) ?>#recenzije" novalidate>
+                    <?= csrf_polje() ?>
+
+                    <h3 class="recenzija-obrazac__naslov"><?= $vlastita === null ? 'Ocijeni lokaciju' : 'Tvoja recenzija' ?></h3>
+
+                    <?php if ($vlastita !== null && (int) $vlastita['skriveno'] === 1): ?>
+                        <p class="poruka poruka--greska">Recenziju je sakrio urednik pa je ostali ne vide. Ti je i dalje možeš urediti ili obrisati.</p>
+                    <?php endif; ?>
+
+                    <!-- Ocjena se bira klikom na broj od 1 do 5 -->
+                    <fieldset class="polje ocjena-unos">
+                        <legend class="polje__oznaka">Ocjena</legend>
+                        <div class="ocjena-unos__izbor">
+                            <?php for ($broj = 1; $broj <= 5; $broj++): ?>
+                                <label class="ocjena-unos__pilula">
+                                    <input type="radio" name="ocjena" value="<?= $broj ?>"<?= $obrazac['ocjena'] === $broj ? ' checked' : '' ?> required>
+                                    <?= $broj ?>
+                                </label>
+                            <?php endfor; ?>
+                        </div>
+                        <?php if (isset($greske['ocjena'])): ?>
+                            <p class="polje__greska"><?= e($greske['ocjena']) ?></p>
+                        <?php endif; ?>
+                    </fieldset>
+
+                    <div class="polje">
+                        <label class="polje__oznaka" for="tekst-recenzije">Komentar (nije obavezan)</label>
+                        <textarea class="polje__unos<?= isset($greske['tekst']) ? ' polje__unos--greska' : '' ?>" id="tekst-recenzije" name="tekst" rows="4" maxlength="<?= NAJVECI_TEKST_RECENZIJE ?>"><?= e($obrazac['tekst']) ?></textarea>
+                        <?php if (isset($greske['tekst'])): ?>
+                            <p class="polje__greska"><?= e($greske['tekst']) ?></p>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="recenzija-obrazac__radnje">
+                        <button class="gumb gumb--glavni" type="submit"><?= $vlastita === null ? 'Objavi recenziju' : 'Spremi promjene' ?></button>
+                        <?php if ($vlastita !== null): ?>
+                            <!-- Gumb pripada zasebnom obrascu za brisanje (atribut form) -->
+                            <button class="gumb gumb--obrub" type="submit" form="obrisi-recenziju">Obriši recenziju</button>
+                        <?php endif; ?>
+                    </div>
+                </form>
+
+                <?php if ($vlastita !== null): ?>
+                    <form id="obrisi-recenziju" method="post" action="index.php?stranica=recenzija-obrisi&amp;lokacija=<?= e($lokacija['id']) ?>">
+                        <?= csrf_polje() ?>
+                    </form>
+                <?php endif; ?>
+            <?php elseif (!$prijavljen): ?>
+                <p class="recenzije__prijava"><a href="index.php?stranica=prijava">Prijavi se</a> da ocijeniš ovu lokaciju.</p>
+            <?php endif; ?>
+
             <?php if ($sazetak['broj'] === 0): ?>
                 <p class="poruka poruka--prazno">Još nema recenzija za ovu lokaciju.</p>
             <?php else: ?>

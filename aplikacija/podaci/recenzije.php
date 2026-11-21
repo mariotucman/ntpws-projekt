@@ -36,3 +36,27 @@ function recenzije_javne($lokacija_id, $koliko, $preskoci)
         [(int) $lokacija_id, (int) $koliko, (int) $preskoci]
     );
 }
+
+// Recenzija korisnika za lokaciju, i kad je skrivena (autor uvijek vidi svoju). Bez recenzije vraća null.
+function recenzija_korisnika($lokacija_id, $korisnik_id)
+{
+    return db_jedan_redak(
+        'SELECT id, ocjena, tekst, skriveno, kreirano, azurirano FROM recenzije WHERE lokacija_id = ? AND korisnik_id = ?',
+        [(int) $lokacija_id, (int) $korisnik_id]
+    );
+}
+
+// Dodaje recenziju ili mijenja postojeću (jedna po korisniku i lokaciji). Skrivenost se pri uređivanju ne mijenja.
+function recenzija_spremi($lokacija_id, $korisnik_id, $ocjena, $tekst)
+{
+    db_izvrsi(
+        'INSERT INTO recenzije (lokacija_id, korisnik_id, ocjena, tekst) VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE ocjena = VALUES(ocjena), tekst = VALUES(tekst)',
+        [(int) $lokacija_id, (int) $korisnik_id, (int) $ocjena, $tekst]
+    );
+}
+
+function recenzija_obrisi($lokacija_id, $korisnik_id)
+{
+    db_izvrsi('DELETE FROM recenzije WHERE lokacija_id = ? AND korisnik_id = ?', [(int) $lokacija_id, (int) $korisnik_id]);
+}
