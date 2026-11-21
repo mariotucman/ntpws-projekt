@@ -9,6 +9,7 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS recenzije;
 DROP TABLE IF EXISTS fotografije_lokacija;
 DROP TABLE IF EXISTS lokacije;
 DROP TABLE IF EXISTS vrste_lokacija;
@@ -217,4 +218,27 @@ CREATE TABLE fotografije_lokacija (
     CONSTRAINT fk_fotografije_lokacija_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_fotografije_lokacija_slika FOREIGN KEY (slika_id) REFERENCES slike (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT ck_fotografije_lokacija_redoslijed CHECK (redoslijed BETWEEN 1 AND 5)
+);
+
+-- Tablica recenzije
+-- Ocjena je obavezna (1 do 5), a tekst nije. Jedan korisnik ima najviše jednu recenziju po lokaciji.
+-- Recenzija je javna odmah, a urednik je može sakriti (skriveno = 1). Skrivene recenzije ne ulaze u prosjek.
+-- Brisanjem lokacije brišu se i njezine recenzije. Korisnik se ne briše nego deaktivira pa recenzija ostaje.
+CREATE TABLE recenzije (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    lokacija_id INT UNSIGNED NOT NULL,
+    korisnik_id INT UNSIGNED NOT NULL,
+    ocjena TINYINT UNSIGNED NOT NULL,
+    tekst VARCHAR(1000) NULL,
+    skriveno TINYINT(1) NOT NULL DEFAULT 0,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_recenzije_lokacija_korisnik (lokacija_id, korisnik_id),
+    KEY ix_recenzije_korisnik (korisnik_id),
+    KEY ix_recenzije_kreirano (kreirano),
+    CONSTRAINT fk_recenzije_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_recenzije_korisnik FOREIGN KEY (korisnik_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT ck_recenzije_ocjena CHECK (ocjena BETWEEN 1 AND 5),
+    CONSTRAINT ck_recenzije_skriveno CHECK (skriveno IN (0, 1))
 );

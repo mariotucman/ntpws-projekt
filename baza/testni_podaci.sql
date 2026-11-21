@@ -10,7 +10,13 @@ INSERT INTO korisnici (id, uloga_id, ime, email, lozinka_hash, aktivan) VALUES
 (2, 2, 'Ivan Urednik', 'urednik1@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
 (3, 2, 'Petra Urednica', 'urednik2@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
 (4, 1, 'Marko Turist', 'korisnik@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
-(5, 1, 'Lea Neaktivna', 'neaktivan@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 0);
+(5, 1, 'Lea Neaktivna', 'neaktivan@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 0),
+(6, 1, 'Luka Babić', 'korisnik2@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
+(7, 1, 'Maja Kovačević', 'korisnik3@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
+(8, 1, 'Tomislav Marić', 'korisnik4@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
+(9, 1, 'Iva Novak', 'korisnik5@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
+(10, 1, 'Josip Jurić', 'korisnik6@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1),
+(11, 1, 'Ema Vuković', 'korisnik7@mjestopis.test', '$2y$12$hhjGSyQei1smg42U8QyckuSt6EJ2nv.w.rjoqRAmaiuB.uLugREWi', 1);
 
 INSERT INTO kategorije (id, naziv) VALUES
 (1, 'Turizam'),
@@ -94,3 +100,48 @@ INSERT INTO lokacije (id, vrsta_id, grad_opcina_id, autor_id, naziv, opis, adres
 (42, 3, 532, 3, 'Stari grad Zrinskih', 'Utvrda obitelji Zrinski u parku u središtu Čakovca, danas Muzej Međimurja.', 'Trg Republike 5', 46.386940, 16.434170, '{"pon": null, "uto": ["10:00", "18:00"], "sri": ["10:00", "18:00"], "cet": ["10:00", "18:00"], "pet": ["10:00", "18:00"], "sub": ["10:00", "13:00"], "ned": null}', 1, 0),
 (43, 3, 413, 2, 'Dvorac Odescalchi', 'Dvorac na mjestu srednjovjekovne utvrde iznad Dunava, u najistočnijem hrvatskom gradu. U dvorcu je Muzej grada Iloka, a ispod njega stari podrumi vina.', 'Šetalište oca Mladena Barbarića 5', 45.222500, 19.376110, '{"pon": null, "uto": ["10:00", "18:00"], "sri": ["10:00", "18:00"], "cet": ["10:00", "18:00"], "pet": ["10:00", "18:00"], "sub": ["10:00", "18:00"], "ned": ["10:00", "18:00"]}', 1, 0),
 (44, 8, 345, 3, 'Šetnica uz Dravu', 'Šetnica i biciklistička staza uz Dravu od Tvrđe do središta Osijeka, s pješačkim mostom preko rijeke prema Copacabani.', 'Šetalište kardinala Franje Šepera', 45.562220, 18.680000, NULL, 1, 0);
+
+-- Recenzije pišu samo korisnici s ulogom Korisnik. Lea Neaktivna je deaktivirana, ali njezina recenzija ostaje.
+-- Recenzija 20 je skrivena pa se ne prikazuje javno i ne ulazi u prosjek. Ostale lokacije nemaju recenzija.
+INSERT INTO recenzije (id, lokacija_id, korisnik_id, ocjena, tekst, skriveno, kreirano, azurirano) VALUES
+(1, 6, 4, 5, 'Prekrasno, svaki put iznova. Dođite rano ujutro dok nema gužve.', 0, '2026-05-03 09:12:00', '2026-05-03 09:12:00'),
+(2, 6, 6, 5, 'Staza je dobro označena, a mostovi preko jezera su pravi doživljaj.', 0, '2026-06-18 17:40:00', '2026-06-18 17:40:00'),
+(3, 6, 7, 4, 'Predivno, ali ljeti je prevelika gužva na drvenim stazama.', 0, '2026-07-22 19:05:00', '2026-07-22 19:05:00'),
+(4, 6, 8, 5, NULL, 0, '2026-08-09 12:30:00', '2026-08-09 12:30:00'),
+(5, 6, 9, 5, 'Najljepše mjesto u Hrvatskoj. Ponesite udobne cipele.', 0, '2026-09-14 08:55:00', '2026-09-14 08:55:00'),
+(6, 6, 10, 4, 'Ulaznica je skupa, ali isplati se.', 0, '2026-10-02 14:20:00', '2026-10-02 14:20:00'),
+(7, 4, 4, 5, 'Šetnja kroz podrume i Peristil je kao putovanje kroz vrijeme.', 0, '2026-04-11 11:00:00', '2026-04-11 11:00:00'),
+(8, 4, 6, 4, 'Puno ljudi i štandova, ali vrijedi vidjeti.', 0, '2026-07-05 16:45:00', '2026-07-05 16:45:00'),
+(9, 4, 9, 5, NULL, 0, '2026-08-21 21:10:00', '2026-08-21 21:10:00'),
+(10, 4, 10, 5, 'Navečer uz glazbu na Peristilu je posebno lijepo.', 0, '2026-09-01 22:15:00', '2026-09-01 22:15:00'),
+(11, 4, 11, 3, 'Lijepo, ali skupo i pretrpano kafićima.', 0, '2026-10-12 13:30:00', '2026-10-12 13:30:00'),
+(12, 1, 5, 5, 'Pogled sa zidina na krovove i more je nezaboravan.', 0, '2026-03-28 10:20:00', '2026-03-28 10:20:00'),
+(13, 1, 7, 4, 'Obavezno idite rano jer je u podne nepodnošljivo vruće.', 0, '2026-06-30 08:10:00', '2026-06-30 08:10:00'),
+(14, 1, 8, 3, 'Ulaznica je jako skupa za ono što dobiješ.', 0, '2026-07-17 15:00:00', '2026-07-17 15:00:00'),
+(15, 1, 10, 5, NULL, 0, '2026-08-03 18:40:00', '2026-08-03 18:40:00'),
+(16, 1, 11, 4, 'Krasno, ali treba popiti puno vode.', 0, '2026-09-25 11:50:00', '2026-09-25 11:50:00'),
+(17, 3, 6, 5, 'Najljepša plaža na kojoj sam bio. More je kristalno čisto.', 0, '2026-07-08 13:00:00', '2026-07-08 13:00:00'),
+(18, 3, 8, 4, 'Lijepo, ali u kolovozu nema mjesta za ručnik.', 0, '2026-08-14 16:20:00', '2026-08-14 16:20:00'),
+(19, 3, 9, 4, NULL, 0, '2026-08-28 10:10:00', '2026-08-28 10:10:00'),
+(20, 3, 11, 1, 'Najjeftiniji apartmani u Bolu! Javite se na 091 123 4567.', 1, '2026-09-03 09:00:00', '2026-09-03 09:00:00'),
+(21, 13, 4, 5, 'Dvorac i jezero izgledaju kao iz bajke, posebno u jesen.', 0, '2026-10-05 15:30:00', '2026-10-05 15:30:00'),
+(22, 13, 7, 5, 'Staza oko jezera je idealna za obiteljski izlet.', 0, '2026-05-19 12:00:00', '2026-05-19 12:00:00'),
+(23, 13, 9, 4, 'Muzej je zanimljiv, a vodiči ljubazni.', 0, '2026-06-07 14:10:00', '2026-06-07 14:10:00'),
+(24, 13, 10, 5, NULL, 0, '2026-09-20 11:25:00', '2026-09-20 11:25:00'),
+(25, 9, 4, 5, 'Koncert u Areni ljeti je nezaboravan.', 0, '2026-07-30 23:00:00', '2026-07-30 23:00:00'),
+(26, 9, 6, 4, 'Dobro je očuvana, a u podzemlju je zanimljiva izložba.', 0, '2026-08-11 10:45:00', '2026-08-11 10:45:00'),
+(27, 9, 11, 4, NULL, 0, '2026-09-09 17:15:00', '2026-09-09 17:15:00'),
+(28, 16, 8, 5, 'Vožnja brodom među pticama je nešto posebno.', 0, '2026-05-24 09:30:00', '2026-05-24 09:30:00'),
+(29, 16, 10, 5, 'Ponesite dalekozor i sredstvo protiv komaraca.', 0, '2026-06-12 18:00:00', '2026-06-12 18:00:00'),
+(30, 16, 6, 4, NULL, 0, '2026-09-29 13:40:00', '2026-09-29 13:40:00'),
+(31, 20, 7, 5, 'Mlinice i slapovi su prekrasni, a pastrva u obližnjem restoranu odlična.', 0, '2026-06-23 13:20:00', '2026-06-23 13:20:00'),
+(32, 20, 9, 4, 'Malo, ali jako slikovito mjesto. Dovoljno je sat-dva.', 0, '2026-07-14 11:05:00', '2026-07-14 11:05:00'),
+(33, 20, 4, 5, NULL, 0, '2026-08-25 16:50:00', '2026-08-25 16:50:00'),
+(34, 8, 8, 4, 'Ugodna šetnja u hladu, a zoološki vrt je dobar za djecu.', 0, '2026-05-10 10:00:00', '2026-05-10 10:00:00'),
+(35, 8, 11, 5, 'Moje omiljeno mjesto za trčanje u Zagrebu.', 0, '2026-10-15 07:30:00', '2026-10-15 07:30:00'),
+(36, 7, 6, 5, 'Originalan muzej. Neke su priče smiješne, a neke tužne.', 0, '2026-02-14 17:00:00', '2026-02-14 17:00:00'),
+(37, 7, 10, 3, 'Zanimljivo, ali mali postav za tu cijenu.', 0, '2026-04-02 12:40:00', '2026-04-02 12:40:00'),
+(38, 37, 7, 5, 'Skradinski buk je predivan, a brod iz Skradina je odličan početak.', 0, '2026-07-03 10:30:00', '2026-07-03 10:30:00'),
+(39, 37, 11, 4, NULL, 0, '2026-08-19 15:15:00', '2026-08-19 15:15:00'),
+(40, 19, 9, 5, 'Dirljivo mjesto. Pogled s vrha na Dunav je prekrasan.', 0, '2026-11-18 12:00:00', '2026-11-18 12:00:00'),
+(41, 24, 8, 5, 'Muzej je moderan i zanimljiv i djeci i odraslima.', 0, '2026-10-25 11:00:00', '2026-10-25 11:00:00');
