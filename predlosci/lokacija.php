@@ -37,17 +37,63 @@ $aktivno = 'lokacije';
 <?php endif; ?>
 
 <div class="dva-stupca">
-    <article class="lokacija dva-stupca__glavni">
-        <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
+    <div class="dva-stupca__glavni">
+        <article class="lokacija">
+            <p><span class="oznaka oznaka--vrsta"><?= e($lokacija['vrsta']) ?></span></p>
 
-        <h2 class="lokacija__naslov">O lokaciji</h2>
+            <h2 class="lokacija__naslov">O lokaciji</h2>
 
-        <div class="lokacija__opis">
-            <?= nl2br(e($lokacija['opis'])) ?>
-        </div>
+            <div class="lokacija__opis">
+                <?= nl2br(e($lokacija['opis'])) ?>
+            </div>
 
-        <p class="lokacija__dno"><a href="index.php?stranica=lokacije">&larr; Sve lokacije</a></p>
-    </article>
+            <p class="lokacija__dno"><a href="index.php?stranica=lokacije">&larr; Sve lokacije</a></p>
+        </article>
+
+        <section class="recenzije" id="recenzije">
+            <h2 class="recenzije__naslov">Recenzije</h2>
+
+            <?php if ($sazetak['broj'] === 0): ?>
+                <p class="poruka poruka--prazno">Još nema recenzija za ovu lokaciju.</p>
+            <?php else: ?>
+                <div class="recenzije__sazetak">
+                    <div>
+                        <p class="recenzije__prosjek"><?= e(ocjena($sazetak['prosjek'])) ?></p>
+                        <p class="recenzije__broj"><?= e($sazetak['broj']) ?> recenzija</p>
+                    </div>
+
+                    <!-- Raspodjela ocjena: duljina trake je udio te ocjene u svim recenzijama -->
+                    <dl class="recenzije__raspodjela">
+                        <?php foreach ($sazetak['raspodjela'] as $broj_zvjezdica => $koliko): ?>
+                            <div class="recenzije__traka">
+                                <dt><?= $broj_zvjezdica ?></dt>
+                                <dd class="recenzije__udio" style="--udio: <?= round($koliko / $sazetak['broj'] * 100) ?>%"></dd>
+                                <dd><?= e($koliko) ?></dd>
+                            </div>
+                        <?php endforeach; ?>
+                    </dl>
+                </div>
+
+                <?php foreach ($recenzije as $recenzija): ?>
+                    <article class="recenzija">
+                        <span class="recenzija__inicijal"><?= e(inicijali($recenzija['autor'])) ?></span>
+                        <div class="recenzija__sadrzaj">
+                            <p class="recenzija__vrh">
+                                <strong class="recenzija__autor"><?= e($recenzija['autor']) ?></strong>
+                                <time class="recenzija__datum" datetime="<?= e(datum($recenzija['kreirano'], 'Y-m-d')) ?>"><?= e(datum($recenzija['kreirano'])) ?></time>
+                                <span class="recenzija__ocjena">&#9733; <?= e($recenzija['ocjena']) ?></span>
+                            </p>
+                            <?php if ($recenzija['tekst'] !== null): ?>
+                                <p class="recenzija__tekst"><?= nl2br(e($recenzija['tekst'])) ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+
+                <?php require __DIR__ . '/dijelovi/stranicenje.php'; ?>
+            <?php endif; ?>
+        </section>
+    </div>
 
     <aside class="dva-stupca__bocni">
         <section class="bocna-kartica">

@@ -1,6 +1,7 @@
 <?php
 
 const LOKACIJE_PO_STRANICI = 6;
+const RECENZIJA_PO_STRANICI = 10;
 
 // Popis lokacija s filtrom županije, grada/općine i vrste, pretragom i straničenjem
 function stranica_lokacije()
@@ -51,6 +52,7 @@ function stranica_lokacije()
 }
 
 // Detalj lokacije: ?stranica=lokacija&id=5. Skrivena ili nepostojeća lokacija daje 404.
+// Recenzije se straniče s ?str=2, po RECENZIJA_PO_STRANICI na stranici.
 function stranica_lokacija()
 {
     $lokacija = lokacija_javna_po_id(get_broj('id'));
@@ -60,9 +62,18 @@ function stranica_lokacija()
         return;
     }
 
+    $sazetak = recenzije_sazetak($lokacija['id']);
+    $broj_stranica = max(1, (int) ceil($sazetak['broj'] / RECENZIJA_PO_STRANICI));
+    $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
+
     prikazi('lokacija', [
         'lokacija' => $lokacija,
         'fotografije' => fotografije_lokacije($lokacija['id']),
         'radno_vrijeme' => radno_vrijeme_za_prikaz($lokacija['radno_vrijeme']),
+        'sazetak' => $sazetak,
+        'recenzije' => recenzije_javne($lokacija['id'], RECENZIJA_PO_STRANICI, ($trenutna_stranica - 1) * RECENZIJA_PO_STRANICI),
+        'trenutna_stranica' => $trenutna_stranica,
+        'broj_stranica' => $broj_stranica,
+        'adresa' => ['stranica' => 'lokacija', 'id' => $lokacija['id']],
     ]);
 }

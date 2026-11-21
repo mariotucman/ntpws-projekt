@@ -90,6 +90,12 @@ function adresa_slike_vijesti($slika_id)
     return $slika_id !== null ? 'index.php?stranica=slika&id=' . $slika_id : 'img/vijest-zadana.jpg';
 }
 
+// Prosječna ocjena s jednom decimalom i decimalnim zarezom, npr. 4,7
+function ocjena($broj)
+{
+    return number_format((float) $broj, 1, ',', '');
+}
+
 // Adresa fotografije lokacije. Lokacija bez fotografija dobiva zadanu sliku.
 function adresa_slike_lokacije($slika_id)
 {

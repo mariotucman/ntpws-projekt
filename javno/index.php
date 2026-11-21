@@ -11,6 +11,7 @@ require __DIR__ . '/../aplikacija/podaci/kategorije.php';
 require __DIR__ . '/../aplikacija/podaci/vijesti.php';
 require __DIR__ . '/../aplikacija/podaci/slike.php';
 require __DIR__ . '/../aplikacija/podaci/lokacije.php';
+require __DIR__ . '/../aplikacija/podaci/recenzije.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
