@@ -25,8 +25,12 @@
   align-items: flex-start;
   gap: $spacing-l;
 
+  // Glavni stupac može imati više kartica jednu ispod druge (npr. O lokaciji i Recenzije)
   &__glavni {
+    display: flex;
     flex: 999 1 560px;
+    flex-direction: column;
+    gap: $spacing-l;
     min-width: 0;
   }
 

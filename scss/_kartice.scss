@@ -139,6 +139,38 @@
     font-size: 14px;
     line-height: 1.5;
   }
+
+  // Traka na dnu kartice u boji: lijevo vrsta, desno ocjena. Uvijek je na dnu, i kad je opis kraći.
+  &__traka {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-s;
+    margin-top: auto;
+    padding: $spacing-m;
+    border-radius: $radius-image;
+    background-color: $color-accent;
+  }
+
+  &__vrsta {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &__ocjena {
+    font-size: 16px;
+    font-weight: 700;
+
+    small {
+      font-size: 12px;
+      font-weight: 400;
+    }
+  }
+
+  &__bez-ocjene {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
 }
 
 // Slika na vrhu stranice vijesti, preko cijele širine

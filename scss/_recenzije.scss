@@ -1,0 +1,203 @@
+@use 'varijable' as *;
+
+// Recenzije na stranici lokacije: sažetak ocjena, obrazac i popis u jednoj bijeloj kartici
+.recenzije {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: 28px;
+  }
+
+  &__naslov {
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  &__prijava {
+    color: $color-text-muted;
+  }
+
+  // Prosjek lijevo, trake raspodjele desno (na mobitelu jedno ispod drugog)
+  &__sazetak {
+    display: grid;
+    gap: 20px;
+
+    @media (min-width: $breakpoint-mobile) {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: $spacing-xl;
+    }
+  }
+
+  &__prosjek {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  &__broj {
+    color: $color-text-muted;
+    font-size: 14px;
+  }
+
+  &__raspodjela {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  // Jedan redak raspodjele: ocjena, traka i broj recenzija s tom ocjenom
+  &__traka {
+    display: grid;
+    grid-template-columns: 16px 1fr 36px;
+    align-items: center;
+    gap: $spacing-m;
+    font-size: 14px;
+
+    dd:last-child {
+      color: $color-text-muted;
+      text-align: right;
+    }
+  }
+
+  // Podloga trake je svijetla, a punjenje (udio ocjene) plavo
+  &__udio {
+    height: 8px;
+    border-radius: $radius-pill;
+    background-color: $color-primary-light;
+
+    &::before {
+      content: '';
+      display: block;
+      width: var(--udio);
+      height: 100%;
+      border-radius: $radius-pill;
+      background-color: $color-primary;
+    }
+  }
+}
+
+// Jedna recenzija: krug s inicijalom lijevo, ime, datum, ocjena i tekst desno
+.recenzija {
+  display: flex;
+  gap: $spacing-m;
+  padding-top: 20px;
+  border-top: 1px solid $color-line;
+
+  &__inicijal {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: $color-primary-light;
+    font-weight: 700;
+  }
+
+  &__sadrzaj {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    min-width: 0;
+  }
+
+  &__vrh {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: $spacing-xs $spacing-m;
+  }
+
+  &__autor {
+    font-size: 15px;
+  }
+
+  &__datum {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+
+  &__ocjena {
+    color: $color-primary;
+    font-weight: 700;
+  }
+
+  &__tekst {
+    overflow-wrap: anywhere;
+  }
+}
+
+// Obrazac za vlastitu recenziju, na sivoj podlozi unutar kartice
+.recenzija-obrazac {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-l;
+  padding: 22px;
+  border-radius: 18px;
+  background-color: $color-background;
+
+  &__naslov {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &__radnje {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-s;
+  }
+}
+
+// Ocjena od 1 do 5 kao okrugle pilule. Radio gumb je skriven, ali ostaje dostupan tipkovnici.
+.ocjena-unos {
+  &__izbor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-s;
+  }
+
+  &__pilula {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid $color-text-muted;
+    border-radius: 50%;
+    background-color: $color-surface;
+    font-weight: 500;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &:hover {
+      border-color: $color-primary;
+    }
+
+    // Odabrana ocjena
+    &:has(input:checked) {
+      border-color: $color-primary;
+      background-color: $color-primary;
+      color: $color-surface;
+    }
+
+    // Fokus tipkovnicom (strelice mijenjaju odabir unutar skupine)
+    &:has(input:focus-visible) {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}

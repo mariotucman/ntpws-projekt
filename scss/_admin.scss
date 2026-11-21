@@ -95,7 +95,24 @@
     }
   }
 
-  // Poveznica Obriši je crvena
+  // Gumb u tablici izgleda kao poveznica (npr. Sakrij i Prikaži kod recenzija)
+  &__gumb {
+    min-height: $touch-min;
+    padding: 0 $spacing-s;
+    border: 0;
+    background-color: transparent;
+    color: $color-primary;
+    font-family: inherit;
+    font-size: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+
+  // Poveznica Obriši (i gumb Sakrij) je crvena
   &__obrisi,
   &__obrisi:hover {
     color: $color-error;
