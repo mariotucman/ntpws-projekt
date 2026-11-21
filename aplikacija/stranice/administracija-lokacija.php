@@ -2,6 +2,10 @@
 // Administracija lokacija. Lokacije uređuju administrator i urednik, a vrste lokacija samo administrator.
 
 const ADMIN_LOKACIJA_PO_STRANICI = 20;
+const ADMIN_RECENZIJA_PO_STRANICI = 20;
+
+// Filtar moderacije recenzija: vrijednost u adresi => naziv u izborniku
+const FILTRI_RECENZIJA = ['sve' => 'Sve recenzije', 'vidljive' => 'Vidljive', 'skrivene' => 'Skrivene'];
 
 // Najveća duljina opisa lokacije u znakovima
 const NAJVECI_OPIS_LOKACIJE = 5000;
@@ -536,4 +540,57 @@ function stranica_admin_lokacija_obrisi()
         'lokacija' => $lokacija,
         'broj_fotografija' => count($fotografije),
     ]);
+}
+
+// Moderacija recenzija: popis svih recenzija (i skrivenih), najnovije prve (administrator i urednik)
+function stranica_admin_recenzije()
+{
+    zahtijevaj_ulogu(['administrator', 'urednik']);
+
+    $status = get_tekst('status');
+    if (!isset(FILTRI_RECENZIJA[$status])) {
+        $status = 'sve';
+    }
+
+    $ukupno = recenzije_admin_broj($status);
+    $broj_stranica = max(1, (int) ceil($ukupno / ADMIN_RECENZIJA_PO_STRANICI));
+    $trenutna_stranica = min(max(1, get_broj('str')), $broj_stranica);
+
+    prikazi('admin-recenzije', [
+        'recenzije' => recenzije_admin($status, ADMIN_RECENZIJA_PO_STRANICI, ($trenutna_stranica - 1) * ADMIN_RECENZIJA_PO_STRANICI),
+        'status' => $status,
+        'trenutna_stranica' => $trenutna_stranica,
+        'broj_stranica' => $broj_stranica,
+        // Poveznice straničenja zadržavaju filtar ('sve' je zadano pa se ne piše u adresu)
+        'adresa' => array_filter(['stranica' => 'admin-recenzije', 'status' => $status !== 'sve' ? $status : '']),
+    ]);
+}
+
+// Skrivanje ili ponovno prikazivanje recenzije: POST na ?stranica=admin-recenzija-skrivenost&id=5
+// Nakon promjene vraća se na istu stranicu i filtar popisa.
+function stranica_admin_recenzija_skrivenost()
+{
+    zahtijevaj_ulogu(['administrator', 'urednik']);
+
+    $recenzija = recenzija_po_id(get_broj('id'));
+
+    if ($recenzija === null) {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    $status = post_tekst('status');
+    $povratak = array_filter([
+        'stranica' => 'admin-recenzije',
+        'status' => isset(FILTRI_RECENZIJA[$status]) && $status !== 'sve' ? $status : '',
+        'str' => post_broj('str') > 1 ? post_broj('str') : '',
+    ]);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $skriveno = post_tekst('skriveno') === '1';
+        recenzija_postavi_skriveno($recenzija['id'], $skriveno);
+        postavi_poruku('uspjeh', $skriveno ? 'Recenzija je skrivena.' : 'Recenzija je ponovno vidljiva.');
+    }
+
+    preusmjeri('index.php?' . http_build_query($povratak));
 }

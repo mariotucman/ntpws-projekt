@@ -60,3 +60,50 @@ function recenzija_obrisi($lokacija_id, $korisnik_id)
 {
     db_izvrsi('DELETE FROM recenzije WHERE lokacija_id = ? AND korisnik_id = ?', [(int) $lokacija_id, (int) $korisnik_id]);
 }
+
+// WHERE uvjet za moderaciju: $status je 'sve', 'vidljive' ili 'skrivene'
+function recenzije_admin_uvjeti($status)
+{
+    return match ($status) {
+        'vidljive' => 'r.skriveno = 0',
+        'skrivene' => 'r.skriveno = 1',
+        default => '1 = 1',
+    };
+}
+
+// Broj recenzija za moderaciju (za straničenje)
+function recenzije_admin_broj($status)
+{
+    $uvjeti = recenzije_admin_uvjeti($status);
+    $redak = db_jedan_redak("SELECT COUNT(*) AS broj FROM recenzije r WHERE $uvjeti");
+
+    return (int) $redak['broj'];
+}
+
+// Jedna stranica recenzija za moderaciju s nazivom lokacije i imenom autora, najnovije prve
+function recenzije_admin($status, $koliko, $preskoci)
+{
+    $uvjeti = recenzije_admin_uvjeti($status);
+
+    return db_svi_retci(
+        "SELECT r.id, r.ocjena, r.tekst, r.skriveno, r.kreirano, r.lokacija_id,
+                l.naziv AS lokacija, l.objavljeno AS lokacija_objavljena, k.ime AS autor
+         FROM recenzije r
+         JOIN lokacije l ON l.id = r.lokacija_id
+         JOIN korisnici k ON k.id = r.korisnik_id
+         WHERE $uvjeti
+         ORDER BY r.kreirano DESC, r.id DESC
+         LIMIT ? OFFSET ?",
+        [(int) $koliko, (int) $preskoci]
+    );
+}
+
+function recenzija_po_id($id)
+{
+    return db_jedan_redak('SELECT id, lokacija_id, korisnik_id, ocjena, tekst, skriveno FROM recenzije WHERE id = ?', [(int) $id]);
+}
+
+function recenzija_postavi_skriveno($id, $skriveno)
+{
+    db_izvrsi('UPDATE recenzije SET skriveno = ? WHERE id = ?', [$skriveno ? 1 : 0, (int) $id]);
+}
