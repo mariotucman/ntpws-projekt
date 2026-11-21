@@ -123,6 +123,7 @@ function lokacije_javne_broj($filtar = [])
 
 // Jedna stranica javnih lokacija za filtar, poredanih po nazivu
 // slika_id je prva fotografija po redoslijedu (NULL ako lokacija nema fotografija)
+// prosjek i broj_recenzija računaju se samo iz recenzija koje nisu skrivene (bez recenzija: NULL i 0)
 function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
 {
     [$uvjeti, $parametri] = lokacije_javne_uvjeti($filtar);
@@ -132,11 +133,18 @@ function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
     return db_svi_retci(
         "SELECT l.id, l.naziv, l.opis, v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija,
                 (SELECT f.slika_id FROM fotografije_lokacija f WHERE f.lokacija_id = l.id
-                 ORDER BY f.redoslijed, f.slika_id LIMIT 1) AS slika_id
+                 ORDER BY f.redoslijed, f.slika_id LIMIT 1) AS slika_id,
+                r.prosjek, COALESCE(r.broj, 0) AS broj_recenzija
          FROM lokacije l
          JOIN vrste_lokacija v ON v.id = l.vrsta_id
          JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
          JOIN zupanije z ON z.id = g.zupanija_id
+         LEFT JOIN (
+             SELECT lokacija_id, AVG(ocjena) AS prosjek, COUNT(*) AS broj
+             FROM recenzije
+             WHERE skriveno = 0
+             GROUP BY lokacija_id
+         ) r ON r.lokacija_id = l.id
          WHERE $uvjeti
          ORDER BY l.naziv, l.id
          LIMIT ? OFFSET ?",
