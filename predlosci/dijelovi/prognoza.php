@@ -15,6 +15,12 @@
         <?php endif; ?>
     </div>
 
+    <?php if (prognoza_nacin() === 'greska'): ?>
+        <p class="poruka poruka--prazno"><strong>Testni način prognoze:</strong> glumi se OpenMeteo servis koji ne odgovara (PROGNOZA_NACIN = 'greska').</p>
+    <?php elseif (prognoza_nacin() === 'neispravno'): ?>
+        <p class="poruka poruka--prazno"><strong>Testni način prognoze:</strong> OpenMeteo odgovor bez očekivanih polja (PROGNOZA_NACIN = 'neispravno').</p>
+    <?php endif; ?>
+
     <?php if ($prognoza_kasnije ?? false): ?>
         <p class="poruka poruka--prazno">Prognoza će biti dostupna bliže datumu događanja.</p>
     <?php elseif ($prognoza === null || count($prognoza['dani']) === 0): ?>

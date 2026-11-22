@@ -8,6 +8,16 @@ const PROGNOZA_BROJ_DANA = 16;
 const PROGNOZA_TIMEOUT = 5;
 const PROGNOZA_TRAJANJE = 3600;
 const PROGNOZA_PONOVNI_POKUSAJ = 600;
+const PROGNOZA_NEISPRAVAN_ODGOVOR = __DIR__ . '/../../testni-podaci/openmeteo/neispravno.json';
+
+// Način rada iz konfiguracije (PROGNOZA_NACIN): 'stvarno' je pravi API, a 'greska' i 'neispravno' su testni načini
+// za demonstraciju kvara servisa (servis ne odgovara, odgovor bez očekivanih polja). Bez konstante ili s nepoznatom vrijednošću: 'stvarno'.
+function prognoza_nacin()
+{
+    $nacin = defined('PROGNOZA_NACIN') ? PROGNOZA_NACIN : 'stvarno';
+
+    return in_array($nacin, ['stvarno', 'greska', 'neispravno'], true) ? $nacin : 'stvarno';
+}
 
 // Prognoza za grad/općinu (redak s id, naziv, lat, lng).
 // Vraća ['dani' => [...], 'dohvaceno' => '2026-11-22 14:05:00', 'zastarjelo' => false] ili null.
@@ -20,7 +30,10 @@ function prognoza_grada($grad)
         [(int) $grad['id']]
     );
 
-    if ($zapis !== null && strtotime($zapis['istjece']) > time()) {
+    // U testnom načinu svježa predmemorija se zaobilazi, inače bi se kvar vidio tek kad zapis istekne
+    $testni_nacin = prognoza_nacin() !== 'stvarno';
+
+    if ($zapis !== null && strtotime($zapis['istjece']) > time() && !$testni_nacin) {
         return prognoza_iz_zapisa($zapis);
     }
 
@@ -46,13 +59,18 @@ function prognoza_grada($grad)
         return null;
     }
 
+    // Testni kvar ne odgađa sljedeći pravi poziv, pa nakon povratka na 'stvarno' prognoza odmah radi
+    if ($testni_nacin) {
+        return prognoza_iz_zapisa($zapis, true);
+    }
+
     // API ne radi: stara prognoza ostaje, a novi pokušaj tek za 10 minuta da svaka stranica ne čeka timeout.
     db_izvrsi(
         'UPDATE predmemorija_prognoze SET istjece = ? WHERE grad_opcina_id = ?',
         [date('Y-m-d H:i:s', time() + PROGNOZA_PONOVNI_POKUSAJ), (int) $grad['id']]
     );
 
-    return prognoza_iz_zapisa($zapis);
+    return prognoza_iz_zapisa($zapis, true);
 }
 
 // Prognoza grada/općine samo za dane od $od do $do (Y-m-d), npr. za lokaciju ili događanje.
@@ -73,8 +91,9 @@ function prognoza_razdoblja($grad_opcina_id, $od, $do)
     return count($prognoza['dani']) > 0 ? $prognoza : null;
 }
 
-// Prognoza iz retka predmemorije, bez prošlih dana. Zastarjela je ako je dohvaćena prije više od sat vremena.
-function prognoza_iz_zapisa($zapis)
+// Prognoza iz retka predmemorije, bez prošlih dana.
+// Zastarjela je ako je dohvaćena prije više od sat vremena ili ako dohvaćanje nove upravo nije uspjelo ($neuspjelo).
+function prognoza_iz_zapisa($zapis, $neuspjelo = false)
 {
     $dani = json_decode($zapis['podaci'], true);
 
@@ -92,7 +111,7 @@ function prognoza_iz_zapisa($zapis)
     return [
         'dani' => $dani,
         'dohvaceno' => $zapis['dohvaceno'],
-        'zastarjelo' => strtotime($zapis['dohvaceno']) + PROGNOZA_TRAJANJE < time(),
+        'zastarjelo' => $neuspjelo || strtotime($zapis['dohvaceno']) + PROGNOZA_TRAJANJE < time(),
     ];
 }
 
@@ -106,25 +125,37 @@ function prognoza_dohvati($grad)
         'timezone' => 'Europe/Zagreb',
         'forecast_days' => PROGNOZA_BROJ_DANA,
     ]);
-    $opis = 'Prognoza za ' . $grad['naziv'] . ' (id ' . $grad['id'] . ')';
+    $nacin = prognoza_nacin();
+    $opis = ($nacin !== 'stvarno' ? '[TESTNI NAČIN ' . $nacin . '] ' : '') . 'Prognoza za ' . $grad['naziv'] . ' (id ' . $grad['id'] . ')';
 
-    $zahtjev = curl_init($adresa);
-    curl_setopt_array($zahtjev, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CONNECTTIMEOUT => PROGNOZA_TIMEOUT,
-        CURLOPT_TIMEOUT => PROGNOZA_TIMEOUT,
-    ]);
-    $odgovor = curl_exec($zahtjev);
-
-    if ($odgovor === false) {
-        error_log($opis . ': zahtjev nije uspio (' . curl_error($zahtjev) . ')');
+    if ($nacin === 'greska') {
+        // Glumi se servis koji ne odgovara (kao da je istekao timeout), bez stvarnog zahtjeva
+        error_log($opis . ': zahtjev nije uspio (servis ne odgovara)');
         return null;
     }
 
-    $status = curl_getinfo($zahtjev, CURLINFO_RESPONSE_CODE);
-    if ($status !== 200) {
-        error_log($opis . ': API je vratio HTTP ' . $status);
-        return null;
+    if ($nacin === 'neispravno') {
+        // Umjesto API-ja čita se testni odgovor bez očekivanih polja, a dalje ide kroz iste provjere kao pravi odgovor
+        $odgovor = file_get_contents(PROGNOZA_NEISPRAVAN_ODGOVOR);
+    } else {
+        $zahtjev = curl_init($adresa);
+        curl_setopt_array($zahtjev, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => PROGNOZA_TIMEOUT,
+            CURLOPT_TIMEOUT => PROGNOZA_TIMEOUT,
+        ]);
+        $odgovor = curl_exec($zahtjev);
+
+        if ($odgovor === false) {
+            error_log($opis . ': zahtjev nije uspio (' . curl_error($zahtjev) . ')');
+            return null;
+        }
+
+        $status = curl_getinfo($zahtjev, CURLINFO_RESPONSE_CODE);
+        if ($status !== 200) {
+            error_log($opis . ': API je vratio HTTP ' . $status);
+            return null;
+        }
     }
 
     $podaci = json_decode($odgovor, true);
@@ -133,9 +164,9 @@ function prognoza_dohvati($grad)
         return null;
     }
 
-    $dani = prognoza_obradi($podaci);
+    $dani = prognoza_obradi($podaci, $razlog);
     if ($dani === null) {
-        error_log($opis . ': odgovor nema očekivanu strukturu');
+        error_log($opis . ': odgovor nema očekivanu strukturu (' . $razlog . ')');
         return null;
     }
 
@@ -144,20 +175,37 @@ function prognoza_dohvati($grad)
 
 // Provjera strukture odgovora i pretvaranje u popis dana.
 // Polje daily ima niz za svaku veličinu, a svi nizovi moraju biti iste duljine kao niz datuma.
-function prognoza_obradi($podaci)
+// Ako odgovor nije ispravan, vraća null, a u $razlog upisuje što ne valja (za log).
+function prognoza_obradi($podaci, &$razlog = null)
 {
     $dnevno = $podaci['daily'] ?? null;
-    $polja = ['time', 'weather_code', 'temperature_2m_max', 'temperature_2m_min', 'precipitation_probability_max', 'wind_speed_10m_max'];
 
-    if (!is_array($dnevno) || !isset($dnevno['time']) || !is_array($dnevno['time']) || count($dnevno['time']) === 0) {
+    if (!is_array($dnevno)) {
+        $razlog = 'nedostaje polje daily';
         return null;
     }
 
-    foreach ($polja as $polje) {
-        if (!isset($dnevno[$polje]) || !is_array($dnevno[$polje]) || !array_is_list($dnevno[$polje])
-            || count($dnevno[$polje]) !== count($dnevno['time'])) {
-            return null;
+    if (!isset($dnevno['time']) || !is_array($dnevno['time']) || !array_is_list($dnevno['time']) || count($dnevno['time']) === 0) {
+        $razlog = 'nedostaje niz datuma daily.time';
+        return null;
+    }
+
+    // Svi problemi s poljima navode se odjednom, npr. „nedostaje daily.temperature_2m_min; daily.weather_code ima 2 vrijednosti umjesto 3”
+    $broj_dana = count($dnevno['time']);
+    $problemi = [];
+    foreach (['weather_code', 'temperature_2m_max', 'temperature_2m_min', 'precipitation_probability_max', 'wind_speed_10m_max'] as $polje) {
+        if (!isset($dnevno[$polje])) {
+            $problemi[] = 'nedostaje daily.' . $polje;
+        } elseif (!is_array($dnevno[$polje]) || !array_is_list($dnevno[$polje])) {
+            $problemi[] = 'daily.' . $polje . ' nije niz';
+        } elseif (count($dnevno[$polje]) !== $broj_dana) {
+            $problemi[] = 'daily.' . $polje . ' ima ' . count($dnevno[$polje]) . ' vrijednosti umjesto ' . $broj_dana;
         }
+    }
+
+    if (count($problemi) > 0) {
+        $razlog = implode('; ', $problemi);
+        return null;
     }
 
     $dani = [];
@@ -169,9 +217,18 @@ function prognoza_obradi($podaci)
         $vjetar = $dnevno['wind_speed_10m_max'][$i];
 
         // Datum, vrijeme i temperature su obavezni, a oborine i vjetar za daleke dane znaju biti null.
-        if (!is_string($datum) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $datum) || !is_int($kod)
-            || !prognoza_je_broj($najvisa) || !prognoza_je_broj($najniza)
-            || ($oborine !== null && !prognoza_je_broj($oborine)) || ($vjetar !== null && !prognoza_je_broj($vjetar))) {
+        // Navodi se prva neispravna vrijednost, npr. „daily.temperature_2m_max[3] nije broj”.
+        $razlog = match (true) {
+            !is_string($datum) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $datum) => 'daily.time[' . $i . '] nije datum',
+            !is_int($kod) => 'daily.weather_code[' . $i . '] nije cijeli broj',
+            !prognoza_je_broj($najvisa) => 'daily.temperature_2m_max[' . $i . '] nije broj',
+            !prognoza_je_broj($najniza) => 'daily.temperature_2m_min[' . $i . '] nije broj',
+            $oborine !== null && !prognoza_je_broj($oborine) => 'daily.precipitation_probability_max[' . $i . '] nije broj',
+            $vjetar !== null && !prognoza_je_broj($vjetar) => 'daily.wind_speed_10m_max[' . $i . '] nije broj',
+            default => null,
+        };
+
+        if ($razlog !== null) {
             return null;
         }
 

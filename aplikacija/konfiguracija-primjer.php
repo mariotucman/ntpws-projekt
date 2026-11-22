@@ -8,3 +8,7 @@ define('BAZA_PORT', 3306);
 define('BAZA_NAZIV', 'mjestopis');
 define('BAZA_KORISNIK', 'root');
 define('BAZA_LOZINKA', '');
+
+// Prognoza (OpenMeteo): 'stvarno' je pravi API. Testni načini za demonstraciju kvara servisa:
+// 'greska' glumi servis koji ne odgovara, a 'neispravno' daje odgovor bez očekivanih polja (testni-podaci/openmeteo/neispravno.json).
+define('PROGNOZA_NACIN', 'stvarno');

@@ -44,13 +44,17 @@
 
 // Odjeljak stranice s naslovom lijevo i napomenom ili poveznicom desno (npr. prognoza)
 .odjeljak {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-m;
+
   &__vrh {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
     gap: $spacing-xs $spacing-l;
-    margin-bottom: $spacing-l;
+    margin-bottom: $spacing-xs;
   }
 
   &__naslov {
