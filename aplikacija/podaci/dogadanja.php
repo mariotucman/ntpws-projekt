@@ -201,3 +201,53 @@ function dogadanja_admin($trazi, $koliko, $preskoci)
         $parametri
     );
 }
+
+// Jedno događanje bilo kojeg statusa, za uređivanje. Nepostojeće vraća null.
+function dogadanje_po_id($id)
+{
+    return db_jedan_redak(
+        'SELECT d.id, d.vrsta_id, d.grad_opcina_id, g.zupanija_id, d.lokacija_id, d.autor_id, d.slika_id, d.naziv, d.opis,
+                d.adresa, d.pocetak, d.zavrsetak, d.cijena, d.na_otvorenom, d.objavljeno, d.istaknuto, d.kreirano, d.azurirano,
+                a.ime AS autor
+         FROM dogadanja d
+         JOIN gradovi_opcine g ON g.id = d.grad_opcina_id
+         JOIN korisnici a ON a.id = d.autor_id
+         WHERE d.id = ?',
+        [(int) $id]
+    );
+}
+
+// Dodaje događanje i vraća njegov id
+function dogadanje_dodaj($dogadanje, $autor_id)
+{
+    db_izvrsi(
+        'INSERT INTO dogadanja (vrsta_id, grad_opcina_id, lokacija_id, autor_id, slika_id, naziv, opis, adresa, pocetak, zavrsetak,
+                                cijena, na_otvorenom, objavljeno, istaknuto)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [$dogadanje['vrsta_id'], $dogadanje['grad_opcina_id'], $dogadanje['lokacija_id'], (int) $autor_id, $dogadanje['slika_id'],
+         $dogadanje['naziv'], $dogadanje['opis'], $dogadanje['adresa'], $dogadanje['pocetak'], $dogadanje['zavrsetak'],
+         $dogadanje['cijena'], $dogadanje['na_otvorenom'], $dogadanje['objavljeno'], $dogadanje['istaknuto']]
+    );
+
+    return mysqli_insert_id(db());
+}
+
+// Uređivanje ne mijenja autora
+function dogadanje_uredi($id, $dogadanje)
+{
+    db_izvrsi(
+        'UPDATE dogadanja
+         SET vrsta_id = ?, grad_opcina_id = ?, lokacija_id = ?, slika_id = ?, naziv = ?, opis = ?, adresa = ?, pocetak = ?,
+             zavrsetak = ?, cijena = ?, na_otvorenom = ?, objavljeno = ?, istaknuto = ?
+         WHERE id = ?',
+        [$dogadanje['vrsta_id'], $dogadanje['grad_opcina_id'], $dogadanje['lokacija_id'], $dogadanje['slika_id'],
+         $dogadanje['naziv'], $dogadanje['opis'], $dogadanje['adresa'], $dogadanje['pocetak'], $dogadanje['zavrsetak'],
+         $dogadanje['cijena'], $dogadanje['na_otvorenom'], $dogadanje['objavljeno'], $dogadanje['istaknuto'], (int) $id]
+    );
+}
+
+// Briše događanje. Sliku događanja briše pozivatelj.
+function dogadanje_obrisi($id)
+{
+    db_izvrsi('DELETE FROM dogadanja WHERE id = ?', [(int) $id]);
+}

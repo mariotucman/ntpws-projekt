@@ -62,6 +62,7 @@ $admin_stavka = 'dogadanja';
                             </td>
                             <td class="tablica__radnje">
                                 <a href="index.php?stranica=admin-dogadanje&amp;id=<?= e($dogadanje['id']) ?>">Uredi</a>
+                                <a class="tablica__obrisi" href="index.php?stranica=admin-dogadanje-obrisi&amp;id=<?= e($dogadanje['id']) ?>">Obriši</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -326,3 +326,20 @@ function lokacija_obrisi($id)
 {
     db_izvrsi('DELETE FROM lokacije WHERE id = ?', [(int) $id]);
 }
+
+// Sve lokacije (i skrivene) za odabir mjesta održavanja događanja, poredane po gradu/općini pa po nazivu
+function lokacije_za_odabir()
+{
+    return db_svi_retci(
+        'SELECT l.id, l.naziv, l.grad_opcina_id, g.naziv AS grad_opcina
+         FROM lokacije l
+         JOIN gradovi_opcine g ON g.id = l.grad_opcina_id
+         ORDER BY g.naziv, l.naziv'
+    );
+}
+
+// Lokacija s gradom/općinom kojem pripada (za provjeru mjesta održavanja događanja)
+function lokacija_grad_opcina($id)
+{
+    return db_jedan_redak('SELECT id, grad_opcina_id FROM lokacije WHERE id = ?', [(int) $id]);
+}
