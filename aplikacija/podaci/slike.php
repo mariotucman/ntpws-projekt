@@ -9,15 +9,17 @@ function slika_po_id($id)
     );
 }
 
-// Slika je javna ako pripada objavljenoj vijesti ili je fotografija objavljene lokacije
+// Slika je javna ako pripada objavljenoj vijesti ili objavljenom događanju, ili je fotografija objavljene lokacije
 function slika_javna($id)
 {
     $redak = db_jedan_redak(
         "SELECT 1 FROM vijesti WHERE slika_id = ? AND status = 'objavljeno' AND objavljeno_u <= NOW()
          UNION ALL
          SELECT 1 FROM fotografije_lokacija f JOIN lokacije l ON l.id = f.lokacija_id WHERE f.slika_id = ? AND l.objavljeno = 1
+         UNION ALL
+         SELECT 1 FROM dogadanja WHERE slika_id = ? AND objavljeno = 1
          LIMIT 1",
-        [(int) $id, (int) $id]
+        [(int) $id, (int) $id, (int) $id]
     );
 
     return $redak !== null;

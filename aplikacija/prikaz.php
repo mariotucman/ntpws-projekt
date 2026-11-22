@@ -84,6 +84,36 @@ function datum($vrijednost, $oblik = 'j. n. Y.')
     return date($oblik, strtotime($vrijednost));
 }
 
+// Naziv dana u tjednu za datum: puni („Srijeda”) ili kratki („SRI”)
+function naziv_dana($datum, $kratko = false)
+{
+    $puni = ['Ponedjeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota', 'Nedjelja'];
+    $kratki = ['PON', 'UTO', 'SRI', 'ČET', 'PET', 'SUB', 'NED'];
+    $broj = (int) date('N', strtotime($datum)) - 1;
+
+    return $kratko ? $kratki[$broj] : $puni[$broj];
+}
+
+// Naslov dana na popisu događanja: „Danas”, „Sutra” ili npr. „Subota, 28. 11. 2026.”
+function naslov_dana($datum)
+{
+    if ($datum === date('Y-m-d')) {
+        return 'Danas, ' . datum($datum);
+    }
+
+    if ($datum === date('Y-m-d', strtotime('+1 day'))) {
+        return 'Sutra, ' . datum($datum);
+    }
+
+    return naziv_dana($datum) . ', ' . datum($datum);
+}
+
+// Cijena u eurima, npr. „12,00 €”. Bez cijene je ulaz besplatan.
+function cijena($iznos)
+{
+    return $iznos === null ? 'besplatno' : number_format((float) $iznos, 2, ',', '.') . ' €';
+}
+
 // Adresa slike vijesti. Vijest bez svoje slike dobiva zadanu sliku.
 function adresa_slike_vijesti($slika_id)
 {

@@ -20,3 +20,11 @@
     color: $color-text-muted;
   }
 }
+
+// Unutar bijele kartice prazna poruka dobiva sivu podlogu, da se razlikuje od teksta kartice
+.dogadanje-detalj,
+.recenzije {
+  .poruka--prazno {
+    background-color: $color-background;
+  }
+}

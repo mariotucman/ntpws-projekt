@@ -12,12 +12,14 @@ require __DIR__ . '/../aplikacija/podaci/vijesti.php';
 require __DIR__ . '/../aplikacija/podaci/slike.php';
 require __DIR__ . '/../aplikacija/podaci/lokacije.php';
 require __DIR__ . '/../aplikacija/podaci/recenzije.php';
+require __DIR__ . '/../aplikacija/podaci/dogadanja.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
 require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 require __DIR__ . '/../aplikacija/stranice/vijesti.php';
 require __DIR__ . '/../aplikacija/stranice/lokacije.php';
+require __DIR__ . '/../aplikacija/stranice/dogadanja.php';
 require __DIR__ . '/../aplikacija/stranice/administracija.php';
 require __DIR__ . '/../aplikacija/stranice/administracija-lokacija.php';
 
@@ -32,6 +34,8 @@ $stranice = [
     'lokacije' => 'stranica_lokacije',
     'lokacija' => 'stranica_lokacija',
     'recenzija-obrisi' => 'stranica_recenzija_obrisi',
+    'dogadanja' => 'stranica_dogadanja',
+    'dogadanje' => 'stranica_dogadanje',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
     'slika' => 'stranica_slika',

@@ -173,8 +173,9 @@
   }
 }
 
-// Slika na vrhu stranice vijesti, preko cijele širine
-.vijest__slika {
+// Slika na vrhu stranice vijesti i događanja, preko cijele širine
+.vijest__slika,
+.dogadanje-detalj__slika {
   width: 100%;
   height: 240px;
   border-radius: $radius-block;
@@ -291,8 +292,9 @@
   }
 }
 
-// Glavni dio stranice lokacije, u bijeloj kartici
-.lokacija {
+// Glavni dio stranice lokacije i događanja, u bijeloj kartici
+.lokacija,
+.dogadanje-detalj {
   display: flex;
   flex-direction: column;
   gap: $spacing-l;
@@ -382,3 +384,101 @@
     }
   }
 }
+
+// Naslov dana na popisu događanja (npr. „Subota, 28. 11. 2026.”)
+.dan-dogadanja {
+  margin-top: $spacing-s;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+// Događanja jednog dana: kartice jedna ispod druge, a na širem ekranu u dva stupca
+.popis-dogadanja {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: $spacing-m;
+
+  @media (max-width: #{$breakpoint-mobile - 1px}) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Kartica događanja: blok datuma lijevo, vrsta, naziv i podaci desno. Cijela kartica je klikabilna.
+.dogadanje {
+  @include cijela-kartica-klikabilna(".dogadanje__naziv");
+
+  display: flex;
+  align-items: center;
+  gap: $spacing-l;
+  padding: $spacing-m;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  // Blok datuma: kratki dan i broj. Boje se izmjenjuju kroz popis (1. metvica, 2. plava, 3. tamna).
+  &__datum {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    border-radius: $radius-image;
+
+    &--1 {
+      background-color: $color-accent;
+      color: $color-text;
+    }
+
+    &--2 {
+      background-color: $color-primary;
+      color: $color-surface;
+    }
+
+    &--3 {
+      background-color: $color-text;
+      color: $color-surface;
+    }
+  }
+
+  &__dan {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &__broj {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__sredina {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__vrsta {
+    color: $color-primary;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  &__naziv {
+    font-size: 17px;
+    font-weight: 700;
+
+    a {
+      color: $color-text;
+      text-decoration: none;
+    }
+  }
+
+  &__podaci {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+}
+
