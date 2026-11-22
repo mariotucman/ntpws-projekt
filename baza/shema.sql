@@ -9,6 +9,8 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS dogadanja;
+DROP TABLE IF EXISTS vrste_dogadanja;
 DROP TABLE IF EXISTS recenzije;
 DROP TABLE IF EXISTS fotografije_lokacija;
 DROP TABLE IF EXISTS lokacije;
@@ -241,4 +243,58 @@ CREATE TABLE recenzije (
     CONSTRAINT fk_recenzije_korisnik FOREIGN KEY (korisnik_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT ck_recenzije_ocjena CHECK (ocjena BETWEEN 1 AND 5),
     CONSTRAINT ck_recenzije_skriveno CHECK (skriveno IN (0, 1))
+);
+
+-- Tablica vrste_dogadanja
+-- Vrste događanja (koncert, festival, sajam…) uređuje administrator. Vrsta se ne može obrisati dok je koristi neko događanje.
+CREATE TABLE vrste_dogadanja (
+    id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    naziv VARCHAR(60) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_vrste_dogadanja_naziv (naziv)
+);
+
+-- Tablica dogadanja
+-- Javno se prikazuju samo objavljena događanja (objavljeno = 1). Novo događanje je skriveno dok ga urednik ne objavi.
+-- Grad/općina je obavezan. lokacija_id je mjesto održavanja iz baze (nije obavezno), a adresa slobodan tekst.
+-- Brisanjem lokacije događanje ostaje, samo bez veze s lokacijom.
+-- zavrsetak NULL znači da događanje traje samo taj dan (od početka). Višednevna događanja imaju završetak.
+-- cijena je u eurima, a NULL znači da je ulaz besplatan.
+-- na_otvorenom označava događanja za koja se prikazuje prognoza.
+-- slika_id NULL znači da događanje nema svoju sliku. Brisanjem slike događanje ostaje bez nje.
+CREATE TABLE dogadanja (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    vrsta_id TINYINT UNSIGNED NOT NULL,
+    grad_opcina_id SMALLINT UNSIGNED NOT NULL,
+    lokacija_id INT UNSIGNED NULL,
+    autor_id INT UNSIGNED NOT NULL,
+    slika_id INT UNSIGNED NULL,
+    naziv VARCHAR(150) NOT NULL,
+    opis TEXT NOT NULL,
+    adresa VARCHAR(200) NULL,
+    pocetak DATETIME NOT NULL,
+    zavrsetak DATETIME NULL,
+    cijena DECIMAL(7,2) NULL,
+    na_otvorenom TINYINT(1) NOT NULL DEFAULT 0,
+    objavljeno TINYINT(1) NOT NULL DEFAULT 0,
+    istaknuto TINYINT(1) NOT NULL DEFAULT 0,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY ix_dogadanja_objavljeno (objavljeno, pocetak),
+    KEY ix_dogadanja_vrsta (vrsta_id),
+    KEY ix_dogadanja_grad_opcina (grad_opcina_id),
+    KEY ix_dogadanja_lokacija (lokacija_id),
+    KEY ix_dogadanja_autor (autor_id),
+    KEY ix_dogadanja_slika (slika_id),
+    CONSTRAINT fk_dogadanja_vrsta FOREIGN KEY (vrsta_id) REFERENCES vrste_dogadanja (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_dogadanja_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_dogadanja_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_dogadanja_autor FOREIGN KEY (autor_id) REFERENCES korisnici (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_dogadanja_slika FOREIGN KEY (slika_id) REFERENCES slike (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT ck_dogadanja_zavrsetak CHECK (zavrsetak IS NULL OR zavrsetak >= pocetak),
+    CONSTRAINT ck_dogadanja_cijena CHECK (cijena IS NULL OR cijena > 0),
+    CONSTRAINT ck_dogadanja_na_otvorenom CHECK (na_otvorenom IN (0, 1)),
+    CONSTRAINT ck_dogadanja_objavljeno CHECK (objavljeno IN (0, 1)),
+    CONSTRAINT ck_dogadanja_istaknuto CHECK (istaknuto IN (0, 1))
 );

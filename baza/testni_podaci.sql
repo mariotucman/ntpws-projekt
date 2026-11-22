@@ -145,3 +145,47 @@ INSERT INTO recenzije (id, lokacija_id, korisnik_id, ocjena, tekst, skriveno, kr
 (39, 37, 11, 4, NULL, 0, '2026-08-19 15:15:00', '2026-08-19 15:15:00'),
 (40, 19, 9, 5, 'Dirljivo mjesto. Pogled s vrha na Dunav je prekrasan.', 0, '2026-11-18 12:00:00', '2026-11-18 12:00:00'),
 (41, 24, 8, 5, 'Muzej je moderan i zanimljiv i djeci i odraslima.', 0, '2026-10-25 11:00:00', '2026-10-25 11:00:00');
+
+INSERT INTO vrste_dogadanja (id, naziv) VALUES
+(1, 'Koncert'),
+(2, 'Festival'),
+(3, 'Sajam'),
+(4, 'Izložba'),
+(5, 'Predstava'),
+(6, 'Sport'),
+(7, 'Radionica'),
+(8, 'Gastro');
+
+-- Događanja: 24 nadolazeća ili u tijeku (pet istaknutih), dva prošla i jedno skriveno. Više od pola u kontinentalnoj Hrvatskoj.
+-- grad_opcina_id: 556 Zagreb, 27 Samobor, 47 Krapina, 52 Marija Bistrica, 82 Sisak, 104 Karlovac, 105 Ogulin, 142 Varaždin,
+-- 532 Čakovec, 345 Osijek, 323 Bilje, 332 Đakovo, 433 Vukovar, 413 Ilok, 474 Split, 364 Dubrovnik, 516 Pula, 318 Zadar
+-- lokacija_id je mjesto održavanja iz tablice lokacije (npr. 15 Tvrđa, 43 Dvorac Odescalchi), a NULL znači da mjesto nije lokacija iz baze.
+-- cijena NULL znači besplatan ulaz.
+INSERT INTO dogadanja (id, vrsta_id, grad_opcina_id, lokacija_id, autor_id, naziv, opis, adresa, pocetak, zavrsetak, cijena, na_otvorenom, objavljeno, istaknuto) VALUES
+(1, 2, 556, NULL, 2, 'Advent u Zagrebu', 'Kućice s hranom i kuhanim vinom, klizalište i koncerti na trgovima i u parkovima središta grada.', 'Trg bana Josipa Jelačića', '2026-11-28 10:00:00', '2027-01-06 22:00:00', NULL, 1, 1, 1),
+(2, 1, 556, NULL, 3, 'Božićni koncert Zagrebačke filharmonije', 'Tradicionalni božićni program s klasičnim i zabavnim skladbama, uz zbor i solo pjevače.', 'Trg Stjepana Radića 4', '2026-12-18 19:30:00', NULL, 25.00, 0, 1, 0),
+(3, 4, 556, 7, 2, 'Izložba: Ljubavna pisma', 'Zimska izložba pisama i razglednica koje su posjetitelji darovali muzeju, s pričama o vezama iz cijelog svijeta.', NULL, '2026-12-01 09:00:00', '2027-02-28 21:00:00', 7.00, 0, 1, 0),
+(4, 2, 345, 15, 3, 'Advent u Tvrđi', 'Božićni sajam, koncerti i klizalište među baroknim zgradama osječke Tvrđe.', NULL, '2026-11-29 16:00:00', '2026-12-31 23:00:00', NULL, 1, 1, 1),
+(5, 3, 142, NULL, 2, 'Božićni sajam u Varaždinu', 'Sajam rukotvorina, licitara i domaćih proizvoda na glavnom gradskom trgu.', 'Trg kralja Tomislava', '2026-12-05 10:00:00', '2026-12-24 20:00:00', NULL, 1, 1, 0),
+(6, 4, 142, 14, 3, 'Izložba: Varaždinski barok', 'Namještaj, slike i odjeća iz baroknih palača Varaždina u prostorima Staroga grada.', NULL, '2027-01-15 09:00:00', '2027-03-15 17:00:00', 5.00, 0, 1, 0),
+(7, 1, 104, 22, 2, 'Božićni koncert na Dubovcu', 'Koncert gradskog zbora i puhačkog orkestra u dvorištu utvrde, uz kuhano vino i pogled na grad.', NULL, '2026-12-20 18:00:00', NULL, NULL, 1, 1, 0),
+(8, 7, 52, NULL, 3, 'Radionica izrade licitara', 'Izrada i ukrašavanje licitarskih srca uz majstore medičarskog obrta. Materijal je uključen u cijenu.', 'Trg pape Ivana Pavla II. 32', '2026-12-12 10:00:00', '2026-12-12 13:00:00', 10.00, 0, 1, 0),
+(9, 8, 413, 43, 2, 'Vincekovo u Iloku', 'Blagoslov vinograda, degustacija iločkih vina i zakuska u podrumima dvorca.', NULL, '2027-01-22 12:00:00', '2027-01-24 20:00:00', 15.00, 0, 1, 1),
+(10, 2, 27, NULL, 3, 'Samoborski fašnik', 'Povorka maski, koncerti i spaljivanje Princa Fašnika na kraju karnevala.', 'Trg kralja Tomislava', '2027-02-06 10:00:00', '2027-02-16 23:00:00', NULL, 1, 1, 1),
+(11, 6, 556, 28, 2, 'Zimski noćni trail na Medvednici', 'Utrka od 15 km šumskim stazama Medvednice uz čeone svjetiljke. Prijave do tjedan dana prije utrke.', NULL, '2027-01-30 18:00:00', NULL, 20.00, 1, 1, 0),
+(12, 1, 433, NULL, 3, 'Doček Nove godine u Vukovaru', 'Koncert na otvorenom i vatromet nad Dunavom u ponoć.', 'Trg Republike Hrvatske', '2026-12-31 21:00:00', '2027-01-01 01:00:00', NULL, 1, 1, 0),
+(13, 4, 433, 18, 2, 'Izložba: Vučedolska golubica', 'Izložba posvećena najpoznatijem nalazu vučedolske kulture, s rekonstrukcijama posuda i nakita.', NULL, '2026-12-03 10:00:00', '2027-01-31 18:00:00', 6.00, 0, 1, 0),
+(14, 7, 323, 16, 3, 'Zimsko promatranje ptica', 'Vođena šetnja s ornitologom do promatračnica uz jezero. Dalekozori su osigurani.', NULL, '2027-01-10 08:00:00', '2027-01-10 12:00:00', 8.00, 1, 1, 0),
+(15, 2, 532, 42, 2, 'Advent u Starom gradu', 'Božićne kućice, dječje radionice i koncerti u parku oko utvrde Zrinskih.', NULL, '2026-12-04 17:00:00', '2026-12-23 22:00:00', NULL, 1, 1, 0),
+(16, 5, 556, NULL, 3, 'Mala sirena', 'Glazbena predstava za djecu od četiri godine naviše prema poznatoj bajci.', 'Kaptol 9', '2026-12-13 11:00:00', NULL, 12.00, 0, 1, 0),
+(17, 5, 345, NULL, 2, 'Orašar', 'Blagdanska izvedba baleta uz orkestar osječkog kazališta.', 'Županijska 9', '2026-12-26 19:30:00', NULL, 18.00, 0, 1, 0),
+(18, 7, 47, 24, 3, 'Dan neandertalaca', 'Radionice izrade kamenog oruđa i paljenja vatre za djecu i odrasle.', NULL, '2027-02-13 10:00:00', '2027-02-13 15:00:00', NULL, 0, 1, 0),
+(19, 1, 332, 17, 2, 'Božićni koncert u katedrali', 'Koncert katedralnog zbora i orgulja uoči Božića.', NULL, '2026-12-22 19:00:00', NULL, NULL, 0, 1, 0),
+(20, 3, 82, NULL, 3, 'Zimski sajam rukotvorina', 'Sajam ručno izrađenih darova, tekstila i keramike iz Sisačko-moslavačke županije.', 'Trg bana Josipa Jelačića', '2026-12-19 09:00:00', '2026-12-20 18:00:00', NULL, 1, 1, 0),
+(21, 1, 474, 4, 2, 'Božićni koncert u podrumima palače', 'Klapsko pjevanje i božićne pjesme u podrumima Dioklecijanove palače.', NULL, '2026-12-21 20:00:00', NULL, 15.00, 0, 1, 0),
+(22, 1, 364, NULL, 3, 'Doček Nove godine na Stradunu', 'Koncert na otvorenom i odbrojavanje do ponoći na glavnoj dubrovačkoj ulici.', 'Stradun', '2026-12-31 22:00:00', '2027-01-01 01:00:00', NULL, 1, 1, 1),
+(23, 6, 318, NULL, 2, 'Zimski polumaraton', 'Utrka od 21 km uz more, s kraćom utrkom od 5 km za rekreativce.', 'Obala kralja Petra Krešimira IV.', '2027-02-21 10:00:00', NULL, 25.00, 1, 1, 0),
+(24, 4, 516, 9, 3, 'Izložba amfora u podzemlju Arene', 'Rimske amfore za vino i maslinovo ulje pronađene u podmorju Istre.', NULL, '2026-12-01 09:00:00', '2027-03-31 17:00:00', 10.00, 0, 1, 0),
+(25, 8, 413, NULL, 2, 'Martinje u Iloku', 'Krštenje mladog vina, tamburaši i jela s roštilja na glavnom trgu.', 'Trg Nikole Iločkog', '2026-11-11 12:00:00', '2026-11-11 22:00:00', NULL, 1, 1, 0),
+(26, 3, 556, NULL, 3, 'Jesenski sajam knjiga', 'Nakladnici iz cijele Hrvatske s popustima na nova izdanja i susretima s autorima.', 'Avenija Dubrovnik 15', '2026-11-10 10:00:00', '2026-11-15 20:00:00', NULL, 0, 1, 0),
+(27, 3, 105, NULL, 2, 'Proljetni sajam cvijeća', 'Sajam sadnica i cvijeća. Opis i program još se dogovaraju.', NULL, '2027-04-10 09:00:00', NULL, NULL, 1, 0, 0);
