@@ -9,6 +9,7 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS predmemorija_prognoze;
 DROP TABLE IF EXISTS dogadanja;
 DROP TABLE IF EXISTS vrste_dogadanja;
 DROP TABLE IF EXISTS recenzije;
@@ -297,4 +298,19 @@ CREATE TABLE dogadanja (
     CONSTRAINT ck_dogadanja_na_otvorenom CHECK (na_otvorenom IN (0, 1)),
     CONSTRAINT ck_dogadanja_objavljeno CHECK (objavljeno IN (0, 1)),
     CONSTRAINT ck_dogadanja_istaknuto CHECK (istaknuto IN (0, 1))
+);
+
+-- Tablica predmemorija_prognoze
+-- Zadnja uspješno dohvaćena prognoza s OpenMeteo API-ja.
+-- Jedan zapis po gradu/općini.
+-- Podaci su već obrađeni dani prognoze (JSON), a ne izvorni odgovor API-ja.
+-- Do vremena "istjece" prognoza se čita odavde bez poziva API-ja, a nakon toga se dohvaća ponovno.
+CREATE TABLE predmemorija_prognoze (
+    grad_opcina_id SMALLINT UNSIGNED NOT NULL,
+    podaci JSON NOT NULL,
+    dohvaceno DATETIME NOT NULL,
+    istjece DATETIME NOT NULL,
+    PRIMARY KEY (grad_opcina_id),
+    CONSTRAINT fk_predmemorija_prognoze_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT ck_predmemorija_prognoze_istjece CHECK (istjece > dohvaceno)
 );
