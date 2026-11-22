@@ -156,7 +156,7 @@ function lokacije_javne($filtar = [], $koliko = 10, $preskoci = 0)
 function lokacija_javna_po_id($id)
 {
     return db_jedan_redak(
-        'SELECT l.id, l.naziv, l.opis, l.adresa, l.lat, l.lng, l.radno_vrijeme,
+        'SELECT l.id, l.naziv, l.opis, l.adresa, l.lat, l.lng, l.radno_vrijeme, l.grad_opcina_id,
                 v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija
          FROM lokacije l
          JOIN vrste_lokacija v ON v.id = l.vrsta_id

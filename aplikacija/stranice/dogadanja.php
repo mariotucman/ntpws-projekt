@@ -87,11 +87,33 @@ function stranica_dogadanje()
 
     // Završilo je kad je prošao završetak, a događanje bez završetka kad je prošao dan početka
     $kraj = $dogadanje['zavrsetak'] ?? date('Y-m-d 23:59:59', strtotime($dogadanje['pocetak']));
+    $zavrsilo = strtotime($kraj) < time();
+
+    // Prognoza samo za događanja na otvorenom koja nisu završila: najviše 7 dana od danas (ili od početka), ali ne nakon kraja.
+    // Ako događanje počinje nakon zadnjeg dana prognoze, API se ne poziva.
+    $prognoza = null;
+    $prognoza_kasnije = false;
+    $prikazi_prognozu = (int) $dogadanje['na_otvorenom'] === 1 && !$zavrsilo;
+
+    if ($prikazi_prognozu) {
+        $od = max(date('Y-m-d'), substr($dogadanje['pocetak'], 0, 10));
+        $do = min(substr($kraj, 0, 10), date('Y-m-d', strtotime($od . ' +6 days')));
+        $zadnji_dan_prognoze = date('Y-m-d', strtotime('+' . (PROGNOZA_BROJ_DANA - 1) . ' days'));
+
+        if ($od > $zadnji_dan_prognoze) {
+            $prognoza_kasnije = true;
+        } else {
+            $prognoza = prognoza_razdoblja($dogadanje['grad_opcina_id'], $od, $do);
+        }
+    }
 
     prikazi('dogadanje', [
         'dogadanje' => $dogadanje,
-        'zavrsilo' => strtotime($kraj) < time(),
+        'zavrsilo' => $zavrsilo,
         'slika' => $dogadanje['slika_id'] !== null ? slika_po_id($dogadanje['slika_id']) : null,
+        'prikazi_prognozu' => $prikazi_prognozu,
+        'prognoza' => $prognoza,
+        'prognoza_kasnije' => $prognoza_kasnije,
     ]);
 }
 

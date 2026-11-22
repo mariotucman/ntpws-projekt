@@ -111,6 +111,8 @@ function stranica_lokacija()
         'lokacija' => $lokacija,
         'fotografije' => fotografije_lokacije($lokacija['id']),
         'radno_vrijeme' => radno_vrijeme_za_prikaz($lokacija['radno_vrijeme']),
+        // Prognoza za grad/općinu lokacije, idućih 7 dana
+        'prognoza' => prognoza_razdoblja($lokacija['grad_opcina_id'], date('Y-m-d'), date('Y-m-d', strtotime('+6 days'))),
         'sazetak' => $sazetak,
         'recenzije' => recenzije_javne($lokacija['id'], RECENZIJA_PO_STRANICI, ($trenutna_stranica - 1) * RECENZIJA_PO_STRANICI),
         'trenutna_stranica' => $trenutna_stranica,

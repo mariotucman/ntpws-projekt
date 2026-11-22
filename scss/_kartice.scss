@@ -385,6 +385,108 @@
   }
 }
 
+// Prognoza po danima: vodoravni niz kartica, na širokom ekranu svih 7 dana u jednom redu.
+// auto-fill zadržava prazne stupce pa jedan dan ne zauzima cijelu širinu.
+.prognoza {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: $spacing-l;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Modifikator ikone (iz ikona_vremena() u prognoza.php) → naziv Lucide ikone
+$weather-icons: (
+  "sunce": "sun",
+  "djelomicno-oblacno": "cloud-sun",
+  "oblacno": "cloudy",
+  "oblak": "cloud",
+  "magla": "cloud-fog",
+  "rosulja": "cloud-drizzle",
+  "kisa": "cloud-rain",
+  "jaka-kisa": "cloud-rain-wind",
+  "pljuskovi": "cloud-sun-rain",
+  "snijeg": "cloud-snow",
+  "snjezni-pljuskovi": "sun-snow",
+  "snjezna-zrnca": "snowflake",
+  "grmljavina": "cloud-lightning",
+  "tuca": "cloud-hail",
+);
+
+// Kartica jednog dana: dan i ikona gore, temperatura u sredini, opis dolje
+.prognoza-kartica {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  background-color: $color-surface;
+
+  &__vrh {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-s;
+  }
+
+  &__dan {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__datum {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+
+  // Ikona je Lucide SVG s CDN-a, korištena kao maska: oblik daje SVG, a boju podloga.
+  // Sunce, kiša i snijeg u plavoj, oblak u sivoj
+  &__ikona {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background-color: $color-primary;
+    mask: no-repeat center / contain;
+
+    @each $modifikator, $ikona in $weather-icons {
+      &--#{$modifikator} {
+        mask-image: url("#{$icons-url}/#{$ikona}.svg");
+      }
+    }
+
+    // Ikone samo s oblakom (bez sunca, kiše, snijega…) su sive
+    &--oblak,
+    &--oblacno,
+    &--magla {
+      background-color: $color-text-muted;
+    }
+  }
+
+  &__temperatura {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  &__najniza {
+    font-size: 16px;
+    letter-spacing: 0;
+  }
+
+  &__opis {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &__detalji {
+    margin-top: -10px;
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+}
+
 // Naslov dana na popisu događanja (npr. „Subota, 28. 11. 2026.”)
 .dan-dogadanja {
   margin-top: $spacing-s;

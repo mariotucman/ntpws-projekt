@@ -177,3 +177,5 @@ $aktivno = 'lokacije';
         <?php endif; ?>
     </aside>
 </div>
+
+<?php require __DIR__ . '/dijelovi/prognoza.php'; ?>

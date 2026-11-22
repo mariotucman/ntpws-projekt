@@ -82,7 +82,7 @@ function dogadanje_javno_po_id($id)
 {
     return db_jedan_redak(
         'SELECT d.id, d.naziv, d.opis, d.adresa, d.pocetak, d.zavrsetak, d.cijena, d.na_otvorenom, d.slika_id, d.lokacija_id,
-                v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija,
+                d.grad_opcina_id, v.naziv AS vrsta, g.naziv AS grad_opcina, z.naziv AS zupanija,
                 l.naziv AS lokacija, l.objavljeno AS lokacija_objavljena
          FROM dogadanja d
          JOIN vrste_dogadanja v ON v.id = d.vrsta_id

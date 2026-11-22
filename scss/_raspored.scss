@@ -41,3 +41,25 @@
     gap: $spacing-l;
   }
 }
+
+// Odjeljak stranice s naslovom lijevo i napomenom ili poveznicom desno (npr. prognoza)
+.odjeljak {
+  &__vrh {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: $spacing-xs $spacing-l;
+    margin-bottom: $spacing-l;
+  }
+
+  &__naslov {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__napomena {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+}

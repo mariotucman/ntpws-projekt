@@ -69,3 +69,7 @@ if ($dogadanje['zavrsetak'] !== null) {
         </section>
     </aside>
 </div>
+
+<?php if ($prikazi_prognozu): ?>
+    <?php require __DIR__ . '/dijelovi/prognoza.php'; ?>
+<?php endif; ?>
