@@ -22,6 +22,7 @@ require __DIR__ . '/../aplikacija/stranice/lokacije.php';
 require __DIR__ . '/../aplikacija/stranice/dogadanja.php';
 require __DIR__ . '/../aplikacija/stranice/administracija.php';
 require __DIR__ . '/../aplikacija/stranice/administracija-lokacija.php';
+require __DIR__ . '/../aplikacija/stranice/administracija-dogadanja.php';
 
 // Popis dopuštenih stranica
 $stranice = [
@@ -52,6 +53,10 @@ $stranice = [
     'admin-lokacija-obrisi' => 'stranica_admin_lokacija_obrisi',
     'admin-recenzije' => 'stranica_admin_recenzije',
     'admin-recenzija-skrivenost' => 'stranica_admin_recenzija_skrivenost',
+    'admin-dogadanja' => 'stranica_admin_dogadanja',
+    'admin-vrste-dogadanja' => 'stranica_admin_vrste_dogadanja',
+    'admin-vrsta-dogadanja' => 'stranica_admin_vrsta_dogadanja',
+    'admin-vrsta-dogadanja-obrisi' => 'stranica_admin_vrsta_dogadanja_obrisi',
     'admin-vrste-lokacija' => 'stranica_admin_vrste_lokacija',
     'admin-vrsta-lokacije' => 'stranica_admin_vrsta_lokacije',
     'admin-vrsta-lokacije-obrisi' => 'stranica_admin_vrsta_lokacije_obrisi',

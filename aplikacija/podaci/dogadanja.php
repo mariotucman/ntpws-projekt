@@ -94,3 +94,110 @@ function dogadanje_javno_po_id($id)
     );
 }
 
+
+// Vrste s brojem događanja svake vrste (za administraciju)
+function vrste_dogadanja_s_brojem_dogadanja()
+{
+    return db_svi_retci(
+        'SELECT v.id, v.naziv, COUNT(d.id) AS broj_dogadanja
+         FROM vrste_dogadanja v
+         LEFT JOIN dogadanja d ON d.vrsta_id = v.id
+         GROUP BY v.id, v.naziv
+         ORDER BY v.naziv'
+    );
+}
+
+// Naziv je zauzet ako ga već ima druga vrsta
+function vrsta_dogadanja_naziv_zauzet($naziv, $osim_id = 0)
+{
+    $redak = db_jedan_redak('SELECT id FROM vrste_dogadanja WHERE naziv = ? AND id <> ?', [$naziv, (int) $osim_id]);
+
+    return $redak !== null;
+}
+
+function vrsta_dogadanja_po_id($id)
+{
+    return db_jedan_redak('SELECT id, naziv FROM vrste_dogadanja WHERE id = ?', [(int) $id]);
+}
+
+function vrsta_dogadanja_dodaj($naziv)
+{
+    db_izvrsi('INSERT INTO vrste_dogadanja (naziv) VALUES (?)', [$naziv]);
+}
+
+function vrsta_dogadanja_uredi($id, $naziv)
+{
+    db_izvrsi('UPDATE vrste_dogadanja SET naziv = ? WHERE id = ?', [$naziv, (int) $id]);
+}
+
+// Broj događanja te vrste, uključujući skrivena i prošla
+function vrsta_dogadanja_broj_dogadanja($id)
+{
+    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM dogadanja WHERE vrsta_id = ?', [(int) $id]);
+
+    return (int) $redak['broj'];
+}
+
+// Briše vrstu. Ako je koristi neko događanje, baza to odbija (RESTRICT) i funkcija vraća false.
+function vrsta_dogadanja_obrisi($id)
+{
+    try {
+        db_izvrsi('DELETE FROM vrste_dogadanja WHERE id = ?', [(int) $id]);
+    } catch (mysqli_sql_exception $greska) {
+        if ($greska->getCode() === 1451) {
+            return false;
+        }
+        throw $greska;
+    }
+
+    return true;
+}
+
+// WHERE uvjet za administraciju: sva događanja (i skrivena i prošla), uz pretragu po nazivu događanja ili grada/općine
+function dogadanja_admin_uvjeti($trazi)
+{
+    if ($trazi === '') {
+        return ['1 = 1', []];
+    }
+
+    $uzorak = uzorak_pretrage($trazi);
+
+    return ["(d.naziv LIKE ? ESCAPE '|' OR g.naziv LIKE ? ESCAPE '|')", [$uzorak, $uzorak]];
+}
+
+// Broj događanja za administraciju (za straničenje)
+function dogadanja_admin_broj($trazi)
+{
+    [$uvjeti, $parametri] = dogadanja_admin_uvjeti($trazi);
+
+    $redak = db_jedan_redak(
+        "SELECT COUNT(*) AS broj
+         FROM dogadanja d
+         JOIN gradovi_opcine g ON g.id = d.grad_opcina_id
+         WHERE $uvjeti",
+        $parametri
+    );
+
+    return (int) $redak['broj'];
+}
+
+// Jedna stranica događanja za administraciju, po početku od najkasnijeg
+function dogadanja_admin($trazi, $koliko, $preskoci)
+{
+    [$uvjeti, $parametri] = dogadanja_admin_uvjeti($trazi);
+    $parametri[] = (int) $koliko;
+    $parametri[] = (int) $preskoci;
+
+    return db_svi_retci(
+        "SELECT d.id, d.naziv, d.pocetak, d.zavrsetak, d.objavljeno, d.istaknuto,
+                v.naziv AS vrsta, g.naziv AS grad_opcina, a.ime AS autor
+         FROM dogadanja d
+         JOIN vrste_dogadanja v ON v.id = d.vrsta_id
+         JOIN gradovi_opcine g ON g.id = d.grad_opcina_id
+         JOIN korisnici a ON a.id = d.autor_id
+         WHERE $uvjeti
+         ORDER BY d.pocetak DESC, d.id DESC
+         LIMIT ? OFFSET ?",
+        $parametri
+    );
+}
