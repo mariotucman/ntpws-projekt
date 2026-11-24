@@ -7,7 +7,7 @@ function vrste_dogadanja_sve()
 }
 
 // Javno se vide objavljena događanja koja još nisu završila (današnja se vide cijeli dan).
-// $filtar: zupanija, grad_opcina, vrsta (id-ovi, 0 = bez filtra), od i do (datumi 'Y-m-d', do može biti null).
+// $filtar: zupanija, grad_opcina, vrsta (id-ovi, 0 = bez filtra), od i do (datumi 'Y-m-d', do može biti null), trazi (tekst u nazivu, nije obavezno).
 // Događanje je u razdoblju ako se s njim preklapa: završava od datuma od, a počinje najkasnije na datum do.
 // Vraća WHERE uvjet i parametre, zajedničke za popis i za brojanje.
 function dogadanja_javna_uvjeti($filtar)
@@ -31,6 +31,12 @@ function dogadanja_javna_uvjeti($filtar)
     if (($filtar['vrsta'] ?? 0) > 0) {
         $uvjeti .= ' AND d.vrsta_id = ?';
         $parametri[] = (int) $filtar['vrsta'];
+    }
+
+    // Pretraga po nazivu (koristi je dodavanje u plan; javni popis događanja nema pretragu)
+    if (($filtar['trazi'] ?? '') !== '') {
+        $uvjeti .= " AND d.naziv LIKE ? ESCAPE '|'";
+        $parametri[] = uzorak_pretrage($filtar['trazi']);
     }
 
     return [$uvjeti, $parametri];

@@ -21,7 +21,7 @@ $danas = date('Y-m-d');
                             : datum($plan['datum_od'], 'j. n.') . ' – ' . datum($plan['datum_do']);
                         ?>
                         <li class="popis-planova__plan">
-                            <p class="popis-planova__naziv"><?= e($plan['naziv']) ?></p>
+                            <p class="popis-planova__naziv"><a href="index.php?stranica=plan&amp;id=<?= e($plan['id']) ?>"><?= e($plan['naziv']) ?></a></p>
                             <p class="popis-planova__podaci">
                                 <?= e($razdoblje) ?> · <?= e($dana) ?> <?= $dana === 1 ? 'dan' : 'dana' ?> · <?= e($plan['broj_stavki']) ?> <?= (int) $plan['broj_stavki'] === 1 ? 'stavka' : 'stavki' ?>
                             </p>
