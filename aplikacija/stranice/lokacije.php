@@ -1,6 +1,6 @@
 <?php
 
-const LOKACIJE_PO_STRANICI = 6;
+const LOKACIJE_PO_STRANICI = 8;
 const RECENZIJA_PO_STRANICI = 10;
 
 // Najveća duljina teksta recenzije u znakovima

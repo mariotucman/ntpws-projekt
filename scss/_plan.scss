@@ -200,11 +200,11 @@
   }
 }
 
-// Rezultati pretrage za dodavanje u plan
+// Rezultati pretrage za dodavanje u plan: mreža kartica (slika, naziv i podaci, a na dnu vrijeme i Dodaj)
 .plan-dodaj {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-m;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $spacing-l;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -216,33 +216,35 @@
 
   &__rezultat {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: $spacing-m $spacing-l;
-    padding: $spacing-l 20px;
+    flex-direction: column;
+    gap: $spacing-m;
+    padding: $spacing-s $spacing-s $spacing-l;
     border-radius: $radius-card;
     background-color: $color-surface;
+
+    // Oznaka „Već u planu” na dnu kartice, poravnata lijevo
+    > .oznaka {
+      align-self: flex-start;
+      margin: auto $spacing-s 0;
+    }
   }
 
   // Slika lokacije ili događanja (bez vlastite slike: zadana slika lokacije)
   &__slika {
-    flex-shrink: 0;
-    width: 96px;
-    height: 72px;
-    border-radius: $radius-button;
+    width: 100%;
+    height: 160px;
+    border-radius: $radius-image;
     object-fit: cover;
   }
 
-  // Naziv i podaci zauzimaju prostor između slike i obrasca
   &__opis {
-    flex: 1 1 200px;
-    min-width: 0;
+    padding: 0 $spacing-s;
   }
 
   &__naziv {
     font-size: 17px;
     font-weight: 700;
+    line-height: 1.3;
 
     a {
       color: $color-text;
@@ -260,12 +262,14 @@
     font-size: 13px;
   }
 
-  // Oznaka iznad polja, a vrijeme i gumb Dodaj u istom redu
+  // Na dnu kartice: oznaka iznad, a vrijeme i gumb Dodaj u istom redu
   &__obrazac {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: $spacing-xs $spacing-s;
+    margin-top: auto;
+    padding: 0 $spacing-s;
 
     .polje__oznaka {
       flex-basis: 100%;
@@ -273,7 +277,9 @@
     }
 
     .polje__unos {
+      flex: 1 1 120px;
       width: auto;
+      min-width: 0;
     }
   }
 }

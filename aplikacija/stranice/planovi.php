@@ -3,7 +3,7 @@
 
 const PLAN_NAJVISE_DANA = 14;
 const PLAN_NAJDULJI_NAZIV = 100;
-const PLAN_REZULTATA_PO_STRANICI = 10;
+const PLAN_REZULTATA_PO_STRANICI = 12;
 
 // Datum iz polja type="date" (Y-m-d). Prazno polje daje null, a neispravan datum false.
 function datum_iz_obrasca($tekst)
