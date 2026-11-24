@@ -395,3 +395,91 @@ function stranica_plan_dodaj()
         'trazi' => $filtar['trazi'],
     ]);
 }
+
+// Stavka plana prijavljenog korisnika iz adrese (?id=). Za tuđu ili nepostojeću stavku prikazuje 404 i vraća null.
+function stavka_iz_adrese()
+{
+    $korisnik = zahtijevaj_prijavu();
+    $stavka = stavka_korisnika(get_broj('id'), $korisnik['id']);
+
+    if ($stavka === null) {
+        stranica_nije_pronadena();
+    }
+
+    return $stavka;
+}
+
+// Dani plana na koje se stavka smije premjestiti: svi dani plana, a za događanje samo oni u kojima traje
+function dani_za_stavku($stavka)
+{
+    $dani = [];
+    for ($dan = $stavka['datum_od']; $dan <= $stavka['datum_do']; $dan = date('Y-m-d', strtotime($dan . ' +1 day'))) {
+        if ($stavka['dogadanje_id'] === null || dogadanje_traje_na_dan($stavka, $dan)) {
+            $dani[] = $dan;
+        }
+    }
+
+    return $dani;
+}
+
+// Promjena dana i vremena stavke: ?stranica=plan-stavka&id=5
+function stranica_plan_stavka()
+{
+    $stavka = stavka_iz_adrese();
+
+    if ($stavka === null) {
+        return;
+    }
+
+    $dani = dani_za_stavku($stavka);
+    $obrazac = ['dan' => $stavka['dan'], 'vrijeme' => $stavka['vrijeme'] !== null ? substr($stavka['vrijeme'], 0, 5) : ''];
+    $greske = [];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $obrazac = ['dan' => post_tekst('dan'), 'vrijeme' => trim(post_tekst('vrijeme'))];
+        $vrijeme = vrijeme_iz_obrasca($obrazac['vrijeme']);
+
+        if (!in_array($obrazac['dan'], $dani, true)) {
+            $greske['dan'] = 'Odaberi jedan od ponuđenih dana.';
+        }
+
+        if ($vrijeme === false) {
+            $greske['vrijeme'] = 'Upiši vrijeme u obliku 10:30 ili ostavi prazno.';
+        }
+
+        if (count($greske) === 0 && !stavka_uredi($stavka['id'], $obrazac['dan'], $vrijeme)) {
+            $greske['dan'] = '„' . $stavka['naziv'] . '” je taj dan već u planu.';
+        }
+
+        if (count($greske) === 0) {
+            postavi_poruku('uspjeh', 'Promjena za „' . $stavka['naziv'] . '” je spremljena.');
+            preusmjeri('index.php?stranica=plan&id=' . $stavka['plan_id'] . '#dan-' . $obrazac['dan']);
+        }
+    }
+
+    prikazi('plan-stavka', [
+        'stavka' => $stavka,
+        'dani' => $dani,
+        'obrazac' => $obrazac,
+        'greske' => $greske,
+    ]);
+}
+
+// Uklanjanje stavke iz plana (samo POST): ?stranica=plan-stavka-ukloni&id=5
+function stranica_plan_stavka_ukloni()
+{
+    $stavka = stavka_iz_adrese();
+
+    if ($stavka === null) {
+        return;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    stavka_obrisi($stavka['id']);
+    postavi_poruku('uspjeh', '„' . $stavka['naziv'] . '” je uklonjeno iz plana.');
+    preusmjeri('index.php?stranica=plan&id=' . $stavka['plan_id'] . '#dan-' . $stavka['dan']);
+}

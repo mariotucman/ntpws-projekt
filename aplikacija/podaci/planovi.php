@@ -133,3 +133,41 @@ function stavka_dodaj($plan_id, $dan, $vrijeme, $lokacija_id, $dogadanje_id)
 
     return true;
 }
+
+// Stavka iz plana zadanog korisnika, zajedno s planom i nazivom lokacije ili događanja.
+// pocetak i zavrsetak su od događanja (za lokaciju NULL). Tuđa ili nepostojeća stavka vraća null.
+function stavka_korisnika($id, $korisnik_id)
+{
+    return db_jedan_redak(
+        'SELECT s.id, s.plan_id, s.dan, s.vrijeme, s.lokacija_id, s.dogadanje_id,
+                p.naziv AS plan_naziv, p.datum_od, p.datum_do,
+                COALESCE(l.naziv, d.naziv) AS naziv, d.pocetak, d.zavrsetak
+         FROM stavke_plana s
+         JOIN planovi p ON p.id = s.plan_id
+         LEFT JOIN lokacije l ON l.id = s.lokacija_id
+         LEFT JOIN dogadanja d ON d.id = s.dogadanje_id
+         WHERE s.id = ? AND p.korisnik_id = ?',
+        [(int) $id, (int) $korisnik_id]
+    );
+}
+
+// Premješta stavku na drugi dan i/ili mijenja vrijeme.
+// Ako je ista lokacija ili događanje već na tom danu, baza to odbija (UNIQUE) i funkcija vraća false.
+function stavka_uredi($id, $dan, $vrijeme)
+{
+    try {
+        db_izvrsi('UPDATE stavke_plana SET dan = ?, vrijeme = ? WHERE id = ?', [$dan, $vrijeme, (int) $id]);
+    } catch (mysqli_sql_exception $greska) {
+        if ($greska->getCode() === 1062) {
+            return false;
+        }
+        throw $greska;
+    }
+
+    return true;
+}
+
+function stavka_obrisi($id)
+{
+    db_izvrsi('DELETE FROM stavke_plana WHERE id = ?', [(int) $id]);
+}

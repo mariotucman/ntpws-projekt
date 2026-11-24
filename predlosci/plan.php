@@ -39,6 +39,13 @@ $aktivno = 'moj-plan';
                                 <p class="plan-stavka__naziv"><a href="<?= e($adresa) ?>"><?= e($stavka['naziv']) ?></a></p>
                                 <p class="plan-stavka__podaci"><?= e(implode(' · ', $podaci)) ?></p>
                             </div>
+                            <div class="plan-stavka__akcije">
+                                <a class="plan-stavka__gumb" href="index.php?stranica=plan-stavka&amp;id=<?= e($stavka['id']) ?>">Promijeni</a>
+                                <form method="post" action="index.php?stranica=plan-stavka-ukloni&amp;id=<?= e($stavka['id']) ?>">
+                                    <?= csrf_polje() ?>
+                                    <button class="plan-stavka__gumb" type="submit">Ukloni</button>
+                                </form>
+                            </div>
                         </li>
                     <?php endforeach; ?>
                 </ul>
