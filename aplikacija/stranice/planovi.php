@@ -345,7 +345,7 @@ function stranica_plan_stavka_dodaj()
 // Dodavanje lokacije ili događanja na dan plana: ?stranica=plan-dodaj&id=1&dan=2026-11-28
 // GET: pretraga (naziv), županija -> grad/općina i izbor Lokacije/Događanja. Događanja su samo ona koja traju taj dan.
 // Pri prvom otvaranju filtar je postavljen na grad prve stavke tog dana.
-// POST: dodaje odabranu stavku (uz neobavezno vrijeme) i vraća korisnika na plan.
+// POST: dodaje odabranu stavku (uz neobavezno vrijeme), a korisnik ostaje na istoj pretrazi.
 function stranica_plan_dodaj()
 {
     $plan = plan_iz_adrese();
@@ -360,13 +360,10 @@ function stranica_plan_dodaj()
         return;
     }
 
-    $povratak = 'index.php?stranica=plan&id=' . $plan['id'] . '#dan-' . $dan;
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Uspjeh ili dvostruka stavka: natrag na plan; ostale greške: natrag na istu pretragu
-        if (dodaj_stavku_iz_obrasca($plan, $dan) !== 'neispravno') {
-            preusmjeri($povratak);
-        }
+        // Korisnik uvijek ostaje na istoj pretrazi (isti filtar i stranica rezultata) i može dodati još stavki.
+        // Poruka kaže je li dodano, a dodana stavka ima oznaku „Već u planu”.
+        dodaj_stavku_iz_obrasca($plan, $dan);
         preusmjeri('index.php?' . http_build_query($_GET));
     }
 
@@ -401,16 +398,18 @@ function stranica_plan_dodaj()
         ? lokacije_javne($filtar, PLAN_REZULTATA_PO_STRANICI, $preskoci)
         : dogadanja_javna($filtar, PLAN_REZULTATA_PO_STRANICI, $preskoci);
 
-    // Parametri adrese bez stranice, da straničenje i obrasci za dodavanje zadrže filtar
-    $adresa = array_filter([
+    // Parametri adrese bez stranice, da straničenje i obrasci za dodavanje zadrže filtar.
+    // trazi, zupanija i grad_opcina su u adresi i kad su prazni (npr. „Sve županije”), jer njihov izostanak
+    // znači prvo otvaranje, a tada bi se filtar ponovno postavio na grad prve stavke dana.
+    $adresa = [
         'stranica' => 'plan-dodaj',
         'id' => $plan['id'],
         'dan' => $dan,
         'vrsta_stavke' => $vrsta_stavke,
         'trazi' => $filtar['trazi'],
-        'zupanija' => $zupanija_id,
-        'grad_opcina' => $grad_opcina_id,
-    ]);
+        'zupanija' => $zupanija_id > 0 ? $zupanija_id : '',
+        'grad_opcina' => $grad_opcina_id > 0 ? $grad_opcina_id : '',
+    ];
 
     prikazi('plan-dodaj', [
         'plan' => $plan,
