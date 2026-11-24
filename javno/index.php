@@ -45,6 +45,7 @@ $stranice = [
     'plan-uredi' => 'stranica_plan_uredi',
     'plan-obrisi' => 'stranica_plan_obrisi',
     'plan-dodaj' => 'stranica_plan_dodaj',
+    'plan-stavka-dodaj' => 'stranica_plan_stavka_dodaj',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
     'slika' => 'stranica_slika',

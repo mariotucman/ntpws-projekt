@@ -221,6 +221,93 @@ function dogadanje_traje_na_dan($dogadanje, $dan)
     return $prvi <= $dan && $dan <= $zadnji;
 }
 
+// Dodaje u plan lokaciju ili događanje iz poslanog obrasca (vrsta_stavke: lokacija ili dogadanje, stavka: id, vrijeme)
+// i postavlja poruku za korisnika. Plan je već provjeren (vlastiti), a dan je unutar njegova razdoblja.
+// Vraća 'dodano', 'vec-u-planu' ili 'neispravno'.
+function dodaj_stavku_iz_obrasca($plan, $dan)
+{
+    $vrsta = post_tekst('vrsta_stavke');
+    $vrijeme = vrijeme_iz_obrasca(post_tekst('vrijeme'));
+    $lokacija = $vrsta === 'lokacija' ? lokacija_javna_po_id(post_broj('stavka')) : null;
+    $dogadanje = $vrsta === 'dogadanje' ? dogadanje_javno_po_id(post_broj('stavka')) : null;
+
+    if ($lokacija === null && $dogadanje === null) {
+        postavi_poruku('greska', 'Odabrana lokacija ili događanje ne postoji.');
+        return 'neispravno';
+    }
+
+    if ($dogadanje !== null && !dogadanje_traje_na_dan($dogadanje, $dan)) {
+        postavi_poruku('greska', 'Događanje „' . $dogadanje['naziv'] . '” ne traje taj dan.');
+        return 'neispravno';
+    }
+
+    if ($vrijeme === false) {
+        postavi_poruku('greska', 'Vrijeme nije ispravno. Upiši ga u obliku 10:30 ili ostavi prazno.');
+        return 'neispravno';
+    }
+
+    $naziv = $lokacija['naziv'] ?? $dogadanje['naziv'];
+
+    if (!stavka_dodaj($plan['id'], $dan, $vrijeme, $lokacija['id'] ?? null, $dogadanje['id'] ?? null)) {
+        postavi_poruku('greska', '„' . $naziv . '” je već u planu „' . $plan['naziv'] . '” taj dan.');
+        return 'vec-u-planu';
+    }
+
+    postavi_poruku('uspjeh', '„' . $naziv . '” je dodano u plan „' . $plan['naziv'] . '” (' . naziv_dana($dan) . ', ' . datum($dan, 'j. n.') . ').');
+    return 'dodano';
+}
+
+// Dani budućih planova korisnika na koje se može dodati stavka (za obrazac na detalju lokacije i događanja).
+// Prošli dani se ne nude, a za događanje samo dani u kojima ono traje.
+// Vraća [['plan' => plan, 'dani' => ['2026-11-28', ...]], ...], bez planova u kojima nema nijednog takvog dana.
+function dani_za_dodavanje($korisnik_id, $dogadanje = null)
+{
+    $danas = date('Y-m-d');
+    $rezultat = [];
+
+    foreach (planovi_korisnika($korisnik_id) as $plan) {
+        $dani = [];
+        for ($dan = max($plan['datum_od'], $danas); $dan <= $plan['datum_do']; $dan = date('Y-m-d', strtotime($dan . ' +1 day'))) {
+            if ($dogadanje === null || dogadanje_traje_na_dan($dogadanje, $dan)) {
+                $dani[] = $dan;
+            }
+        }
+
+        if (count($dani) > 0) {
+            $rezultat[] = ['plan' => $plan, 'dani' => $dani];
+        }
+    }
+
+    return $rezultat;
+}
+
+// Dodavanje u plan s detalja lokacije ili događanja (samo POST): ?stranica=plan-stavka-dodaj
+// Polje plan_dan je „id plana|datum”, npr. „1|2026-11-28”. Korisnik se uvijek vraća na detalj s porukom.
+function stranica_plan_stavka_dodaj()
+{
+    $korisnik = zahtijevaj_prijavu();
+
+    $vrsta = post_tekst('vrsta_stavke');
+    $povratak = 'index.php?stranica=' . ($vrsta === 'dogadanje' ? 'dogadanje' : 'lokacija') . '&id=' . post_broj('stavka');
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        stranica_nije_pronadena();
+        return;
+    }
+
+    [$plan_id, $dan] = array_pad(explode('|', post_tekst('plan_dan'), 2), 2, '');
+    $plan = plan_korisnika((int) $plan_id, $korisnik['id']);
+    $dan = datum_iz_obrasca($dan);
+
+    if ($plan === null || !is_string($dan) || $dan < $plan['datum_od'] || $dan > $plan['datum_do']) {
+        postavi_poruku('greska', 'Odaberi plan i dan.');
+    } else {
+        dodaj_stavku_iz_obrasca($plan, $dan);
+    }
+
+    preusmjeri($povratak . '#moj-plan');
+}
+
 // Dodavanje lokacije ili događanja na dan plana: ?stranica=plan-dodaj&id=1&dan=2026-11-28
 // GET: pretraga (naziv), županija -> grad/općina i izbor Lokacije/Događanja. Događanja su samo ona koja traju taj dan.
 // Pri prvom otvaranju filtar je postavljen na grad prve stavke tog dana.
@@ -242,30 +329,10 @@ function stranica_plan_dodaj()
     $povratak = 'index.php?stranica=plan&id=' . $plan['id'] . '#dan-' . $dan;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $vrsta = post_tekst('vrsta_stavke');
-        $vrijeme = vrijeme_iz_obrasca(post_tekst('vrijeme'));
-        $lokacija = $vrsta === 'lokacija' ? lokacija_javna_po_id(post_broj('stavka')) : null;
-        $dogadanje = $vrsta === 'dogadanje' ? dogadanje_javno_po_id(post_broj('stavka')) : null;
-
-        if ($lokacija === null && $dogadanje === null) {
-            postavi_poruku('greska', 'Odabrana lokacija ili događanje ne postoji.');
-        } elseif ($dogadanje !== null && !dogadanje_traje_na_dan($dogadanje, $dan)) {
-            postavi_poruku('greska', 'Događanje „' . $dogadanje['naziv'] . '” ne traje taj dan.');
-        } elseif ($vrijeme === false) {
-            postavi_poruku('greska', 'Vrijeme nije ispravno. Upiši ga u obliku 10:30 ili ostavi prazno.');
-        } else {
-            $naziv = $lokacija['naziv'] ?? $dogadanje['naziv'];
-            $dodano = stavka_dodaj($plan['id'], $dan, $vrijeme, $lokacija['id'] ?? null, $dogadanje['id'] ?? null);
-
-            if ($dodano) {
-                postavi_poruku('uspjeh', '„' . $naziv . '” je dodano u plan.');
-            } else {
-                postavi_poruku('greska', '„' . $naziv . '” je već u planu taj dan.');
-            }
+        // Uspjeh ili dvostruka stavka: natrag na plan; ostale greške: natrag na istu pretragu
+        if (dodaj_stavku_iz_obrasca($plan, $dan) !== 'neispravno') {
             preusmjeri($povratak);
         }
-
-        // Greška: natrag na istu pretragu
         preusmjeri('index.php?' . http_build_query($_GET));
     }
 

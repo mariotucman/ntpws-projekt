@@ -111,6 +111,7 @@ function stranica_lokacija()
         'lokacija' => $lokacija,
         'fotografije' => fotografije_lokacije($lokacija['id']),
         'radno_vrijeme' => radno_vrijeme_za_prikaz($lokacija['radno_vrijeme']),
+        'planovi_za_dodavanje' => trenutni_korisnik() !== null ? dani_za_dodavanje(trenutni_korisnik()['id']) : null,
         // Prognoza za grad/općinu lokacije, idućih 7 dana
         'prognoza' => prognoza_razdoblja($lokacija['grad_opcina_id'], date('Y-m-d'), date('Y-m-d', strtotime('+6 days'))),
         'sazetak' => $sazetak,

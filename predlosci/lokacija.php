@@ -148,6 +148,13 @@ $aktivno = 'lokacije';
     </div>
 
     <aside class="dva-stupca__bocni">
+        <?php
+        $vrsta_stavke = 'lokacija';
+        $stavka_id = $lokacija['id'];
+        $zadano_vrijeme = '';
+        require __DIR__ . '/dijelovi/dodaj-u-plan.php';
+        ?>
+
         <section class="bocna-kartica">
             <h2 class="bocna-kartica__naslov">Radno vrijeme</h2>
 

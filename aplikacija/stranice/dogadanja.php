@@ -114,6 +114,7 @@ function stranica_dogadanje()
         'prikazi_prognozu' => $prikazi_prognozu,
         'prognoza' => $prognoza,
         'prognoza_kasnije' => $prognoza_kasnije,
+        'planovi_za_dodavanje' => trenutni_korisnik() !== null ? dani_za_dodavanje(trenutni_korisnik()['id'], $dogadanje) : null,
     ]);
 }
 

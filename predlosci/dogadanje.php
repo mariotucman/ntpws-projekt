@@ -37,6 +37,15 @@ if ($dogadanje['zavrsetak'] !== null) {
     </div>
 
     <aside class="dva-stupca__bocni">
+        <?php if (!$zavrsilo): ?>
+            <?php
+            $vrsta_stavke = 'dogadanje';
+            $stavka_id = $dogadanje['id'];
+            $zadano_vrijeme = datum($dogadanje['pocetak'], 'H:i');
+            require __DIR__ . '/dijelovi/dodaj-u-plan.php';
+            ?>
+        <?php endif; ?>
+
         <section class="bocna-kartica">
             <h2 class="bocna-kartica__naslov">Kada</h2>
             <p class="bocna-kartica__istaknuto"><?= e($pocetak) ?></p>
