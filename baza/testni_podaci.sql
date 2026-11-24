@@ -189,3 +189,26 @@ INSERT INTO dogadanja (id, vrsta_id, grad_opcina_id, lokacija_id, autor_id, nazi
 (25, 8, 413, NULL, 2, 'Martinje u Iloku', 'Krštenje mladog vina, tamburaši i jela s roštilja na glavnom trgu.', 'Trg Nikole Iločkog', '2026-11-11 12:00:00', '2026-11-11 22:00:00', NULL, 1, 1, 0),
 (26, 3, 556, NULL, 3, 'Jesenski sajam knjiga', 'Nakladnici iz cijele Hrvatske s popustima na nova izdanja i susretima s autorima.', 'Avenija Dubrovnik 15', '2026-11-10 10:00:00', '2026-11-15 20:00:00', NULL, 0, 1, 0),
 (27, 3, 105, NULL, 2, 'Proljetni sajam cvijeća', 'Sajam sadnica i cvijeća. Opis i program još se dogovaraju.', NULL, '2027-04-10 09:00:00', NULL, NULL, 1, 0, 0);
+
+-- Planovi putovanja: dva plana Marka Turista i jedan plan Luke Babića (za provjeru da korisnik ne vidi tuđi plan).
+-- Zadnji dan prvog plana je namjerno prazan.
+INSERT INTO planovi (id, korisnik_id, naziv, datum_od, datum_do) VALUES
+(1, 4, 'Advent u Zagrebu', '2026-11-28', '2026-11-30'),
+(2, 4, 'Božić u sjevernoj Hrvatskoj', '2026-12-19', '2026-12-21'),
+(3, 6, 'Fašnik u Samoboru', '2027-02-13', '2027-02-14');
+
+-- Stavka ima lokaciju ili događanje. Događanja su na dan kad traju. vrijeme NULL znači bez točnog vremena.
+INSERT INTO stavke_plana (id, plan_id, dan, vrijeme, lokacija_id, dogadanje_id) VALUES
+(1, 1, '2026-11-28', '10:00', NULL, 1),
+(2, 1, '2026-11-28', '12:30', 27, NULL),
+(3, 1, '2026-11-28', NULL, 7, NULL),
+(4, 1, '2026-11-29', '10:00', 8, NULL),
+(5, 1, '2026-11-29', NULL, 28, NULL),
+(6, 2, '2026-12-19', '11:00', NULL, 5),
+(7, 2, '2026-12-19', '14:00', 14, NULL),
+(8, 2, '2026-12-20', '15:00', 42, NULL),
+(9, 2, '2026-12-20', '17:00', NULL, 15),
+(10, 2, '2026-12-21', '11:00', 22, NULL),
+(11, 2, '2026-12-21', '13:30', 23, NULL),
+(12, 3, '2027-02-13', '09:00', 30, NULL),
+(13, 3, '2027-02-14', '11:00', NULL, 10);

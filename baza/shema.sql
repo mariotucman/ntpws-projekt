@@ -9,6 +9,8 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS stavke_plana;
+DROP TABLE IF EXISTS planovi;
 DROP TABLE IF EXISTS predmemorija_prognoze;
 DROP TABLE IF EXISTS dogadanja;
 DROP TABLE IF EXISTS vrste_dogadanja;
@@ -313,4 +315,46 @@ CREATE TABLE predmemorija_prognoze (
     PRIMARY KEY (grad_opcina_id),
     CONSTRAINT fk_predmemorija_prognoze_grad_opcina FOREIGN KEY (grad_opcina_id) REFERENCES gradovi_opcine (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT ck_predmemorija_prognoze_istjece CHECK (istjece > dohvaceno)
+);
+
+-- Tablica planovi
+-- Plan putovanja („Moj plan”) jednog korisnika: naziv i razdoblje od datum_od do datum_do, najviše 14 dana.
+-- Plan vidi i mijenja samo njegov vlasnik. Korisnik se ne briše nego deaktivira, a ako se ipak obriše, brišu se i njegovi planovi.
+CREATE TABLE planovi (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    korisnik_id INT UNSIGNED NOT NULL,
+    naziv VARCHAR(100) NOT NULL,
+    datum_od DATE NOT NULL,
+    datum_do DATE NOT NULL,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    azurirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY ix_planovi_korisnik (korisnik_id, datum_od),
+    CONSTRAINT fk_planovi_korisnik FOREIGN KEY (korisnik_id) REFERENCES korisnici (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT ck_planovi_razdoblje CHECK (datum_do >= datum_od AND DATEDIFF(datum_do, datum_od) <= 13)
+);
+
+-- Tablica stavke_plana
+-- Stavka je jedna lokacija ili jedno događanje na određeni dan plana (točno jedno od lokacija_id i dogadanje_id).
+-- Da je dan unutar razdoblja plana i da događanje tog dana traje, provjerava aplikacija.
+-- vrijeme nije obavezno; stavke dana slažu se po vremenu, a one bez vremena idu na kraj.
+-- Ista lokacija ili isto događanje može biti u planu samo jednom na isti dan.
+-- Brisanjem plana, lokacije ili događanja brišu se i njihove stavke.
+CREATE TABLE stavke_plana (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    plan_id INT UNSIGNED NOT NULL,
+    dan DATE NOT NULL,
+    vrijeme TIME NULL,
+    lokacija_id INT UNSIGNED NULL,
+    dogadanje_id INT UNSIGNED NULL,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_stavke_plana_lokacija (plan_id, dan, lokacija_id),
+    UNIQUE KEY uq_stavke_plana_dogadanje (plan_id, dan, dogadanje_id),
+    KEY ix_stavke_plana_lokacija (lokacija_id),
+    KEY ix_stavke_plana_dogadanje (dogadanje_id),
+    CONSTRAINT fk_stavke_plana_plan FOREIGN KEY (plan_id) REFERENCES planovi (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_stavke_plana_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_stavke_plana_dogadanje FOREIGN KEY (dogadanje_id) REFERENCES dogadanja (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT ck_stavke_plana_jedna_stavka CHECK ((lokacija_id IS NULL) <> (dogadanje_id IS NULL))
 );
