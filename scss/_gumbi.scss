@@ -23,6 +23,17 @@
     }
   }
 
+  // Istaknuta radnja na metvici, npr. Dodaj u moj plan (tekst uvijek $color-text)
+  &--naglasak {
+    background-color: $color-accent;
+    color: $color-text;
+
+    &:hover {
+      color: $color-text;
+      filter: brightness(0.95);
+    }
+  }
+
   // Sporedna radnja, npr. Poništi filtar
   &--obrub {
     border: 1px solid $color-primary;

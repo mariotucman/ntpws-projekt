@@ -52,7 +52,7 @@ $aktivno = 'moj-plan';
                                 <a class="plan-stavka__gumb" href="index.php?stranica=plan-stavka&amp;id=<?= e($stavka['id']) ?>">Promijeni</a>
                                 <form method="post" action="index.php?stranica=plan-stavka-ukloni&amp;id=<?= e($stavka['id']) ?>">
                                     <?= csrf_polje() ?>
-                                    <button class="plan-stavka__gumb" type="submit">Ukloni</button>
+                                    <button class="plan-stavka__gumb plan-stavka__gumb--ukloni" type="submit">Ukloni</button>
                                 </form>
                             </div>
                         </li>

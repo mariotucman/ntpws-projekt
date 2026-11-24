@@ -150,6 +150,8 @@
     padding: $spacing-m;
     border-radius: $radius-image;
     background-color: $color-accent;
+    // Ista visina retka za ocjenu (16px) i „Bez recenzija” (13px), pa su sve trake jednako visoke
+    line-height: 24px;
   }
 
   &__vrsta {
@@ -414,6 +416,30 @@ $weather-icons: (
   "tuca": "cloud-hail",
 );
 
+// Ikona vremena (kartice prognoze, dani u planu): Lucide SVG s CDN-a korišten kao maska,
+// oblik daje SVG, a boju podloga. Zadana veličina je 20px. Sunce, kiša i snijeg u plavoj, oblak u sivoj.
+.ikona-vremena {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background-color: $color-primary;
+  mask: no-repeat center / contain;
+
+  @each $modifikator, $ikona in $weather-icons {
+    &--#{$modifikator} {
+      mask-image: url("#{$icons-url}/#{$ikona}.svg");
+    }
+  }
+
+  // Ikone samo s oblakom (bez sunca, kiše, snijega…) su sive
+  &--oblak,
+  &--oblacno,
+  &--magla {
+    background-color: $color-text-muted;
+  }
+}
+
 // Kartica jednog dana: dan i ikona gore, temperatura u sredini, opis dolje
 .prognoza-kartica {
   display: flex;
@@ -440,27 +466,10 @@ $weather-icons: (
     font-size: 13px;
   }
 
-  // Ikona je Lucide SVG s CDN-a, korištena kao maska: oblik daje SVG, a boju podloga.
-  // Sunce, kiša i snijeg u plavoj, oblak u sivoj
+  // Veća ikona vremena (32px) na kartici; sama ikona je .ikona-vremena
   &__ikona {
-    flex-shrink: 0;
     width: 32px;
     height: 32px;
-    background-color: $color-primary;
-    mask: no-repeat center / contain;
-
-    @each $modifikator, $ikona in $weather-icons {
-      &--#{$modifikator} {
-        mask-image: url("#{$icons-url}/#{$ikona}.svg");
-      }
-    }
-
-    // Ikone samo s oblakom (bez sunca, kiše, snijega…) su sive
-    &--oblak,
-    &--oblacno,
-    &--magla {
-      background-color: $color-text-muted;
-    }
   }
 
   &__temperatura {

@@ -68,7 +68,7 @@ function dogadanja_javna($filtar, $koliko, $preskoci)
     $parametri[] = (int) $preskoci;
 
     return db_svi_retci(
-        "SELECT d.id, d.naziv, d.pocetak, d.zavrsetak, d.cijena, d.adresa, d.na_otvorenom,
+        "SELECT d.id, d.naziv, d.pocetak, d.zavrsetak, d.cijena, d.adresa, d.na_otvorenom, d.slika_id,
                 GREATEST(DATE(d.pocetak), ?) AS dan,
                 v.naziv AS vrsta, g.naziv AS grad_opcina, l.naziv AS lokacija
          FROM dogadanja d

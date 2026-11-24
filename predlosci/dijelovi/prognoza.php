@@ -55,7 +55,7 @@
                             <p class="prognoza-kartica__dan"><?= e($naziv_dana) ?></p>
                             <p class="prognoza-kartica__datum"><?= e(datum($dan['datum'], 'j. n.')) ?></p>
                         </div>
-                        <span class="prognoza-kartica__ikona prognoza-kartica__ikona--<?= e(ikona_vremena($dan['kod'])) ?>"></span>
+                        <span class="ikona-vremena ikona-vremena--<?= e(ikona_vremena($dan['kod'])) ?> prognoza-kartica__ikona"></span>
                     </div>
                     <p class="prognoza-kartica__temperatura">
                         <?= e((int) round($dan['najvisa'])) ?>°<span class="prognoza-kartica__najniza"> / <?= e((int) round($dan['najniza'])) ?>°</span>

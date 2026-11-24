@@ -27,7 +27,9 @@ $akcija = 'index.php?' . http_build_query($trenutna_stranica > 1 ? $adresa + ['s
 
     <?php require __DIR__ . '/dijelovi/filtar-podrucja.php'; ?>
 
-    <button class="gumb gumb--glavni" type="submit">Traži</button>
+    <div class="filtar__radnje">
+        <button class="gumb gumb--glavni" type="submit">Traži</button>
+    </div>
 </form>
 
 <?php if (count($rezultati) === 0): ?>
@@ -61,13 +63,14 @@ $akcija = 'index.php?' . http_build_query($trenutna_stranica > 1 ? $adresa + ['s
             }
             ?>
             <li class="plan-dodaj__rezultat">
-                <div>
+                <img class="plan-dodaj__slika" src="<?= e(adresa_slike_lokacije($rezultat['slika_id'])) ?>" width="96" height="72" alt="" loading="lazy">
+                <div class="plan-dodaj__opis">
                     <p class="plan-dodaj__naziv"><a href="<?= e($poveznica) ?>"><?= e($rezultat['naziv']) ?></a></p>
                     <p class="plan-dodaj__podaci"><?= e($podaci) ?></p>
                 </div>
 
                 <?php if ($vec_u_planu): ?>
-                    <span class="oznaka">Već u planu</span>
+                    <span class="oznaka oznaka--status">Već u planu</span>
                 <?php else: ?>
                     <form class="plan-dodaj__obrazac" method="post" action="<?= e($akcija) ?>">
                         <?= csrf_polje() ?>

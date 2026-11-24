@@ -14,7 +14,7 @@
         </p>
         <a class="gumb gumb--obrub" href="index.php?stranica=moj-plan">Napravi plan</a>
     <?php else: ?>
-        <form method="post" action="index.php?stranica=plan-stavka-dodaj">
+        <form class="dodaj-u-plan" method="post" action="index.php?stranica=plan-stavka-dodaj">
             <?= csrf_polje() ?>
             <input type="hidden" name="vrsta_stavke" value="<?= e($vrsta_stavke) ?>">
             <input type="hidden" name="stavka" value="<?= e($stavka_id) ?>">

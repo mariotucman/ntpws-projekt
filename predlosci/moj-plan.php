@@ -26,7 +26,7 @@ $danas = date('Y-m-d');
                                 <?= e($razdoblje) ?> · <?= e($dana) ?> <?= $dana === 1 ? 'dan' : 'dana' ?> · <?= e($plan['broj_stavki']) ?> <?= (int) $plan['broj_stavki'] === 1 ? 'stavka' : 'stavki' ?>
                             </p>
                             <?php if ($plan['datum_do'] < $danas): ?>
-                                <p><span class="oznaka">Prošao</span></p>
+                                <p><span class="oznaka oznaka--status">Prošao</span></p>
                             <?php elseif ($plan['datum_od'] <= $danas): ?>
                                 <p><span class="oznaka oznaka--vrsta">U tijeku</span></p>
                             <?php endif; ?>

@@ -287,7 +287,7 @@ function opis_vremena($kod)
     return $opisi[$kod] ?? 'Nepoznato';
 }
 
-// Ikona vremena prema WMO kodu, kao modifikator klase prognoza-kartica__ikona (npr. „kisa”).
+// Ikona vremena prema WMO kodu, kao modifikator klase ikona-vremena (npr. „kisa”).
 // Koja Lucide ikona odgovara kojem modifikatoru, zapisano je u $weather-icons u scss/_kartice.scss. Nepoznat kod dobiva oblak.
 function ikona_vremena($kod)
 {
