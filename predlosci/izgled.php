@@ -31,6 +31,9 @@ $klase = function ($blok, $stranica) use ($aktivno) {
                 <a class="<?= $klase('izbornik__stavka', 'lokacije') ?>" href="index.php?stranica=lokacije">Lokacije</a>
                 <a class="<?= $klase('izbornik__stavka', 'dogadanja') ?>" href="index.php?stranica=dogadanja">Događanja</a>
                 <a class="<?= $klase('izbornik__stavka', 'vijesti') ?>" href="index.php?stranica=vijesti">Vijesti</a>
+                <?php if ($prijavljeni !== null): ?>
+                    <a class="<?= $klase('izbornik__stavka', 'moj-plan') ?>" href="index.php?stranica=moj-plan">Moj plan</a>
+                <?php endif; ?>
                 <?php if (ima_ulogu(['administrator', 'urednik'])): ?>
                     <a class="<?= $klase('izbornik__stavka', 'administracija') ?>" href="index.php?stranica=admin-vijesti">Administracija</a>
                 <?php endif; ?>

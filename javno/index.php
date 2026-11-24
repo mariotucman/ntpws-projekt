@@ -13,6 +13,7 @@ require __DIR__ . '/../aplikacija/podaci/slike.php';
 require __DIR__ . '/../aplikacija/podaci/lokacije.php';
 require __DIR__ . '/../aplikacija/podaci/recenzije.php';
 require __DIR__ . '/../aplikacija/podaci/dogadanja.php';
+require __DIR__ . '/../aplikacija/podaci/planovi.php';
 require __DIR__ . '/../aplikacija/servisi/prognoza.php';
 require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
@@ -21,6 +22,7 @@ require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 require __DIR__ . '/../aplikacija/stranice/vijesti.php';
 require __DIR__ . '/../aplikacija/stranice/lokacije.php';
 require __DIR__ . '/../aplikacija/stranice/dogadanja.php';
+require __DIR__ . '/../aplikacija/stranice/planovi.php';
 require __DIR__ . '/../aplikacija/stranice/administracija.php';
 require __DIR__ . '/../aplikacija/stranice/administracija-lokacija.php';
 require __DIR__ . '/../aplikacija/stranice/administracija-dogadanja.php';
@@ -38,6 +40,7 @@ $stranice = [
     'recenzija-obrisi' => 'stranica_recenzija_obrisi',
     'dogadanja' => 'stranica_dogadanja',
     'dogadanje' => 'stranica_dogadanje',
+    'moj-plan' => 'stranica_moj_plan',
     'vijesti' => 'stranica_vijesti',
     'vijest' => 'stranica_vijest',
     'slika' => 'stranica_slika',

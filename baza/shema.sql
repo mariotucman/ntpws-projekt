@@ -354,7 +354,7 @@ CREATE TABLE stavke_plana (
     KEY ix_stavke_plana_lokacija (lokacija_id),
     KEY ix_stavke_plana_dogadanje (dogadanje_id),
     CONSTRAINT fk_stavke_plana_plan FOREIGN KEY (plan_id) REFERENCES planovi (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_stavke_plana_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_stavke_plana_dogadanje FOREIGN KEY (dogadanje_id) REFERENCES dogadanja (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_stavke_plana_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT fk_stavke_plana_dogadanje FOREIGN KEY (dogadanje_id) REFERENCES dogadanja (id) ON DELETE CASCADE ON UPDATE RESTRICT,
     CONSTRAINT ck_stavke_plana_jedna_stavka CHECK ((lokacija_id IS NULL) <> (dogadanje_id IS NULL))
 );
