@@ -129,7 +129,41 @@ function stranica_plan()
     prikazi('plan', [
         'plan' => $plan,
         'dani' => $dani,
-    ]);
+    ] + prognoze_dana_plana($dani));
+}
+
+// Prognoza za svaki dan plana: za grad/općinu prve stavke dana i samo za dane unutar razdoblja prognoze
+// (prazni dani, prošli dani i dani nakon PROGNOZA_BROJ_DANA nemaju prognozu, a API se za njih ne poziva).
+// Vraća ['prognoze' => [dan => ['dan' => dan prognoze, 'grad_opcina' => naziv]], 'prognoza_dohvaceno' => najstarije
+// vrijeme dohvaćanja od korištenih prognoza ili null, 'prognoza_zastarjela' => true ako ijedna nije svježa].
+function prognoze_dana_plana($dani)
+{
+    $danas = date('Y-m-d');
+    $zadnji_dan_prognoze = date('Y-m-d', strtotime('+' . (PROGNOZA_BROJ_DANA - 1) . ' days'));
+    $prognoze = [];
+    $dohvaceno = null;
+    $zastarjela = false;
+
+    foreach ($dani as $dan => $stavke) {
+        if (count($stavke) === 0 || $dan < $danas || $dan > $zadnji_dan_prognoze) {
+            continue;
+        }
+
+        $prognoza = prognoza_razdoblja($stavke[0]['grad_opcina_id'], $dan, $dan);
+        if ($prognoza === null) {
+            continue;
+        }
+
+        $prognoze[$dan] = ['dan' => $prognoza['dani'][0], 'grad_opcina' => $stavke[0]['grad_opcina']];
+        $dohvaceno = $dohvaceno === null ? $prognoza['dohvaceno'] : min($dohvaceno, $prognoza['dohvaceno']);
+        $zastarjela = $zastarjela || $prognoza['zastarjelo'];
+    }
+
+    return [
+        'prognoze' => $prognoze,
+        'prognoza_dohvaceno' => $dohvaceno,
+        'prognoza_zastarjela' => $zastarjela,
+    ];
 }
 
 // Uređivanje naziva i razdoblja plana: ?stranica=plan-uredi&id=1.

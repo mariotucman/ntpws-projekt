@@ -16,7 +16,16 @@ $aktivno = 'moj-plan';
 <div class="plan-dani">
     <?php foreach ($dani as $dan => $stavke): ?>
         <section class="dan-plana" id="dan-<?= e($dan) ?>">
-            <h2 class="dan-plana__naslov"><?= e(naziv_dana($dan) . ', ' . datum($dan, 'j. n.')) ?></h2>
+            <div class="dan-plana__vrh">
+                <h2 class="dan-plana__naslov"><?= e(naziv_dana($dan) . ', ' . datum($dan, 'j. n.')) ?></h2>
+                <?php if (isset($prognoze[$dan])): ?>
+                    <?php $prognoza_dana = $prognoze[$dan]['dan']; ?>
+                    <p class="dan-plana__prognoza" title="<?= e(opis_vremena($prognoza_dana['kod']) . ', ' . $prognoze[$dan]['grad_opcina']) ?>">
+                        <span class="ikona-vremena ikona-vremena--<?= e(ikona_vremena($prognoza_dana['kod'])) ?>"></span>
+                        <?= e((int) round($prognoza_dana['najvisa'])) ?>° / <?= e((int) round($prognoza_dana['najniza'])) ?>°
+                    </p>
+                <?php endif; ?>
+            </div>
 
             <?php if (count($stavke) === 0): ?>
                 <p class="dan-plana__prazno">Još nema ništa za ovaj dan.</p>
@@ -55,3 +64,15 @@ $aktivno = 'moj-plan';
         </section>
     <?php endforeach; ?>
 </div>
+
+<?php if ($prognoza_dohvaceno !== null): ?>
+    <?php
+    // Vrijeme dohvaćanja uvijek se vidi; datum samo ako podaci nisu od danas
+    $dohvaceno_danas = datum($prognoza_dohvaceno, 'Y-m-d') === date('Y-m-d');
+    $azurirano = datum($prognoza_dohvaceno, $dohvaceno_danas ? '\u H:i' : 'j. n. \u H:i');
+    ?>
+    <p class="plan__napomena">
+        Prognoza je za grad/općinu prve stavke dana:
+        <a href="https://open-meteo.com">Open-Meteo</a> · ažurirano <?= e($azurirano) ?><?= $prognoza_zastarjela ? ' (trenutno se ne može osvježiti)' : '' ?>
+    </p>
+<?php endif; ?>
