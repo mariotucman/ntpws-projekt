@@ -83,6 +83,15 @@
     border-bottom: 1px solid $color-line;
   }
 
+  // U širokoj tablici (5 i više stupaca) prvi stupac (naslov ili naziv) se na mobitelu ne stišće,
+  // nego se tablica pomiče u omotaču. Male tablice (npr. kategorije) i dalje stanu u širinu.
+  &:has(th:nth-child(5)) {
+    th:first-child,
+    td:first-child {
+      min-width: 200px;
+    }
+  }
+
   // Poveznice Uredi i Obriši u retku, dovoljno velike za klik
   &__radnje {
     white-space: nowrap;
