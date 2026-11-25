@@ -82,6 +82,53 @@
   }
 }
 
+// Mala kartica vijesti (najnovije vijesti na početnoj): slika lijevo, kategorija, datum i naslov desno
+.vijest-redak {
+  @include cijela-kartica-klikabilna(".vijest-redak__naslov");
+
+  display: flex;
+  align-items: center;
+  gap: $spacing-l;
+  padding: $spacing-m;
+  border-radius: $radius-card;
+  background-color: $color-surface;
+
+  &__slika {
+    flex-shrink: 0;
+    width: 88px;
+    height: 76px;
+    border-radius: $radius-image;
+    object-fit: cover;
+  }
+
+  &__tijelo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__podaci {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-xs $spacing-s;
+    color: $color-text-muted;
+    font-size: 12px;
+  }
+
+  &__naslov {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    a {
+      color: $color-text;
+      text-decoration: none;
+    }
+  }
+}
+
 // Mreža kartica na popisu lokacija
 // auto-fill pazi da jedna ili dvije kartice ne zauzmu cijelu širinu
 .mreza-lokacija {

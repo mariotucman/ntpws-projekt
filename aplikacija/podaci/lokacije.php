@@ -87,7 +87,7 @@ function vrsta_lokacije_obrisi($id)
 }
 
 // Javno se vide samo objavljene lokacije
-// $filtar: zupanija, grad_opcina, vrsta (id-ovi, 0 = bez filtra) i trazi (tekst u nazivu ili opisu)
+// $filtar: zupanija, grad_opcina, vrsta (id-ovi, 0 = bez filtra), trazi (tekst u nazivu ili opisu) i istaknuto (true = samo istaknute)
 // Vraća WHERE uvjet i parametre, zajedničke za popis i za brojanje lokacija.
 function lokacije_javne_uvjeti($filtar)
 {
@@ -105,6 +105,10 @@ function lokacije_javne_uvjeti($filtar)
     if (($filtar['vrsta'] ?? 0) > 0) {
         $uvjeti .= ' AND l.vrsta_id = ?';
         $parametri[] = (int) $filtar['vrsta'];
+    }
+
+    if (!empty($filtar['istaknuto'])) {
+        $uvjeti .= ' AND l.istaknuto = 1';
     }
 
     if (($filtar['trazi'] ?? '') !== '') {

@@ -28,3 +28,42 @@
     background-color: $color-accent-light;
   }
 }
+
+// Kartice s izborom: red pilula (npr. vrste lokacija na početnoj)
+.izbor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-s;
+  max-width: 900px;
+  margin-top: $spacing-xl;
+
+  &__stavka {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-s;
+    min-height: $touch-min;
+    padding: 0 20px;
+    border-radius: $radius-pill;
+    background-color: $color-surface;
+    color: $color-text;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-primary-light;
+      color: $color-text;
+    }
+  }
+
+  // Broj lokacija te vrste
+  &__broj {
+    min-width: 24px;
+    padding: 1px 7px;
+    border-radius: $radius-pill;
+    background-color: $color-background;
+    color: $color-text-muted;
+    font-size: 12px;
+    text-align: center;
+  }
+}

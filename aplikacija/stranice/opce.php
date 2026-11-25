@@ -1,11 +1,14 @@
 <?php
 // Opće stranice: početna, slika i stranice za greške.
 
-// Početna sa „Što te zanima?”: vrste lokacija vode na popis lokacija te vrste
+// Početna: „Što te zanima?” (vrste lokacija), istaknute lokacije i događanja te najnovije vijesti
 function stranica_pocetna()
 {
     prikazi('pocetna', [
         'vrste' => vrste_lokacija_s_javnim_lokacijama(),
+        'lokacije' => lokacije_javne(['istaknuto' => true], 6),
+        'dogadanja' => dogadanja_javna(['od' => date('Y-m-d'), 'do' => null, 'istaknuto' => true], 4, 0),
+        'vijesti' => vijesti_javne([], 3),
     ]);
 }
 
