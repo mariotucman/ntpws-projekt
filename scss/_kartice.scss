@@ -129,7 +129,7 @@
   }
 }
 
-// Mreža kartica na popisu lokacija
+// Mreža kartica lokacija (popis lokacija i istaknute lokacije na početnoj)
 // auto-fill pazi da jedna ili dvije kartice ne zauzmu cijelu širinu
 .mreza-lokacija {
   display: grid;
@@ -137,8 +137,8 @@
   gap: $spacing-l;
 }
 
-// Velika kartica lokacije: fotografija na vrhu, ispod tekst
-// Gumb Spremi i traka s ocjenom dolaze uz spremljene lokacije i recenzije
+// Velika kartica lokacije: fotografija na vrhu, ispod tekst, a na dnu traka s vrstom i ocjenom
+// Gumb Spremi dolazi uz spremljene lokacije (korak 25)
 .lokacija-kartica {
   @include cijela-kartica-klikabilna(".lokacija-kartica__naziv");
 
@@ -588,7 +588,7 @@ $weather-icons: (
   font-weight: 700;
 }
 
-// Događanja jednog dana: kartice jedna ispod druge, a na širem ekranu u dva stupca
+// Kartice događanja (jedan dan na popisu ili istaknuta na početnoj): jedna ispod druge, a na širem ekranu u dva stupca
 .popis-dogadanja {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

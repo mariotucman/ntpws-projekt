@@ -43,6 +43,7 @@ $touch-min: 44px; // najmanja visina svega što se klikne
 
 // Točke prijeloma
 $breakpoint-mobile: 600px;
+$breakpoint-desktop: 1024px; // ispod ovoga izbornik se skuplja u gumb
 
 // Ikone: Lucide (lucide.dev, ISC licenca) s jsDelivra
 $icons-url: "https://cdn.jsdelivr.net/npm/lucide-static@1.70.0/icons";

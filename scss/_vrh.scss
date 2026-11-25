@@ -63,6 +63,95 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
+
+  // Okrugli hamburger gumb, a natpis „Izbornik” ili „Zatvori” je vizualno skriven.
+  // Zadano je skriven, a prikazuje se ispod 1024px uz klasu zaglavlje--js (media upit niže).
+  &__gumb {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: $touch-min;
+    height: $touch-min;
+    padding: 0;
+    border: 1px solid $color-surface;
+    border-radius: 50%;
+    background-color: transparent;
+    color: $color-surface;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-primary-hover;
+    }
+  }
+
+  // Lucide ikona kao maska, kao ikone vremena: oblik daje SVG, a boju podloga (boja teksta gumba)
+  &__ikona {
+    width: 22px;
+    height: 22px;
+    background-color: currentColor;
+    mask: url("#{$icons-url}/menu.svg") no-repeat center / contain;
+  }
+
+  &--otvoreno &__ikona {
+    mask-image: url("#{$icons-url}/x.svg");
+  }
+
+  // Ispod 1024px: u retku su samo logotip i gumb, a izbornik i račun pojavljuju se tek na klik
+  @media (max-width: #{$breakpoint-desktop - 1px}) {
+    &--js {
+      justify-content: space-between;
+
+      .izbornik,
+      .racun {
+        display: none;
+      }
+    }
+
+    &--js &__gumb {
+      display: inline-flex;
+    }
+
+    &--otvoreno &__gumb {
+      background-color: $color-surface;
+      color: $color-primary;
+    }
+
+    // Otvoreni izbornik: bijeli panel preko cijele širine, stavke jedna ispod druge
+    &--otvoreno .izbornik {
+      display: flex;
+      flex-basis: 100%;
+      flex-direction: column;
+      padding: $spacing-s;
+      border-radius: $radius-card;
+      background-color: $color-surface;
+
+      :focus-visible {
+        outline-color: $color-primary;
+      }
+    }
+
+    &--otvoreno .izbornik__stavka {
+      border-radius: $radius-button;
+      color: $color-text;
+
+      &:hover {
+        background-color: $color-primary-light;
+        color: $color-text;
+      }
+    }
+
+    &--otvoreno .izbornik__stavka--trenutna {
+      background-color: $color-primary-light;
+      color: $color-primary;
+    }
+
+    // Račun (prijava i registracija ili korisnik s odjavom) ostaje na plavoj podlozi ispod panela
+    &--otvoreno .racun {
+      display: flex;
+      flex-basis: 100%;
+      flex-wrap: wrap;
+    }
+  }
 }
 
 .racun {

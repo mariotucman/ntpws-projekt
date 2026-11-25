@@ -19,12 +19,19 @@ $klase = function ($blok, $stranica) use ($aktivno) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="css/stil.css">
+    <script src="js/izbornik.js" defer></script>
 </head>
 <body>
 <div class="stranica">
     <header class="vrh<?= isset($natpis) ? ' vrh--pocetna' : '' ?><?= $admin ? ' vrh--admin' : '' ?>">
         <div class="zaglavlje">
             <a class="logo" href="index.php">Mjestopis</a>
+
+            <!-- Hamburger gumb: vidi se samo ispod 1024px i samo ako se učitao js/izbornik.js -->
+            <button class="zaglavlje__gumb" type="button">
+                <span class="zaglavlje__ikona"></span>
+                <span class="zaglavlje__natpis vizualno-skriveno">Izbornik</span>
+            </button>
 
             <nav class="izbornik">
                 <a class="<?= $klase('izbornik__stavka', 'pocetna') ?>" href="index.php">Početna</a>
