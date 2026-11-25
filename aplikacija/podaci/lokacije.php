@@ -28,6 +28,18 @@ function vrste_lokacija_s_brojem_lokacija()
     );
 }
 
+// Samo vrste koje imaju barem jednu objavljenu lokaciju, s brojem takvih lokacija (početna)
+function vrste_lokacija_s_javnim_lokacijama()
+{
+    return db_svi_retci(
+        'SELECT v.id, v.naziv, COUNT(l.id) AS broj_lokacija
+         FROM vrste_lokacija v
+         JOIN lokacije l ON l.vrsta_id = v.id AND l.objavljeno = 1
+         GROUP BY v.id, v.naziv
+         ORDER BY v.naziv'
+    );
+}
+
 // Naziv je zauzet ako ga već ima druga vrsta
 function vrsta_lokacije_naziv_zauzet($naziv, $osim_id = 0)
 {

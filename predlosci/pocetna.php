@@ -1,6 +1,5 @@
 <?php
-$naslov = 'Kamo ideš?';
+$naslov = 'Što te zanima?';
 $natpis = 'Turistički vodič po Hrvatskoj';
 $aktivno = 'pocetna';
 ?>
-<p>Broj korisnika u bazi: <?= e($broj_korisnika) ?></p>

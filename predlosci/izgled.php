@@ -65,6 +65,9 @@ $klase = function ($blok, $stranica) use ($aktivno) {
             <?php if (isset($opis)): ?>
                 <p class="vrh__opis"><?= e($opis) ?></p>
             <?php endif; ?>
+            <?php if ($aktivno === 'pocetna'): ?>
+                <?php require __DIR__ . '/dijelovi/sto-te-zanima.php'; ?>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
     </header>

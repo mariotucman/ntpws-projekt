@@ -1,12 +1,11 @@
 <?php
 // Opće stranice: početna, slika i stranice za greške.
 
+// Početna sa „Što te zanima?”: vrste lokacija vode na popis lokacija te vrste
 function stranica_pocetna()
 {
-    $redak = db_jedan_redak('SELECT COUNT(*) AS broj FROM korisnici'); // test
-
     prikazi('pocetna', [
-        'broj_korisnika' => $redak['broj'],
+        'vrste' => vrste_lokacija_s_javnim_lokacijama(),
     ]);
 }
 
