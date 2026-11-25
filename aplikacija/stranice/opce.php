@@ -12,6 +12,11 @@ function stranica_pocetna()
     ]);
 }
 
+function stranica_o_projektu()
+{
+    prikazi('o-projektu');
+}
+
 function stranica_nije_pronadena()
 {
     http_response_code(404);

@@ -30,6 +30,7 @@ require __DIR__ . '/../aplikacija/stranice/administracija-dogadanja.php';
 // Popis dopuštenih stranica
 $stranice = [
     'pocetna' => 'stranica_pocetna',
+    'o-projektu' => 'stranica_o_projektu',
     'registracija' => 'stranica_registracija',
     'prijava' => 'stranica_prijava',
     'odjava' => 'stranica_odjava',

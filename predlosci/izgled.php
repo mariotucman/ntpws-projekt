@@ -107,7 +107,10 @@ $klase = function ($blok, $stranica) use ($aktivno) {
             <p class="podnozje__naziv">Mjestopis</p>
             <p>Turistički vodič po Hrvatskoj</p>
         </div>
-        <p>&copy; <?= date('Y') ?> Mjestopis</p>
+        <p>
+            <a class="podnozje__poveznica" href="index.php?stranica=o-projektu">O projektu</a>
+            &middot; &copy; <?= date('Y') ?> Mjestopis
+        </p>
     </footer>
 </div>
 </body>

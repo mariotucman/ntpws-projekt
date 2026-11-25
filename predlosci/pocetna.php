@@ -60,3 +60,11 @@ $aktivno = 'pocetna';
         <?php endif; ?>
     </section>
 </div>
+
+<section class="poziv">
+    <div>
+        <h2 class="poziv__naslov">Složi svoj plan putovanja</h2>
+        <p class="poziv__opis">Dodaj lokacije i događanja po danima i uz svaki dan vidi prognozu.</p>
+    </div>
+    <a class="gumb gumb--tamni" href="index.php?stranica=moj-plan">Moj plan</a>
+</section>

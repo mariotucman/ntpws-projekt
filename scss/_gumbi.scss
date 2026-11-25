@@ -34,6 +34,17 @@
     }
   }
 
+  // Gumb unutar trake u metvici, npr. Moj plan u traci s pozivom
+  &--tamni {
+    background-color: $color-text;
+    color: $color-surface;
+
+    &:hover {
+      color: $color-surface;
+      filter: brightness(0.95);
+    }
+  }
+
   // Sporedna radnja, npr. Poništi filtar
   &--obrub {
     border: 1px solid $color-primary;
