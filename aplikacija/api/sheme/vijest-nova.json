@@ -1,0 +1,51 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://mjestopis.test/api/sheme/vijest-nova.json",
+    "title": "Nova vijest",
+    "description": "Tijelo zahtjeva POST /v1/vijesti. Slika vijesti nije dio API-ja.",
+    "type": "object",
+    "required": ["naslov", "sazetak", "sadrzaj", "kategorija_id"],
+    "additionalProperties": false,
+    "properties": {
+        "naslov": {
+            "description": "Naslov vijesti",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S"
+        },
+        "sazetak": {
+            "description": "Kratki sažetak za popis vijesti",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400,
+            "pattern": "\\S"
+        },
+        "sadrzaj": {
+            "description": "Sadržaj u HTML-u (p, br, h2, h3, strong, em, a, ul, ol, li, blockquote); ostale oznake se brišu",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+        },
+        "kategorija_id": {
+            "description": "Id kategorije iz GET /v1/kategorije",
+            "type": "integer",
+            "minimum": 1
+        },
+        "grad_opcina_id": {
+            "description": "Id grada ili općine; null ili bez polja znači cijela Hrvatska",
+            "type": ["integer", "null"],
+            "minimum": 1
+        },
+        "status": {
+            "description": "Bez polja vijest se sprema kao nacrt",
+            "type": "string",
+            "enum": ["nacrt", "objavljeno", "povuceno"]
+        },
+        "objavljeno_u": {
+            "description": "Datum i vrijeme objave (RFC 3339, npr. 2026-12-01T09:00:00+01:00); null ili bez polja znači sada. Nacrt nema datum objave.",
+            "type": ["string", "null"],
+            "format": "date-time"
+        }
+    }
+}

@@ -1,5 +1,6 @@
 {
     "require": {
-        "symfony/html-sanitizer": "^8.1"
+        "symfony/html-sanitizer": "^8.1",
+        "opis/json-schema": "^2.6"
     }
 }

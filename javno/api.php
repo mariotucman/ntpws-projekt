@@ -1,10 +1,12 @@
 <?php
 // Ulaz vlastitog REST API-ja. Adrese su oblika api.php/v1/<resurs>[/<id>].
 
+require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../aplikacija/greske.php';
 require __DIR__ . '/../aplikacija/konfiguracija.php';
 require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
+require __DIR__ . '/../aplikacija/validacija.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/api.php';
 require __DIR__ . '/../aplikacija/podaci/korisnici.php';

@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://mjestopis.test/api/sheme/vijest-izmjena.json",
+    "title": "Izmjena vijesti",
+    "description": "Tijelo zahtjeva PATCH /v1/vijesti/{id}. Šalju se samo polja koja se mijenjaju, a pravila za svako polje ista su kao kod nove vijesti.",
+    "type": "object",
+    "minProperties": 1,
+    "additionalProperties": false,
+    "properties": {
+        "naslov": { "$ref": "vijest-nova.json#/properties/naslov" },
+        "sazetak": { "$ref": "vijest-nova.json#/properties/sazetak" },
+        "sadrzaj": { "$ref": "vijest-nova.json#/properties/sadrzaj" },
+        "kategorija_id": { "$ref": "vijest-nova.json#/properties/kategorija_id" },
+        "grad_opcina_id": { "$ref": "vijest-nova.json#/properties/grad_opcina_id" },
+        "status": { "$ref": "vijest-nova.json#/properties/status" },
+        "objavljeno_u": { "$ref": "vijest-nova.json#/properties/objavljeno_u" }
+    }
+}

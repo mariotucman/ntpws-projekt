@@ -54,7 +54,8 @@ function obradi_gresku_api($greska)
 
 // Tijelo zahtjeva (POST, PATCH) kao polje. Tijelo mora biti JSON objekt
 // poslan sa zaglavljem Content-Type: application/json, inače odgovor je 415 ili 400.
-function api_tijelo()
+// Uz $shema (npr. 'vijest-nova') tijelo se provjerava prema JSON Schemi, a greške daju 400 s porukama po poljima.
+function api_tijelo($shema = null)
 {
     $vrsta = strtolower(trim(explode(';', $_SERVER['CONTENT_TYPE'] ?? '')[0]));
     if ($vrsta !== 'application/json') {
@@ -68,6 +69,13 @@ function api_tijelo()
     }
     if (!is_object($podaci)) {
         api_greska(400, 'Tijelo zahtjeva mora biti JSON objekt.');
+    }
+
+    if ($shema !== null) {
+        $greske = provjeri_shemu($podaci, $shema);
+        if (count($greske) > 0) {
+            api_greska(400, 'Neispravan unos.', $greske);
+        }
     }
 
     return json_decode($json, true);
