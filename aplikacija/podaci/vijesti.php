@@ -64,6 +64,7 @@ function vijesti_javne($filtar = [], $koliko = 10, $preskoci = 0)
 
     return db_svi_retci(
         "SELECT v.id, v.naslov, v.sazetak, v.objavljeno_u, v.slika_id,
+                v.kategorija_id, v.grad_opcina_id, g.zupanija_id,
                 k.naziv AS kategorija, g.naziv AS grad_opcina, z.naziv AS zupanija
          FROM vijesti v
          JOIN kategorije k ON k.id = v.kategorija_id
@@ -81,6 +82,7 @@ function vijest_javna_po_id($id)
 {
     return db_jedan_redak(
         "SELECT v.id, v.naslov, v.sazetak, v.sadrzaj, v.objavljeno_u, v.slika_id,
+                v.kategorija_id, v.grad_opcina_id, g.zupanija_id,
                 k.naziv AS kategorija, g.naziv AS grad_opcina, z.naziv AS zupanija, a.ime AS autor
          FROM vijesti v
          JOIN kategorije k ON k.id = v.kategorija_id
