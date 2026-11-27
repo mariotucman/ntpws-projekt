@@ -3,6 +3,25 @@
 // Svaka sesija dobiva tajni token. Naši obrasci ga šalju u skrivenom polju, a obrazac
 // s tuđe stranice ga ne može znati, pa poslužitelj takav zahtjev odbija.
 
+// Na javnoj instalaciji (HTTPS_ADRESA u konfiguraciji) sav promet ide preko HTTPS-a.
+// Zahtjev preko HTTP-a trajno se preusmjerava na istu stranicu na HTTPS_ADRESA. Adresa se uzima iz konfiguracije,
+// a ne iz zaglavlja Host, da se preusmjeravanje ne može poslati na tuđu stranicu.
+// Strict-Transport-Security kaže pregledniku da godinu dana stranicu otvara samo preko HTTPS-a.
+// Lokalno je HTTPS_ADRESA prazna (ili je nema), pa se ništa ne mijenja.
+function zahtijevaj_https()
+{
+    if (!defined('HTTPS_ADRESA') || HTTPS_ADRESA === '') {
+        return;
+    }
+
+    if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
+        header('Location: ' . rtrim(HTTPS_ADRESA, '/') . $_SERVER['REQUEST_URI'], true, 301);
+        exit;
+    }
+
+    header('Strict-Transport-Security: max-age=31536000');
+}
+
 function csrf_token()
 {
     if (empty($_SESSION['csrf_token'])) {

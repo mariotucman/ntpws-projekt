@@ -1,6 +1,7 @@
 <?php
 $naslov = 'Što te zanima?';
 $natpis = 'Turistički vodič po Hrvatskoj';
+$opis = 'Lokacije, događanja, vijesti i vremenska prognoza za cijelu Hrvatsku na jednom mjestu. Odaberi što te zanima ili složi vlastiti plan putovanja.';
 $aktivno = 'pocetna';
 ?>
 <?php if (count($lokacije) > 0): ?>

@@ -17,11 +17,26 @@ function prijavi($korisnik_id)
     $_SESSION['korisnik_id'] = $korisnik_id;
 }
 
-// Briše sve podatke sesije i daje novi ID
+// Odjava: briše podatke sesije, uništava sesiju na poslužitelju i briše kolačić u pregledniku.
+// Zatim se pokreće nova prazna sesija s novim ID-om, samo za poruku „Odjavljen si.”.
 function odjavi()
 {
     $_SESSION = [];
-    session_regenerate_id(true);
+
+    $kolacic = session_get_cookie_params();
+    setcookie(session_name(), '', [
+        'expires' => time() - 3600,
+        'path' => $kolacic['path'],
+        'domain' => $kolacic['domain'],
+        'secure' => $kolacic['secure'],
+        'httponly' => $kolacic['httponly'],
+        'samesite' => $kolacic['samesite'],
+    ]);
+
+    session_destroy();
+
+    session_id(session_create_id());
+    session_start();
 }
 
 // Korisnik se na svakom zahtjevu dohvaća iz baze.

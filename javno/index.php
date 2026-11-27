@@ -15,8 +15,12 @@ require __DIR__ . '/../aplikacija/podaci/recenzije.php';
 require __DIR__ . '/../aplikacija/podaci/dogadanja.php';
 require __DIR__ . '/../aplikacija/podaci/planovi.php';
 require __DIR__ . '/../aplikacija/servisi/prognoza.php';
-require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
+
+// Na javnoj instalaciji HTTP se preusmjerava na HTTPS prije nego što se pokrene sesija
+zahtijevaj_https();
+
+require __DIR__ . '/../aplikacija/autentifikacija.php';
 require __DIR__ . '/../aplikacija/stranice/opce.php';
 require __DIR__ . '/../aplikacija/stranice/korisnici.php';
 require __DIR__ . '/../aplikacija/stranice/vijesti.php';
