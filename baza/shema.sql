@@ -9,6 +9,7 @@ USE mjestopis;
 SET NAMES utf8mb4;
 
 -- Tablice se brišu obrnutim redom odnosno prvo one koje pokazuju na druge.
+DROP TABLE IF EXISTS api_tokeni;
 DROP TABLE IF EXISTS stavke_plana;
 DROP TABLE IF EXISTS planovi;
 DROP TABLE IF EXISTS predmemorija_prognoze;
@@ -357,4 +358,22 @@ CREATE TABLE stavke_plana (
     CONSTRAINT fk_stavke_plana_lokacija FOREIGN KEY (lokacija_id) REFERENCES lokacije (id) ON DELETE CASCADE ON UPDATE RESTRICT,
     CONSTRAINT fk_stavke_plana_dogadanje FOREIGN KEY (dogadanje_id) REFERENCES dogadanja (id) ON DELETE CASCADE ON UPDATE RESTRICT,
     CONSTRAINT ck_stavke_plana_jedna_stavka CHECK ((lokacija_id IS NULL) <> (dogadanje_id IS NULL))
+);
+
+-- Tablica api_tokeni
+-- Prijava za vlastiti REST API: klijent šalje token u zaglavlju Authorization: Bearer <token>.
+-- Sprema se samo SHA-256 sažetak tokena, pa ukradena baza ne otkriva tokene.
+-- Token vrijedi do vremena "istjece", a odjavom se briše. Brisanjem korisnika brišu se i njegovi tokeni.
+CREATE TABLE api_tokeni (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    korisnik_id INT UNSIGNED NOT NULL,
+    token_hash CHAR(64) NOT NULL,
+    kreirano DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    istjece DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_api_tokeni_token_hash (token_hash),
+    KEY ix_api_tokeni_korisnik (korisnik_id),
+    KEY ix_api_tokeni_istjece (istjece),
+    CONSTRAINT fk_api_tokeni_korisnik FOREIGN KEY (korisnik_id) REFERENCES korisnici (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT ck_api_tokeni_istjece CHECK (istjece > kreirano)
 );

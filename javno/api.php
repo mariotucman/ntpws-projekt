@@ -7,8 +7,11 @@ require __DIR__ . '/../aplikacija/baza.php';
 require __DIR__ . '/../aplikacija/sigurnost.php';
 require __DIR__ . '/../aplikacija/prikaz.php';
 require __DIR__ . '/../aplikacija/api.php';
+require __DIR__ . '/../aplikacija/podaci/korisnici.php';
+require __DIR__ . '/../aplikacija/podaci/tokeni.php';
 require __DIR__ . '/../aplikacija/podaci/kategorije.php';
 require __DIR__ . '/../aplikacija/podaci/vijesti.php';
+require __DIR__ . '/../aplikacija/api/tokeni.php';
 require __DIR__ . '/../aplikacija/api/kategorije.php';
 require __DIR__ . '/../aplikacija/api/vijesti.php';
 
@@ -19,6 +22,7 @@ zahtijevaj_https();
 
 // Popis dopuštenih adresa i metoda
 $rute = [
+    'tokeni' => ['POST' => 'api_token_prijava', 'DELETE' => 'api_token_odjava'],
     'kategorije' => ['GET' => 'api_kategorije_popis'],
     'vijesti' => ['GET' => 'api_vijesti_popis'],
     'vijesti/id' => ['GET' => 'api_vijest_detalj'],

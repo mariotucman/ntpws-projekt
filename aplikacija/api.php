@@ -52,6 +52,92 @@ function obradi_gresku_api($greska)
     }
 }
 
+// Tijelo zahtjeva (POST, PATCH) kao polje. Tijelo mora biti JSON objekt
+// poslan sa zaglavljem Content-Type: application/json, inače odgovor je 415 ili 400.
+function api_tijelo()
+{
+    $vrsta = strtolower(trim(explode(';', $_SERVER['CONTENT_TYPE'] ?? '')[0]));
+    if ($vrsta !== 'application/json') {
+        api_greska(415, 'Tijelo zahtjeva mora biti JSON (Content-Type: application/json).');
+    }
+
+    $json = file_get_contents('php://input');
+    $podaci = json_decode($json);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        api_greska(400, 'Tijelo zahtjeva nije ispravan JSON.');
+    }
+    if (!is_object($podaci)) {
+        api_greska(400, 'Tijelo zahtjeva mora biti JSON objekt.');
+    }
+
+    return json_decode($json, true);
+}
+
+// Token iz zaglavlja Authorization: Bearer <token> ili null
+function api_bearer_token()
+{
+    $zaglavlje = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    if ($zaglavlje === '' && function_exists('getallheaders')) {
+        $zaglavlje = array_change_key_case(getallheaders())['authorization'] ?? '';
+    }
+
+    if (!preg_match('/^Bearer\s+([0-9a-f]{64})$/i', trim($zaglavlje), $dijelovi)) {
+        return null;
+    }
+
+    return strtolower($dijelovi[1]);
+}
+
+// Prijavljeni korisnik API-ja (kao trenutni_korisnik() na stranici) ili null.
+// Korisnik se čita iz baze na svakom zahtjevu, pa deaktivacija odmah vrijedi.
+// Vraća i 'token_id' da se token može obrisati kod odjave.
+function api_korisnik()
+{
+    static $korisnik = false;
+
+    if ($korisnik === false) {
+        $korisnik = null;
+        $token = api_bearer_token();
+        $zapis = $token === null ? null : token_vazeci($token);
+
+        if ($zapis !== null) {
+            $korisnik = korisnik_po_id($zapis['korisnik_id']);
+            if ($korisnik === null || !$korisnik['aktivan']) {
+                $korisnik = null;
+            } else {
+                $korisnik['token_id'] = $zapis['id'];
+            }
+        }
+    }
+
+    return $korisnik;
+}
+
+// Bez valjanog tokena odgovor je 401
+function api_zahtijevaj_prijavu()
+{
+    $korisnik = api_korisnik();
+
+    if ($korisnik === null) {
+        header('WWW-Authenticate: Bearer');
+        api_greska(401, 'Potrebna je prijava. Pošalji valjani token u zaglavlju Authorization: Bearer <token>.');
+    }
+
+    return $korisnik;
+}
+
+// Prijavljeni korisnik bez potrebne uloge dobiva 403
+function api_zahtijevaj_ulogu($uloge)
+{
+    $korisnik = api_zahtijevaj_prijavu();
+
+    if (!in_array($korisnik['uloga'], $uloge, true)) {
+        api_greska(403, 'Nemaš ovlasti za ovu radnju.');
+    }
+
+    return $korisnik;
+}
+
 // Pozitivan cijeli broj iz adrese (?kljuc=5). Ako ga nema, vraća $zadano.
 // Neispravna vrijednost ili broj izvan granica dodaje poruku u $greske.
 function api_get_broj($kljuc, &$greske, $zadano = 0, $najvise = null)
