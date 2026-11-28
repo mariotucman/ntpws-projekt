@@ -152,10 +152,13 @@ function vijest_po_id($id)
 {
     return db_jedan_redak(
         'SELECT v.id, v.kategorija_id, v.grad_opcina_id, g.zupanija_id, v.autor_id, v.slika_id, v.naslov, v.sazetak, v.sadrzaj,
-                v.status, v.objavljeno_u, v.kreirano, v.azurirano, a.ime AS autor
+                v.status, v.objavljeno_u, v.kreirano, v.azurirano, a.ime AS autor,
+                k.naziv AS kategorija, g.naziv AS grad_opcina, z.naziv AS zupanija
          FROM vijesti v
          JOIN korisnici a ON a.id = v.autor_id
+         JOIN kategorije k ON k.id = v.kategorija_id
          LEFT JOIN gradovi_opcine g ON g.id = v.grad_opcina_id
+         LEFT JOIN zupanije z ON z.id = g.zupanija_id
          WHERE v.id = ?',
         [(int) $id]
     );
